@@ -22,6 +22,8 @@ def resize_pad(img):
         img2: 128x128
         scale: scale factor between original image and 256x256 image
         pad: pixels of padding in the original image
+
+    Based on https://github.com/zmurez/MediaPipePyTorch/blob/master/blazebase.py
     """
 
     size0 = img.shape
@@ -64,6 +66,7 @@ def denormalize_detections(detections, scale, pad):
         scale: scalar that was used to resize the image
         pad: padding in the x and y dimensions
 
+    Based on https://github.com/zmurez/MediaPipePyTorch/blob/master/blazebase.py
     """
     detections[:, 0] = detections[:, 0] * scale * 256 - pad[0]
     detections[:, 1] = detections[:, 1] * scale * 256 - pad[1]
@@ -81,6 +84,8 @@ def intersect(box_a, box_b):
       box_b: (numpy array) bounding boxes, Shape: [B, 4].
     Return:
       (numpy array) intersection area, Shape: [A, B].
+
+    Based on https://github.com/zmurez/MediaPipePyTorch/blob/master/blazebase.py
     """
     A = box_a.shape[0]
     B = box_b.shape[0]
@@ -96,6 +101,8 @@ def jaccard(box_a, box_b):
         box_b: (numpy array) Prior boxes, Shape: [num_priors, 4]
     Return:
         jaccard overlap: (numpy array) Shape: [box_a.shape[0], box_b.shape[0]]
+
+    Based on https://github.com/zmurez/MediaPipePyTorch/blob/master/blazebase.py
     """
     inter_area = intersect(box_a, box_b)
     area_a = (box_a[:, 2] - box_a[:, 0]) * (box_a[:, 3] - box_a[:, 1])
@@ -104,7 +111,10 @@ def jaccard(box_a, box_b):
     return inter_area / union_area
 
 def overlap_similarity(box, other_boxes):
-    """Computes the IOU between a bounding box and a set of other boxes."""
+    """Computes the IOU between a bounding box and a set of other boxes.
+    
+    Based on https://github.com/zmurez/MediaPipePyTorch/blob/master/blazebase.py
+    """
     return jaccard(np.expand_dims(box, axis=0), other_boxes)
 
 class BlazeDetector():
@@ -113,7 +123,7 @@ class BlazeDetector():
     Based on code from https://github.com/tkat0/PyTorch_BlazeFace/ and
     https://github.com/hollance/BlazeFace-PyTorch and
     https://github.com/google/mediapipe/
-    """
+        """
     def __init__(self):
         # These are the settings from the MediaPipe example graph
         # mediapipe/graphs/hand_tracking/subgraphs/hand_detection_gpu.pbtxt
@@ -423,7 +433,10 @@ class BlazeDetector():
         return output_detections
 
 class BlazeLandmark():
-    """ Base class for landmark models. """
+    """ Base class for landmark models. 
+
+    Based on https://github.com/zmurez/MediaPipePyTorch/blob/master/blazebase.py
+    """
 
     def __init__(self):
         # size of ROIs used for input
