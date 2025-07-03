@@ -444,6 +444,12 @@ function scripts_env_setup(){
 }
 
 function download_qrb_ros_node(){
+    if [ -d "$DIR/src" ]; then
+	  echo "✅ Directory exists: $DIR/src"
+	else
+	  echo "⚠️ Directory not found: $DIR/src"
+	  mkdir -p "$DIR/src"
+	fi
     cd $DIR/src
     local N=$1
     if [ $((N -1)) == 0 ];then
