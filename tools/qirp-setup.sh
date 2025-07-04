@@ -321,9 +321,9 @@ apt_packages_base+=( \
     ros-$ROS_DISTRO-qrb-ros-transport-imu-type \
     ros-$ROS_DISTRO-qrb-ros-transport-point-cloud2-type \
     ros-$ROS_DISTRO-lib-mem-dmabuf \
+    ros-$ROS_DISTRO-dmabuf-transport  \
     ros-jazzy-orbbec-camera  \
     ros-jazzy-orbbec-camera-msgs \
-    ros-jazzy-qrb-ros-transport-point-cloud2-type \
     ros-jazzy-rplidar-ros \
     ros-jazzy-sample-hand-detection \
     ros-jazzy-sample-resnet101-quantized \
