@@ -14,6 +14,16 @@ For more information, please refer to [qrb_ros_samples/robotics/simulation_sampl
 
 ![pipeline](./resource/pipeline.png)
 
+
+
+## Supported Platforms 
+
+| Hardware                   | Software                                 |
+| -------------------------- | ---------------------------------------- |
+| Qualcomm RB3 gen2          | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
+| IQ-9075 Evaluation Kit     | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
+| IQ-8 Beta   Evaluation Kit | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
+
 ## ROS Nodes Used in QRB AMR simple motion pipeline
 
 |                               | Table : ROS nodes used in QRB AMR simple motion pipeline               |

@@ -14,6 +14,14 @@ For more information, please refer to  https://github.com/qualcomm-qrb-ros/qrb_r
 
 ![image-20250416115206913](./resource/pipeline.png)
 
+## Supported Platforms
+
+| Hardware                   | Software                                   |
+| -------------------------- | ------------------------------------------ |
+| Qualcomm RB3 gen2          | LE.QCROBOTICS.1.0 , Canonical Ubuntu Image |
+| IQ-9075 Evaluation Kit     | LE.QCROBOTICS.1.0 , Canonical Ubuntu Image |
+| IQ-8 Beta   Evaluation Kit | LE.QCROBOTICS.1.0,Canonical Ubuntu Image   |
+
 ## ROS Nodes Used in Resnet101 Quantized
 
 | ROS Node                | Description                                                  |

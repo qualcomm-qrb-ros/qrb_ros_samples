@@ -16,6 +16,12 @@ For more information, please refer to https://github.com/qualcomm-qrb-ros/qrb_ro
 
 ![](./resource/pipeline.png)
 
+## Supported Platforms
+
+| Hardware               | Software                                 |
+| ---------------------- | ---------------------------------------- |
+| IQ-9075 Evaluation Kit | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
+
 ## ROS Nodes Used in hand landmark detection
 
 | ROS Node                | Description                                                  |

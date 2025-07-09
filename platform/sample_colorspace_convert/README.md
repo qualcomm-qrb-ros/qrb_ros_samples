@@ -20,14 +20,24 @@ The figure shows the pipeline for `qrb-ros-color-space-convert`:
 
 ![pipeline](resource/pipeline.png) 
 
-## ROS Nodes
+
+
+## Supported Platforms 
+
+| Hardware                   | Software                                 |
+| -------------------------- | ---------------------------------------- |
+| Qualcomm RB3 gen2          | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
+| IQ-9075 Evaluation Kit     | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
+| IQ-8 Beta   Evaluation Kit | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
+
+## ROS Nodes Used in  QRB Color Space Conversion
 
 | Node | Description |
 |------|-------------|
 | `customer_ros_node` | Publishes input image info to colorspace_convert_node |
 | `colorspace_convert_node` | Converts color space between NV12 and RGB888 |
 
-## ROS Topics
+## ROS Topics QRB Color Space Conversion
 
 | Topic | Direction | Type | Message Type | Description |
 |-------|-----------|------|--------------|-------------|
