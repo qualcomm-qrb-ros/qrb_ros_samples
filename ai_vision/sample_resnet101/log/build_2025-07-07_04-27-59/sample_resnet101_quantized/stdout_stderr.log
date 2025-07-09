@@ -1,0 +1,28 @@
+running egg_info
+writing build/sample_resnet101_quantized/sample_resnet101_quantized.egg-info/PKG-INFO
+writing dependency_links to build/sample_resnet101_quantized/sample_resnet101_quantized.egg-info/dependency_links.txt
+writing entry points to build/sample_resnet101_quantized/sample_resnet101_quantized.egg-info/entry_points.txt
+writing requirements to build/sample_resnet101_quantized/sample_resnet101_quantized.egg-info/requires.txt
+writing top-level names to build/sample_resnet101_quantized/sample_resnet101_quantized.egg-info/top_level.txt
+reading manifest file 'build/sample_resnet101_quantized/sample_resnet101_quantized.egg-info/SOURCES.txt'
+writing manifest file 'build/sample_resnet101_quantized/sample_resnet101_quantized.egg-info/SOURCES.txt'
+running build
+running build_py
+copying sample_resnet101_quantized/qrb_ros_resnet101.py -> /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/ai_vision/sample_resnet101_quantized/build/sample_resnet101_quantized/build/lib/sample_resnet101_quantized
+copying sample_resnet101_quantized/component.py -> /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/ai_vision/sample_resnet101_quantized/build/sample_resnet101_quantized/build/lib/sample_resnet101_quantized
+copying sample_resnet101_quantized/__init__.py -> /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/ai_vision/sample_resnet101_quantized/build/sample_resnet101_quantized/build/lib/sample_resnet101_quantized
+copying sample_resnet101_quantized/qrb_ros_resnet101_posprocess.py -> /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/ai_vision/sample_resnet101_quantized/build/sample_resnet101_quantized/build/lib/sample_resnet101_quantized
+running install
+running install_lib
+running install_data
+copying resource/sample_resnet101_quantized -> /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/ai_vision/sample_resnet101_quantized/install/sample_resnet101_quantized/share/ament_index/resource_index/packages
+copying package.xml -> /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/ai_vision/sample_resnet101_quantized/install/sample_resnet101_quantized/share/sample_resnet101_quantized
+copying resource/mouse.jpg -> /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/ai_vision/sample_resnet101_quantized/install/sample_resnet101_quantized/share/sample_resnet101_quantized
+copying resource/cup.jpg -> /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/ai_vision/sample_resnet101_quantized/install/sample_resnet101_quantized/share/sample_resnet101_quantized
+copying resource/glasses.jpg -> /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/ai_vision/sample_resnet101_quantized/install/sample_resnet101_quantized/share/sample_resnet101_quantized
+copying sample_resnet101_quantized/qrb_ros_resnet101.py -> /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/ai_vision/sample_resnet101_quantized/install/sample_resnet101_quantized/lib/sample_resnet101_quantized
+copying sample_resnet101_quantized/qrb_ros_resnet101_posprocess.py -> /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/ai_vision/sample_resnet101_quantized/install/sample_resnet101_quantized/lib/sample_resnet101_quantized
+copying resource//input.txt -> /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/ai_vision/sample_resnet101_quantized/install/sample_resnet101_quantized/share/sample_resnet101_quantized
+copying launch/launch_with_usbcam.py -> /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/ai_vision/sample_resnet101_quantized/install/sample_resnet101_quantized/share/sample_resnet101_quantized/launch
+copying launch/launch_with_image_publisher.py -> /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/ai_vision/sample_resnet101_quantized/install/sample_resnet101_quantized/share/sample_resnet101_quantized/launch
+error: can't copy ' launch_with_orbbec_camera.py': doesn't exist or not a regular file

@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: sample_resnet101_quantized
+Version: 0.1.0
+Summary: Imagenet classifier and general purpose backbone with resnet101 model
+Maintainer: Fulan Liu
+Maintainer-email: quic_fulaliu@quicinc.com
+License: BSD-3-Clause
+Requires-Dist: setuptools

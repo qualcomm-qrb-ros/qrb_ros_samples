@@ -1,0 +1,4 @@
+source;share/sample_resnet101_quantized/hook/pythonpath.dsv
+source;share/sample_resnet101_quantized/hook/pythonpath.sh
+source;share/sample_resnet101_quantized/hook/ament_prefix_path.dsv
+source;share/sample_resnet101_quantized/hook/ament_prefix_path.sh
