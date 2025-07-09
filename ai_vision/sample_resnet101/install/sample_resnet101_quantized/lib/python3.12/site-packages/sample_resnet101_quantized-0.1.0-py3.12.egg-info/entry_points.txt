@@ -1,3 +1,0 @@
-[console_scripts]
-qrb_ros_resnet101 = sample_resnet101_quantized.qrb_ros_resnet101:main
-qrb_ros_resnet101_posprocess = sample_resnet101_quantized.qrb_ros_resnet101_posprocess:main

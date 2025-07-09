@@ -1,3 +1,6 @@
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+
 from setuptools import find_packages, setup
 from glob import glob
 
@@ -11,12 +14,8 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-	('share/' + package_name, glob('resource/*.jpg')),
         ('lib/' + package_name,[package_name + "/qrb_ros_resnet101.py"]),
         ('lib/' + package_name,[package_name + "/qrb_ros_resnet101_posprocess.py"]),
-	('share/' + package_name, ['resource/' +"/input.txt"]),
-        ('share/' + package_name + '/launch', ['launch/launch_with_usbcam.py']),
-	('share/' + package_name + '/launch',  ['launch/launch_with_image_publisher.py']),
         ('share/' + package_name + '/launch',  ['launch/launch_with_orbbec_camera.py']),
     ],
     install_requires=['setuptools'],
