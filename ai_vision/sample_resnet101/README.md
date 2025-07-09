@@ -10,6 +10,14 @@ For more information, please refer to  https://github.com/qualcomm-qrb-ros/qrb_r
 
 ![](./resource/output.gif)
 
+## Supported Platforms
+
+| Hardware                 | Software                       |
+| ------------------------ | ------------------------------ |
+| IQ-9075 Evaluation Kit   | QCLINUX;Canonical Ubuntu Image |
+| RB3 Gen2 Vision Kit      | QCLINUX;Canonical Ubuntu Image |
+| IQ-8 Beta Evaluation Kit | QCLINUX;Canonical Ubuntu Image |
+
 ## Pipeline flow for Resnet101 Quantized
 
 ![image-20250416115206913](./resource/pipeline.png)

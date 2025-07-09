@@ -12,6 +12,14 @@ For more information, please refer to  https://github.com/qualcomm-qrb-ros/qrb_r
 
 ![](./resource/pipeline.png)
 
+## Supported Platforms
+
+| Hardware                 | Software                       |
+| ------------------------ | ------------------------------ |
+| IQ-9075 Evaluation Kit   | QCLINUX;Canonical Ubuntu Image |
+| RB3 Gen2 Vision Kit      | QCLINUX;Canonical Ubuntu Image |
+| IQ-8 Beta Evaluation Kit | QCLINUX;Canonical Ubuntu Image |
+
 ## ROS Nodes Used in Simulation Follow Me
 
 ## ROS Topics Used in Simulation Follow Me
