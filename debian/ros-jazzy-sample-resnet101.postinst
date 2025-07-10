@@ -1,0 +1,43 @@
+#!/bin/bash
+
+echo "execute post install for ros-jazzy-sample-resnet101-quantized ..."
+if [ -d "/opt/model" ]; then
+    echo "model path /opt/model exit."
+else
+    echo "model path /opt/model not exit."
+    sudo mkdir /opt/model    
+fi
+#sudo wget https://huggingface.co/qualcomm/ResNet101Quantized/resolve/653916aac7c732d28863aa449176299ba2890c15/ResNet101Quantized.tflite?download=true -O /opt/model/ResNet101Quantized.tflite
+#sudo wget https://raw.githubusercontent.com/quic/ai-hub-models/refs/heads/main/qai_hub_models/labels/imagenet_labels.txt -O /opt/model/imagenet_labels.txt
+
+download_file() {
+    local url=$1
+    local output_path=$2
+
+    echo "downloading ... : $url"
+    if ! wget --tries=3 --timeout=30 -q "$url" -O "$output_path"; then
+        echo "download error : $url" >&2
+        return 0
+    fi
+
+    echo "download successfully: $output_path"
+}
+
+# download ai model
+if ! download_file \
+    "https://huggingface.co/qualcomm/ResNet101Quantized/resolve/653916aac7c732d28863aa449176299ba2890c15/ResNet101Quantized.tflite?download=true" \
+    "/opt/model/ResNet101Quantized.tflite"; then
+    echo "WARNING: the requested file can not be downloaded"    
+    return
+fi
+
+# download ai model lable
+if ! download_file \
+    "https://raw.githubusercontent.com/quic/ai-hub-models/refs/heads/main/qai_hub_models/labels/imagenet_labels.txt" \
+    "/opt/model/imagenet_labels.txt"; then
+    echo "WARNING: the requested file can not be downloaded"
+    return
+fi
+
+echo "Finish post install"
+
