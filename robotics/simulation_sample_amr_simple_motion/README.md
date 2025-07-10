@@ -14,6 +14,16 @@ For more information, please refer to [qrb_ros_samples/robotics/simulation_sampl
 
 ![pipeline](./resource/pipeline.png)
 
+
+
+## Supported Platforms 
+
+| Hardware                   | Software                                 |
+| -------------------------- | ---------------------------------------- |
+| Qualcomm RB3 gen2          | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
+| IQ-9075 Evaluation Kit     | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
+| IQ-8 Beta   Evaluation Kit | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
+
 ## ROS Nodes Used in QRB AMR simple motion pipeline
 
 |                               | Table : ROS nodes used in QRB AMR simple motion pipeline               |
@@ -46,11 +56,12 @@ On the host machine, move to the artifacts directory and decompress the package 
 
 ```bash
 # set up qirp sdk environment
-tar -zxvf qirp-sdk_<qirp_version>.tar.gz && cd <qirp_decompressed_path>/qirp-sdk
+tar -zxf qirp-sdk_<qirp_version>.tar.gz
+cd <qirp_decompressed_path>/qirp-sdk
 source setup.sh
 
 # build sample
-cd <qirp_decompressed_path>/qirp-sdk/qirp-samples/demos/qrb_ros_samples/robotics/simulation_sample_amr_simple_motion
+cd <qirp_decompressed_path>/qirp-sdk/qirp-samples/robotics/simulation_sample_amr_simple_motion
 colcon build
 ```
 
@@ -58,8 +69,8 @@ colcon build
 
 ```bash
 # package and push build result of sample
-cd <qirp_decompressed_path>/qirp-sdk/qirp-samples/demos/qrb_ros_samples/robotics/simulation_sample_amr_simple_motion/install/simulation_sample_amr_simple_motion
-tar -czvf simulation_sample_amr_simple_motion.tar.gz lib share
+cd <qirp_decompressed_path>/qirp-sdk/qirp-samples/robotics/simulation_sample_amr_simple_motion/install/simulation_sample_amr_simple_motion
+tar -czf simulation_sample_amr_simple_motion.tar.gz lib share
 scp simulation_sample_amr_simple_motion.tar.gz root@[ip-addr]:/opt/
 ```
 

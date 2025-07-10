@@ -15,7 +15,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name, ['resource/' +"/input_image.jpg"]),
         ('lib/' + package_name, [package_name + "/hand_landmark_detector.py"]),
-        ('lib/' + package_name, [package_name + "/hand_plam_detector.py"]),
+        ('lib/' + package_name, [package_name + "/hand_palm_detector.py"]),
         ('lib/' + package_name, [package_name + "/visualization.py"]),
         ('share/' + package_name, ['launch/' + "/launch_with_usbcam.py"]),
         ('share/' + package_name, ['launch/' + "/launch_with_image_publisher.py"]),

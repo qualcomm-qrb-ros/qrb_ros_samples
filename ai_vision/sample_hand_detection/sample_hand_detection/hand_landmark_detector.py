@@ -4,7 +4,7 @@
 import numpy as np
 import cv2
 import os
-from hand_plam_detector import resize_pad, denormalize_detections, BlazeDetector, BlazeLandmark
+from hand_palm_detector import resize_pad, denormalize_detections, BlazeDetector, BlazeLandmark
 from visualization import draw_detections, draw_landmarks, draw_roi, HAND_CONNECTIONS
 import rclpy
 from rclpy.node import Node
@@ -111,9 +111,16 @@ class HandLandmarkDetector(Node):
 def main(args=None):
     rclpy.init(args=args)
     hand_detector_node = HandLandmarkDetector()
-    rclpy.spin(hand_detector_node)
-    hand_detector_node.destroy_node()
-    rclpy.shutdown()
+    try:
+        rclpy.spin(hand_detector_node)
+    except KeyboardInterrupt:
+        print("HandLandmarkDetector node stopped by user")
+    except Exception as e:
+        print(f"Error in HandLandmarkDetector: {e}")
+    finally:
+        if rclpy.ok():
+            hand_detector_node.destroy_node()
+            rclpy.shutdown()
 
 if __name__ == '__main__':
     main()

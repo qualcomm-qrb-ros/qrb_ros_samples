@@ -16,6 +16,12 @@ For more information, please refer to https://github.com/qualcomm-qrb-ros/qrb_ro
 
 ![](./resource/pipeline.png)
 
+## Supported Platforms
+
+| Hardware               | Software                                 |
+| ---------------------- | ---------------------------------------- |
+| IQ-9075 Evaluation Kit | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
+
 ## ROS Nodes Used in hand landmark detection
 
 | ROS Node                | Description                                                  |
@@ -50,7 +56,7 @@ cd <qirp_decompressed_path>/qirp-sdk
 source setup.sh
 
 # build sample
-cd <qirp_decompressed_path>/qirp-samples/demos/qrb_ros_samples/ai_vision/sample_hand_detection
+cd <qirp_decompressed_path>/qirp-sdk/qirp-samples/ai_vision/sample_hand_detection
 colcon build
 ```
 
@@ -58,12 +64,12 @@ colcon build
 
 ```bash
 # package and push hand detection models
-cd <qirp_decompressed_path>/qirp-samples/demos/qrb_ros_samples/ai_vision/sample_hand_detection
+cd <qirp_decompressed_path>/qirp-sdk/qirp-samples/ai_vision/sample_hand_detection
 tar -czvf model_hand_detection.tar.gz model resource/input_image.jpg
 scp model_hand_detection.tar.gz root@[ip-addr]:/opt/
 
 # package and push build result of sample
-cd <qirp_decompressed_path>/qirp-samples/demos/qrb_ros_samples/ai_vision/sample_hand_detection/install/sample_hand_detection
+cd <qirp_decompressed_path>/qirp-sdk/qirp-samples/ai_vision/sample_hand_detection/install/sample_hand_detection
 tar -czvf sample_hand_detection.tar.gz lib share
 scp sample_hand_detection.tar.gz root@[ip-addr]:/opt/
 ```
@@ -93,7 +99,7 @@ To Login to the device, please use the command `ssh root@[ip-addr]`
 (ssh) setenforce 0
 
 # setup runtime environment
-(ssh) source /usr/bin/ros_setup.sh && source /usr/share/qirp-setup.sh
+(ssh) source /usr/bin/ros_setup.sh && source /usr/share/qirp-setup.sh -m
 ```
 
 **Step 3: Run sample**
