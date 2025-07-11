@@ -1,0 +1,18 @@
+ros-jazzy-sample-hand-detection (0.1.0ubuntu2) noble; urgency=medium
+
+  * Repackaged due to update postinstall script
+
+ -- Dapeng Yuan <dapeyuan@qti.qualcomm.com>  Fri, 27 Jun 2025 14:44:21 +0800
+
+ros-jazzy-sample-hand-detection (0.1.0ubuntu1) noble; urgency=medium
+
+  * Repackaged due to library missing
+
+ -- Chaochen Liang <chalia@qti.qualcomm.com>  Wed, 25 Jun 2025 20:06:21 +0800
+
+ros-jazzy-sample-hand-detection (0.1.0) noble; urgency=medium
+
+  * Repackaged with deb2dsc:
+    - ros-jazzy-sample-hand-detection_0.1.0_arm64.deb
+
+ -- Hon Ming Hui <honming.hui@canonical.com>  Thu, 19 Jun 2025 08:04:09 +0100
