@@ -1,4 +1,4 @@
-## 📦 Release Branch: `stable-release`
+## 📦 Stable Branch: `jazzy-rel`
 
 This branch is a **stable** snapshot dedicated exclusively to official releases. All code here has been tested and vetted for production use.
 

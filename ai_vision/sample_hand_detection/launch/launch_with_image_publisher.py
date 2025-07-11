@@ -28,9 +28,6 @@ def generate_launch_description():
     # Use LaunchConfiguration to get the values of the arguments
     image_path = LaunchConfiguration('image_path')
     model_path = LaunchConfiguration('model_path')
-
-    logger.info(f'IMAGE_PATH set to: {image_path}')
-    logger.info(f'MODEL_PATH set to: {model_path}')
     
     return LaunchDescription([
         image_path_arg,
