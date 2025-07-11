@@ -1,0 +1,12 @@
+Source: ros-jazzy-simulation-sample-amr-simple-motion
+Section: misc
+Priority: optional
+Maintainer: weijshen <weijshen@qti.qualcomm.com>
+Build-Depends: debhelper (>= 9.0.0), python3-pytest <!nocheck>, ros-jazzy-ament-copyright <!nocheck>, ros-jazzy-ament-flake8 <!nocheck>, ros-jazzy-ament-pep257 <!nocheck>, ros-jazzy-geometry-msgs, ros-jazzy-rclpy, python3-all, python3-setuptools, dh-python
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-jazzy-simulation-sample-amr-simple-motion
+Architecture: any
+Depends: ${python3:Depends}, ${misc:Depends}, ros-jazzy-geometry-msgs, ros-jazzy-rclpy
+Description: package for simple motion control of QRB AMRs within the simulator
