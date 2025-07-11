@@ -1,0 +1,12 @@
+Source: ros-jazzy-sample-hand-detection
+Section: misc
+Priority: optional
+Maintainer: Dapeng Yuan <dapeyuan@qti.qualcomm.com>
+Build-Depends: debhelper(=13), python3-numpy, python3-opencv, python3-pytest <!nocheck>, ros-jazzy-ament-cmake-python, ros-jazzy-ament-copyright <!nocheck>, ros-jazzy-ament-flake8 <!nocheck>, ros-jazzy-ament-index-python, ros-jazzy-ament-pep257 <!nocheck>, ros-jazzy-rclpy, ros-jazzy-sensor-msgs, python3-all, python3-setuptools, dh-python
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-jazzy-sample-hand-detection
+Architecture: any
+Depends: ${python3:Depends}, ${misc:Depends}, python3-numpy, python3-opencv, ros-jazzy-ament-index-python, ros-jazzy-image-publisher, ros-jazzy-rclpy, ros-jazzy-sensor-msgs, ros-jazzy-usb-cam
+Description: sample_hand_detection is a Python-based hand recognition ROS node that uses QNN for model inference.
