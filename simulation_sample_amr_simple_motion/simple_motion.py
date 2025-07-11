@@ -1,4 +1,4 @@
-# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.  
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
 # SPDX-License-Identifier: BSD-3-Clause-Clear
 
 from geometry_msgs.msg import Twist
@@ -12,7 +12,7 @@ class AMRSimpleMotionControl(Node):
     def __init__(self):
         """Initialize AMR simple motion controller with configurable speeds."""
         super().__init__('amr_simple_motion_control')
- 
+
         # Configurable velocity parameters
         self.FORWARD_SPEED = 0.5    # m/s
         self.BACKWARD_SPEED = -0.5  # m/s
@@ -53,16 +53,16 @@ def main(args=None):
     rclpy.init(args=args)
     controller = AMRSimpleMotionControl()
     print_usage()
- 
+
     try:
         while rclpy.ok():
             try:
                 cmd = input('Input command > ').strip().lower()
- 
+
                 if cmd == 'q':
                     controller.get_logger().info('Shutting down controller...')
                     break
- 
+
                 match cmd:
                     case 'i':
                         controller.send_movement(
@@ -96,14 +96,14 @@ def main(args=None):
                         )
                     case _:
                         print('Invalid command! Use help commands.')
- 
+
                 # Process ROS events
                 rclpy.spin_once(controller, timeout_sec=0.01)
- 
+
             except KeyboardInterrupt:
                 print('\nExiting...')
                 break
- 
+
     finally:
         # Cleanup resources
         controller.destroy_node()
