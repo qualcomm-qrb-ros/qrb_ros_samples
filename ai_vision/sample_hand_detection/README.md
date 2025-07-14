@@ -10,7 +10,7 @@ This sample allows you to input an image named `input_image.jpg`, then it will p
 
 For more information, please refer to https://github.com/qualcomm-qrb-ros/qrb_ros_samples/tree/main/ai_vision/sample_hand_detection
 
-![](./resource/result.png)
+![](./resource/result.gif)
 
 ## Pipeline flow for hand landmark detection
 
@@ -20,13 +20,15 @@ For more information, please refer to https://github.com/qualcomm-qrb-ros/qrb_ro
 
 | Hardware               | Software                                 |
 | ---------------------- | ---------------------------------------- |
-| IQ-9075 Evaluation Kit | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
+| IQ-9075 Evaluation Kit | Qualcomm Linux, Qualcomm Ubuntu |
 
 ## ROS Nodes Used in hand landmark detection
 
 | ROS Node                | Description                                                  |
 | ----------------------- | ------------------------------------------------------------ |
-| `qrb_ros_hand_detector`    | qrb_ros_hand_detector is a python-based ros jazzy packages realize classify images,  uses the QNN tool for model inference. This ROS node subscribes image topic, and publishs classify result topic after pre-post process. |
+| `qrb_ros_hand_detector`    | qrb_ros_hand_detector is a python-based ros jazzy packages realize classify images. This ROS node subscribes image topic, and publishs classify result topic after pre-post process. |
+| `qrb_ros_nn_inference` | qrb_ros_nn_inference is a ROS2 package for performing neural network model, providing AI-based perception for robotics applications. source link: [qualcomm-qrb-ros/qrb_ros_nn_inference](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) |
+| `orbbec-camera` | orbbec-camera is  a ros jazzy packages,  enables the Orbbec Gemini camera 335L to work in RGB or depth mode and generates the RGB and depth information by ros topics. source link: [Qualcomm Linux/orbbec-camera](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/orbbec-camera_5_2_8.html) |
 | `image_publisher_node` | image_publisher is  a ros jazzy packages, can publish image ros topic with local path. source link: [ros-perception/image_pipeline: An image processing pipeline for ROS.](https://github.com/ros-perception/image_pipeline) |
 
 ## ROS Topics Used in hand landmark detection
@@ -34,7 +36,11 @@ For more information, please refer to https://github.com/qualcomm-qrb-ros/qrb_ro
 | ROS Topic                      | Type                         | Published By            |
 | ------------------------------ | ---------------------------- | ----------------------- |
 | `handlandmark_result ` | `<sensor_msgs.msg.Image> ` | `qrb_ros_hand_detector`     |
-| `image_raw`                   | `<sensor_msgs.msg.Image> `  | `image_publisher_node` |
+| `palm_detector_input_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_hand_detector`     |
+| `palm_detector_output_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_nn_inference`     |
+| `landmark_detector_input_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_hand_detector`     |
+| `landmark_detector_output_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_nn_inference`     |
+| `image_raw`                   | `<sensor_msgs.msg.Image> `  | `image_publisher_node, orbbec_camera_node` |
 
 
 ## Use cases on QCLINUX
@@ -92,23 +98,18 @@ To Login to the device, please use the command `ssh root@[ip-addr]`
 **Step 2: Setup runtime environment**
 
 ```bash
-# Set HOME variable
-(ssh) export HOME=/opt
-
-# set SELinux to permissive mode
-(ssh) setenforce 0
-
 # setup runtime environment
-(ssh) source /usr/bin/ros_setup.sh && source /usr/share/qirp-setup.sh -m
+(ssh) source /usr/share/qirp-setup.sh -m
 ```
 
 **Step 3: Run sample**
 ```bash
 # Launch the sample hand detection node with an image publisher, You can replace 'image_path' with the path to your desired image.
 ros2 launch sample_hand_detection launch_with_image_publisher.py image_path:=/opt/resource/input_image.jpg model_path:=/opt/model/
-```
 
-If success, the log `[INFO] [0316491333.431424664] [qrb_ros_hand_detector]: Publishing image` will be shown.
+# Launch the sample hand detection node with orbbec camera ros node.
+ros2 launch sample_hand_detection launch_with_orbbec_camera.py model_path:=/opt/model/
+```
 
 Then, you can open `rviz2` on HOST and subscribe `handlandmark_result` to get the result.
 
