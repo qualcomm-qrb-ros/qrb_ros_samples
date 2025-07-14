@@ -21,6 +21,7 @@ download_file() {
     fi
 
     echo "download successfully: $output_path"
+    return 1
 }
 
 # download ai model
@@ -28,7 +29,7 @@ if ! download_file \
     "https://huggingface.co/qualcomm/ResNet101Quantized/resolve/653916aac7c732d28863aa449176299ba2890c15/ResNet101Quantized.tflite?download=true" \
     "/opt/model/ResNet101Quantized.tflite"; then
     echo "WARNING: the requested file can not be downloaded"    
-    return
+    exit 0
 fi
 
 # download ai model lable
@@ -36,7 +37,7 @@ if ! download_file \
     "https://raw.githubusercontent.com/quic/ai-hub-models/refs/heads/main/qai_hub_models/labels/imagenet_labels.txt" \
     "/opt/model/imagenet_labels.txt"; then
     echo "WARNING: the requested file can not be downloaded"
-    return
+    exit 0
 fi
 
 echo "Finish post install"
