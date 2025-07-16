@@ -15,38 +15,19 @@ from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
-    # Get USB_CAMERA_PATH from environment variables
-    logger = get_logger('image_publisher_launch')
-    package_name = 'sample_resnet101_quantized'  # Replace with your ROS package name
-    package_path = get_package_share_directory(package_name)
-    #image_path = os.path.join(package_path, 'cup.jpg')  # Construct the relative path
-    #image_path = os.path.join(package_path, 'glasses.jpg')
-    image_path = os.path.join(package_path, 'glasses.jpg')
-
-    logger.info(f'IMAGE_PATH set to: {image_path}')
     
-    
-    # Node for sample_resnet101_quantized
-    DeclareLaunchArgument(
-    'model_path',
-    default_value='/opt/model/', 
-    description='Path to the model file'
-    ),
+    declared_args = [
+        DeclareLaunchArgument(
+            'model_path',
+            default_value="/opt/model/ResNet101_w8a8.bin",
+            description='Path to the model file'
+        ),
+    ]
 
+    model_path = LaunchConfiguration('model_path')
+    
     namespace = ""
     
-    # # Node for image_publisher
-    # image_publisher_node = Node(
-        # package='image_publisher',  # Package name
-        # executable='image_publisher_node',  # Executable name
-        # namespace=namespace,
-        # name='image_publisher_node',  # Node name
-        # output='screen',  # Output logs to terminal
-        # parameters=[
-            # {'filename': image_path},  # Use the constructed relative path
-            # {'rate': 10.0},  # Set the publishing rate to 10 Hz
-        # ]
-    # )
     #orbbec camera
     another_launch_path = os.path.join(
         get_package_share_directory('orbbec_camera'),
@@ -55,12 +36,17 @@ def generate_launch_description():
     )
     included_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(another_launch_path),
-        launch_arguments={'color_width':'640','color_height':'480','color_fps':'30','color_qos':"default"}.items()
+        launch_arguments={
+            'color_width': '640',
+            'color_height': '480',
+            'color_fps': '30',
+            'color_qos': 'default'
+        }.items()
     )
     
     preprocess_node = Node(
-        package='sample_resnet101_quantized',  # Replace with the actual package name
-        executable='qrb_ros_resnet101',  # Replace with the actual executable name
+        package='sample_resnet101',
+        executable='qrb_ros_resnet101',
         namespace=namespace,
         output='screen',  # Output logs to terminal
         remappings = [
@@ -76,16 +62,16 @@ def generate_launch_description():
     parameters = [
       {
         "backend_option": "/usr/lib/libQnnHtp.so",
-        "model_path": "/opt/model/ResNet101.bin"
+        "model_path": model_path
       }]
     )
     
     postprocess_node = Node(
-        package='sample_resnet101_quantized',  # Replace with the actual package name
-        executable='qrb_ros_resnet101_posprocess',  # Replace with the actual executable name
+        package='sample_resnet101',
+        executable='qrb_ros_resnet101_posprocess',
         namespace=namespace,
-        output='screen',  # Output logs to terminal
-    )
+        output='screen',
+	)
     
     container = ComposableNodeContainer(
         name = "container",
@@ -96,4 +82,4 @@ def generate_launch_description():
         composable_node_descriptions = [nn_inference_node]
     )
     
-    return launch.LaunchDescription([preprocess_node, container,postprocess_node,included_launch])
+    return launch.LaunchDescription(declared_args + [preprocess_node, container,postprocess_node,included_launch])

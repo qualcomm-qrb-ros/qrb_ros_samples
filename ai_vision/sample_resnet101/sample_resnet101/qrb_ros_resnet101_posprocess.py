@@ -18,9 +18,9 @@ import struct
 from std_msgs.msg import String
 
 
-class ResNet101QuantizedNode(Node):
+class ResNet101PostProcessNode(Node):
     def __init__(self):
-        super().__init__('resnet101_quantized_node')
+        super().__init__('resnet101_postprocess_node')
         self.subscriber = self.create_subscription(
             TensorList,
             'qrb_inference_output_tensor',  # subscriber topic
@@ -29,18 +29,22 @@ class ResNet101QuantizedNode(Node):
         )
         self.publisher = self.create_publisher(
             String,
-            'resnet101_quantized_output',  # publish topic
+            'resnet101_output',  # publish topic
             10
         )
+
         self.bridge = CvBridge()
-        self.get_logger().info(f'Initial ROS Node resnet101 quantized')
+        self.get_logger().info(f'Initial ROS Node resnet101')
         
         self.declare_parameter('model_path', '/opt/model/')
         
         self.model_path = self.get_parameter('model_path').value
         
         self.get_logger().info(f'model path: {self.model_path}')
-    
+
+        #read output label
+        with open(self.model_path + "imagenet_labels.txt", "r") as file:
+            self.class_names = file.readlines()    
         
     def softmax(self,x):
             """Compute softmax values for each sets of scores in x."""
@@ -53,36 +57,21 @@ class ResNet101QuantizedNode(Node):
             for result_tensor in msg.tensor_list:  # 遍历 tensor_list
                 self.get_logger().info(f'result_tensor shape is {result_tensor.shape}')
                 output_data = np.array(result_tensor.data)
-                output_data = output_data.view(np.float32)
-                confidences = np.squeeze(output_data)
-                confidences = self.softmax(confidences)
-                max_value = np.max(confidences)
-                predicted_class = np.argmax(confidences)
-                self.get_logger().info(f'predicted_class is {predicted_class}, max_value is {max_value}')
+                #output_data = output_data.view(np.float32)
+                #confidences = np.squeeze(output_data)
+                #confidences = self.softmax(confidences)
+                #max_value = np.max(confidences)
+                predicted_class = np.argmax(output_data)
                
-                # # open the lable file
-                with open(self.model_path+"imagenet_labels.txt", "r") as file:
-                    # read the content of the lable
-                    class_names = file.readlines()
-                    class_id = class_names[predicted_class]
-                    self.publisher.publish(String(data=class_id))
+                class_id = self.class_names[predicted_class]
+                self.publisher.publish(String(data=class_id))
         except Exception as e:
             self.get_logger().error(f'Error processing image: {e}')
 
 def main(args=None):
-    package_share_directory = get_package_share_directory('sample_resnet101_quantized')
-    print(f"package_share_directory is {package_share_directory}")
-    global workdir 
-    workdir = package_share_directory
-    if not os.path.exists(workdir+"/input"):
-        os.makedirs(workdir+"/input" )
-        shutil.copy(package_share_directory+"/input.txt", workdir+"/input/input.txt")
-    if not os.path.exists(workdir + "/output"):
-        os.makedirs(workdir+"/output" )
-        os.chmod(workdir+"/output", 0o777)
-         
+    
     rclpy.init(args=args)
-    node = ResNet101QuantizedNode() 
+    node = ResNet101PostProcessNode() 
        
     try:
         rclpy.spin(node)
@@ -90,7 +79,8 @@ def main(args=None):
         node.get_logger().info('Node stopped.')
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 if __name__ == '__main__':
     main()

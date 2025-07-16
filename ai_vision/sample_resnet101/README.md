@@ -4,7 +4,7 @@
 
 ResNet101 is a machine learning model that can classify images from the Imagenet dataset. It can also be used as a backbone in building more complex models for specific use cases.
 
-`sample_resnet101 quantized` is a Python-based classify images ROS node that uses QNN for model inference. 
+`sample_resnet101` is a Python-based classify images ROS node that uses QNN for model inference. 
 
 For more information, please refer to  https://github.com/qualcomm-qrb-ros/qrb_ros_samples/tree/main/ai_vision/sample_resnet101_quantized)
 
@@ -31,10 +31,10 @@ For more information, please refer to  https://github.com/qualcomm-qrb-ros/qrb_r
 
 ## ROS Topics Used in Resnet101 Quantized
 
-| ROS Topic                      | Type                         | Published By            |
-| ------------------------------ | ---------------------------- | ----------------------- |
-| `resnet101_quantized_results ` | `< sensor_msgs.msg.String> ` | `qrb_ros_resnet101`     |
-| `image_raw `                   | `< sensor_msgs.msg.Image> `  | `image_publisher_node ` |
+| ROS Topic            | Type                         | Published By            |
+| -------------------- | ---------------------------- | ----------------------- |
+| `resnet101_results ` | `< sensor_msgs.msg.String> ` | `qrb_ros_resnet101`     |
+| `image_raw `         | `< sensor_msgs.msg.Image> `  | `image_publisher_node ` |
 
 ## Use Case on Ubuntu and QCLINUX
 
@@ -46,11 +46,6 @@ For more information, please refer to  https://github.com/qualcomm-qrb-ros/qrb_r
 Follow bellow steps on device
 
 ```
-(ssh) wget https://raw.githubusercontent.com/qualcomm-qrb-ros/qrb_ros_samples/refs/heads/main/tools/qirp-setup.sh -O qirp-setup.sh
-(ssh) source qirp-setup.sh
-(ssh) chmod 777 /opt/ros/jazzy/share/sample_resnet101_quantized/
-
-
 #run  samples
 (ssh) ros2 launch sample_resnet101_quantized  launch_with_image_publisher.py
  or
