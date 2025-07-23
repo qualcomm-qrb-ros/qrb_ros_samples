@@ -10,6 +10,17 @@
   <depend>rclpy</depend>
   <depend>rclcpp_components</depend>
   <depend>launch_ros</depend>
+  <depend>rclpy</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>ament_index_python</depend>
+  <depend>qrb_ros_tensor_list_msgs</depend>
+  <depend>image_publisher</depend>
+  <depend>qrb_ros_nn_inference</depend>
+  <depend>qrb_ros_camera</depend>
+
+  
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
