@@ -15,7 +15,7 @@ pip_packages_base=( \
     pytesseract \
 )
 
-qrb_ros_node=( \
+standalone_project=( \
 )
 
 DIR=/home/ubuntu
@@ -24,7 +24,7 @@ DIR=/home/ubuntu
 function ubuntu_setup(){
     try_times=5     
     scripts_env_setup
-    download_qrb_ros_node $try_times
+    download_standalone_project $try_times
     setup_env
 }
 function setup_env(){
@@ -62,11 +62,11 @@ function scripts_env_setup(){
     done
 }
 
-function download_qrb_ros_node(){
+function download_standalone_project(){
     if [ -d "$DIR/src" ]; then
-       echo "✅ Directory exists: $DIR/src"
+       echo "Directory exists: $DIR/src"
     else
-       echo "⚠️ Directory not found: $DIR/src"
+       echo "Directory not found: $DIR/src"
        mkdir -p "$DIR/src"
     fi
     cd $DIR/src
@@ -76,7 +76,7 @@ function download_qrb_ros_node(){
         exit 1
     fi
 
-    for node in ${qrb_ros_node[@]};do
+    for node in ${standalone_project[@]};do
         if [ -f $DIR/src/$(echo $node | awk -F'/' '{print $NF}').done ]; then 
             echo "$node has been download in $DIR/src"
         else
@@ -85,7 +85,7 @@ function download_qrb_ros_node(){
                 echo "git clone $node successfully "
                 touch $DIR/src/$(echo $node | awk -F'/' '{print $NF}').done
             else
-                download_qrb_ros_node $((N-1))
+                download_standalone_project $((N-1))
                 exit 1
             fi
         fi
