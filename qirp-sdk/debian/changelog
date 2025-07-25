@@ -1,6 +1,29 @@
+qirp-sdk (2.3.3) noble; urgency=medium
+
+  * qirp package keeps the latest dependency
+
+ -- Dapeng Yuan <dapeyuan@qti.qualcomm.com>  Fri, 25 Jul 2025 16:17:23 +0800
+
+qirp-sdk (2.3.2) noble; urgency=medium
+
+  * remove camera packages from dependency
+
+ -- Dapeng Yuan <dapeyuan@qti.qualcomm.com>  Tue, 22 Jul 2025 11:13:49 +0800
+
+qirp-sdk (2.3.1) noble; urgency=medium
+
+  * remove sensor packages from dependency
+
+ -- Dapeng Yuan <dapeyuan@qti.qualcomm.com>  Mon, 21 Jul 2025 11:20:41 +0800
+
+qirp-sdk (2.3.0) noble; urgency=medium
+
+  * add qrb ros packages as dependency, remove apt process in qirp-setup.sh
+
+ -- Dapeng Yuan <dapeyuan@qti.qualcomm.com>  Tue, 17 Jul 2025 10:26:43 -0000
+
 qirp-sdk (2.2.0) noble; urgency=medium
 
   * first initial for debian release qirp-sdk
 
  -- Dapeng Yuan <dapeyuan@qti.qualcomm.com>  Tue, 13 May 2025 14:09:53 -0000
-
