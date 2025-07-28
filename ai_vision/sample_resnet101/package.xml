@@ -2,23 +2,23 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>sample_resnet101</name>
-  <version>0.1.2</version>
+  <version>0.1.3</version>
   <description>Imagenet classifier and general purpose backbone with resnet101 model</description>
   <maintainer email="fulaliu@qti.qualcomm.com">Fulan Liu</maintainer>
   <license>BSD 3-Clause License</license>
 
-  <depend>rclpy</depend>
-  <depend>rclcpp_components</depend>
-  <depend>launch_ros</depend>
-  <depend>rclpy</depend>
-  <depend>sensor_msgs</depend>
-  <depend>std_msgs</depend>
-  <depend>cv_bridge</depend>
-  <depend>ament_index_python</depend>
-  <depend>qrb_ros_tensor_list_msgs</depend>
-  <depend>image_publisher</depend>
-  <depend>qrb_ros_nn_inference</depend>
-  <depend>qrb_ros_camera</depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>rclcpp_components</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>qrb_ros_tensor_list_msgs</exec_depend>
+  <exec_depend>image_publisher</exec_depend>
+  <exec_depend>qrb_ros_nn_inference</exec_depend>
+  <exec_depend>qrb_ros_camera</exec_depend>
 
   
   <test_depend>ament_copyright</test_depend>
