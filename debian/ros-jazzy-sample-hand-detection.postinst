@@ -1,34 +1,51 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This script is executed after the package is installed.
 # It is used to set up the environment and download necessary files.
+# Failures in this script are now handled to prevent blocking the package installation process.
 
 echo "start post install"
 
-model_path=/opt/model
-if [ -d "$model_path" ]; then
-    echo "model path $model_path exit."
-else
-    echo "model path $model_path not exit."
-    sudo mkdir $model_path    
+model_path="/opt/model"
+
+# Create the model directory if it doesn't exist.
+# Use -p to avoid error if directory exists and create parent directories if needed.
+# If mkdir fails (e.g., due to permissions), print a warning and continue,
+# as subsequent wget commands will likely also fail, but the postinst script itself won't block.
+if ! sudo mkdir -p "$model_path"; then
+    echo "WARNING: Failed to create directory $model_path. Subsequent model downloads may fail." >&2
 fi
-if [ -f "$model_path/MediaPipeHandDetector.tflite" ]; then
-    echo "model $model_path/MediaPipeHandDetector.tflite exit."
-else
-    echo "model $model_path/MediaPipeHandDetector.tflite not exit."
-    sudo wget https://huggingface.co/qualcomm/MediaPipe-Hand-Detection/resolve/0d0b12ccd12b96457185ff9cfab75eb7c7ab3ad6/MediaPipeHandDetector.tflite?download=true -O $model_path/MediaPipeHandDetector.tflite
-fi
-if [ -f "$model_path/MediaPipeHandLandmarkDetector.tflite" ]; then
-    echo "model $model_path/MediaPipeHandLandmarkDetector.tflite exit."
-else
-    echo "model $model_path/MediaPipeHandLandmarkDetector.tflite not exit."
-    sudo wget https://huggingface.co/qualcomm/MediaPipe-Hand-Detection/resolve/0d0b12ccd12b96457185ff9cfab75eb7c7ab3ad6/MediaPipeHandLandmarkDetector.tflite?download=true -O $model_path/MediaPipeHandLandmarkDetector.tflite
-fi
-if [ -f "$model_path/anchors_palm.npy" ]; then
-    echo "anchor $model_path/anchors_palm.npy exit."
-else
-    echo "anchor $model_path/anchors_palm.npy not exit."
-    sudo wget https://raw.githubusercontent.com/zmurez/MediaPipePyTorch/65f2549ba35cd61dfd29f402f6c21882a32fabb1/anchors_palm.npy -O $model_path/anchors_palm.npy
-fi
+
+# Function to download a file if it doesn't exist, and handle download failures gracefully.
+download_file() {
+    local url="$1"
+    local output_path="$2"
+    local filename=$(basename "$output_path")
+    local temp_file="${output_path}.tmp"
+
+    if [ -f "$output_path" ]; then
+        echo "$filename already exists at $output_path"
+    else
+        echo "$filename not found at $output_path. Attempting download from $url..."
+        # Use -q (quiet) for less verbose output, --show-progress to still show progress bar.
+        # Use -O to specify output file. Quoting variables for safety.
+        if ! sudo wget -q --show-progress "$url" -O "$temp_file"; then
+            echo "$filename can not be found in $url. Application may not function correctly." >&2
+            sudo rm -f "$temp_file"
+        else
+            sudo mv "$temp_file" "$output_path"
+            echo "Successfully downloaded $filename."
+        fi
+    fi
+}
+
+# Download MediaPipeHandDetector.tflite
+download_file "https://huggingface.co/qualcomm/MediaPipe-Hand-Detection/resolve/0d0b12ccd12b96457185ff9cfab75eb7c7ab3ad6/MediaPipeHandDetector.tflite?download=true" "$model_path/MediaPipeHandDetector.tflite"
+
+# Download MediaPipeHandLandmarkDetector.tflite
+download_file "https://huggingface.co/qualcomm/MediaPipe-Hand-Detection/resolve/0d0b12ccd12b96457185ff9cfab75eb7c7ab3ad6/MediaPipeHandLandmarkDetector.tflite?download=true" "$model_path/MediaPipeHandLandmarkDetector.tflite"
+
+# Download anchors_palm.npy
+download_file "https://raw.githubusercontent.com/zmurez/MediaPipePyTorch/65f2549ba35cd61dfd29f402f6c21882a32fabb1/anchors_palm.npy" "$model_path/anchors_palm.npy"
 
 echo "finish post install"
