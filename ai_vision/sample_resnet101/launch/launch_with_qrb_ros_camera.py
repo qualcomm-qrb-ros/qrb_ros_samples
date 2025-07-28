@@ -13,6 +13,8 @@ from launch_ros.actions import Node, ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+
 
 def generate_launch_description():
     
@@ -28,21 +30,29 @@ def generate_launch_description():
     
     namespace = ""
     
-    #orbbec camera
-    another_launch_path = os.path.join(
-        get_package_share_directory('orbbec_camera'),
-        'launch',
-        'gemini_330_series.launch.py'
-    )
-    included_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(another_launch_path),
-        launch_arguments={
-            'color_width': '640',
-            'color_height': '480',
-            'color_fps': '30',
-            'color_qos': 'default'
-        }.items()
-    )
+    #qrb ros camera
+    camera_info_config_file_path =PathJoinSubstitution([
+        get_package_share_directory('qrb_ros_camera'),
+        'config', 'camera_info_imx577.yaml'])
+    camera_node = ComposableNode(
+        package='qrb_ros_camera',
+        namespace=namespace,
+        plugin='qrb_ros::camera::CameraNode',
+        name='camera_node',
+        parameters=[{
+            'camera_id': 0,
+            'stream_size': 1,
+            'stream_name': ["stream1"],
+            'stream1':{
+                'height':480,
+                'width':640,
+                'fps':30,
+            },
+            'camera_info_path': camera_info_config_file_path,
+            'dump': False,
+            'dump_camera_info_': False,
+        }]
+    )   
     
     preprocess_node = Node(
         package='sample_resnet101',
@@ -50,7 +60,7 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',  # Output logs to terminal
         remappings = [
-            ("image_raw", "/camera/color/image_raw"),
+            ("image_raw", "/cam0_stream1"),
         ],
     )
     
@@ -79,7 +89,7 @@ def generate_launch_description():
         package = "rclcpp_components",
         executable='component_container',
         output = "screen",
-        composable_node_descriptions = [nn_inference_node]
+        composable_node_descriptions = [nn_inference_node,camera_node]
     )
     
-    return launch.LaunchDescription(declared_args + [preprocess_node, container,postprocess_node,included_launch])
+    return launch.LaunchDescription(declared_args + [preprocess_node, container,postprocess_node])
