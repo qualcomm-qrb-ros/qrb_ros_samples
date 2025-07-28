@@ -71,7 +71,7 @@ For more information, please refer to  https://github.com/qualcomm-qrb-ros/qrb_r
 
 - Please refer to the `Quick Start` of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to launch `QRB Robot Base AMR` on host. Ensure that the device and the host are on the same local network and can communicate with each other via ROS communication.
 
-### on device
+### On Device
 
 To Login to the device, please use the command `ssh root@[ip-addr]`
 
