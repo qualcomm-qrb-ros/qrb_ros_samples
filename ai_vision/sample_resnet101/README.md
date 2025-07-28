@@ -19,7 +19,7 @@ The `sample_resnet101` is a Python-based ROS node that performs image classifica
 
 | Node Name                                                    | Function                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| [qrb ros camera]((https://github.com/qualcomm-qrb-ros/qrb_ros_camera)) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
+| [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
 | image publisher                                              | Publishes image data to a ROS topic—can be camera frames, local files, or processed outputs. |
 | image classification preprocess                              | Subscribes to image data, reshapes/resizes it, and republishes it to a downstream topic. |
 | [qrb ros nn interface](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results. |
@@ -51,20 +51,18 @@ The `sample_resnet101` is a Python-based ROS node that performs image classifica
 <table >
   <tr>
     <th>Development Hardware</th>
-    <td>Qualcomm Dragonwing™ RB3 Gen2</td>
-    <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
+     <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
   </tr>
   <tr>
     <th>Hardware Overview</th>
-    <th><a href="https://www.qualcomm.com/developer/hardware/rb3-gen-2-development-kit"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3-gen2-carousel?fmt=webp-alpha&qlt=85" width="180"/></a></th>
     <th><a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160"></a></th>
   </tr>
   <tr>
     <th>GMSL Camera Support</th>
-    <td>Leopard Imaging AR0231 GMSL2</td>
     <td>LI-VENUS-OX03F10-OAX40-GM2A-118H(YUV)</td>
   </tr>
 </table>
+
 
 
 
