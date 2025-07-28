@@ -11,19 +11,19 @@
 
 ## 👋 Overview
 
-The `sample_resnet101` is a Python-based ROS node that performs image classification using **QNN-based inference**
+The `sample_resnet101` is a Python-based ROS node that performs image classification using QNN-based inference.
 
 [ResNet101](https://huggingface.co/qualcomm/ResNet101) is a machine learning model that can classify images from the Imagenet dataset. It can also be used as a backbone in building more complex models for specific use cases.
 
-![image-20250723181610392](./resource/pipeline.png)
+![image-20250723181610392](./resource/pipeline2.png)
 
-| Node Name           | Function                                                     |
-| ------------------- | ------------------------------------------------------------ |
-| `qrb_ros_camera`    | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
-| `image_publisher`   | Publishes image data to a ROS topic—can be camera frames, local files, or processed outputs. |
-| `preprocess_node`   | Subscribes to image data, reshapes/resizes it, and republishes it to a downstream topic. |
-| `nn_interface_node` | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results. |
-| `postprocess_node`  | Matches inference output with label files and converts results into human-readable form. |
+| Node Name                                                    | Function                                                     |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [qrb ros camera]((https://github.com/qualcomm-qrb-ros/qrb_ros_camera)) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
+| image publisher                                              | Publishes image data to a ROS topic—can be camera frames, local files, or processed outputs. |
+| image classification preprocess                              | Subscribes to image data, reshapes/resizes it, and republishes it to a downstream topic. |
+| [qrb ros nn interface](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results. |
+| image classification postprocess                             | Matches inference output with label files and converts results into human-readable form. |
 
 ## 🔎 Table of contents
 
@@ -83,23 +83,6 @@ sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
 sudo apt update
 ```
 
-Install dependencies
-
-```bash
-sudo apt install ros-jazzy-rclpy \
-  ros-jazzy-sensor-msgs \
-  ros-jazzy-std-msgs \
-  ros-jazzy-cv-bridge \
-  ros-jazzy-ament-index-python \
-  ros-jazzy-qrb-ros-tensor-list-msgs \
-  python3-opencv \
-  python3-numpy \
-  ros-jazzy-image-publisher \
-  ros-jazzy-qrb-ros-nn-inference \
-  ros-jazzy-qrb-ros-camera \
-  ros-jazzy-image-publisher
-```
-
 Install Debian package:
 
 ```bash
@@ -114,8 +97,10 @@ sudo apt install ros-jazzy-sample-resnet101
 ```bash
 source /opt/ros/jazzy/setup.bash
 ros2 launch sample_resnet101 launch_with_image_publisher.py
-# You can also replace this with a custom image file
+or # You can also replace this with a custom image file
 ros2 launch sample_resnet101 launch_with_image_publisher.py image_path:=/usr/share/sample_resnet101_quantized/cup.jpg
+or # You can launch with qrb ros camera
+ros2 launch sample_resnet101 launch_with_qrb_ros_camera.py
 ```
 
 When using this launch script, it will use the default parameters:
@@ -189,6 +174,23 @@ data: 'sunglass
 
 <details>
   <summary>Build from source details</summary>
+
+Install dependencies
+
+```
+sudo apt install ros-jazzy-rclpy \
+  ros-jazzy-sensor-msgs \
+  ros-jazzy-std-msgs \
+  ros-jazzy-cv-bridge \
+  ros-jazzy-ament-index-python \
+  ros-jazzy-qrb-ros-tensor-list-msgs \
+  python3-opencv \
+  python3-numpy \
+  ros-jazzy-image-publisher \
+  ros-jazzy-qrb-ros-nn-inference \
+  ros-jazzy-qrb-ros-camera \
+  ros-jazzy-image-publisher
+```
 
 Download the source code and build with colcon
 
