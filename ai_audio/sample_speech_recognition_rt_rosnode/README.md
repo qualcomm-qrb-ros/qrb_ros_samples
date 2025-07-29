@@ -26,7 +26,7 @@ The feature as follows:
   - Supports the remote bigger models, but user need to build them themselves, and we provide guidance.
   - Choice use local model or remote model via config the launch file.
 
-![](./resource/asr_rt_rosnode.gif)
+![](./test/asr_rt_rosnode.gif)
 
 ## Pipeline flow for Speech Recognition ROS Node
 
