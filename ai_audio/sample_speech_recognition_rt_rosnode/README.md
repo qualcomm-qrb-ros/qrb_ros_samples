@@ -44,17 +44,17 @@ The feature as follows:
 
 
 #### Setup
-2. Clone this repository.
+1. Clone this repository.
 ```
 git clone https://github.com/quic-shouhu/qrb_ros_samples.git
 ```
 
-3. Prepare the environment and install dependent packages.
+2. Prepare the environment and install dependent packages.
 ```
 source ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode/test/install_packages_2.sh
 ```
 
-4. prepare AI-HUB model.
+3. prepare AI-HUB model.
 ```
 cd ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode
 mkdir model
