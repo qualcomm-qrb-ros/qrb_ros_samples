@@ -152,7 +152,11 @@ ros2 launch qrb_ros_sim_gazebo gazebo_robot_base_mini.launch.py \
 ros2 launch simulation_remote_assistant map_nav_setup.launch.py
 
 #Launch the yolo object detection script
-ros2 launch simulation_remote_assistant yolo_detectcion.launch.py
+
+#Default use yolov8_det_qcs9075.bin model and htp backend
+ros2 launch simulation_remote_assistant yolo_detectcion.launch.py model:=/opt/model/yolov8_det_qcs9075.bin backend_option:=libQnnHtp.so
+#Or
+ros2 launch simulation_remote_assistant yolo_detectcion.launch.py model:=/opt/model/yolov8_det_qcs6490.tflite backend_option:=gpu
 
 #Run the task manager to parse the location and object
 ros2 run simulation_remote_assistant task_manager_node
@@ -208,7 +212,7 @@ Thanks to all our contributors who have helped make this project better!
 
 <table>
   <tr>
-    <td align="center">
+    <td style="text-align: center;">
       <a href="https://github.com/fxt-7">
         <img src="https://avatars.githubusercontent.com/u/72394451?s=96&v=4" width="100" height="100" alt="xionfu"/>
         <br />
