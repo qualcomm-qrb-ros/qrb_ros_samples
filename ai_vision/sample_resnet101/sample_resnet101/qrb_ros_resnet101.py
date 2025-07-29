@@ -32,10 +32,26 @@ class ResNet101Node(Node):
         )
         self.bridge = CvBridge()
         self.get_logger().info(f'Initial ROS Node resnet101')
-        
+    
+    def nv12_to_bgr(self, nv12_image, width, height):
+        """
+        Convert NV12 image to BGR format.
+        """
+        yuv = nv12_image.reshape((height * 3 // 2, width))
+        bgr_data = cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR_NV12)
+        return bgr_data
+    
     def image_callback(self, msg):
         try:
-            cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')            
+            if msg.encoding == 'nv12':
+                nv12_data = np.frombuffer(msg.data, dtype=np.uint8)
+                cv_image = self.nv12_to_bgr(nv12_data, msg.width, msg.height)
+            elif msg.encoding == 'bgr8':
+                 cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+            else:
+                self.get_logger().error(f'Unsupported image encoding: {msg.encoding}')
+                return
+                       
             cv_image = cv2.resize(cv_image, (224, 224))
  
             img_data = cv_image.tobytes()

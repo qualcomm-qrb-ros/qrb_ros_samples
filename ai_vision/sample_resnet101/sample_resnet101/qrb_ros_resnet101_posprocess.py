@@ -45,22 +45,12 @@ class ResNet101PostProcessNode(Node):
         #read output label
         with open(self.model_path + "imagenet_labels.txt", "r") as file:
             self.class_names = file.readlines()    
-        
-    def softmax(self,x):
-            """Compute softmax values for each sets of scores in x."""
-            e_x = np.exp(x - np.max(x))  # minus the max value in the sample data to improve the stability
-            return e_x / e_x.sum()
-            
-        
+                  
     def image_callback(self, msg):
         try:
-            for result_tensor in msg.tensor_list:  # 遍历 tensor_list
-                self.get_logger().info(f'result_tensor shape is {result_tensor.shape}')
+            for result_tensor in msg.tensor_list:  # search tensor_list
+                #self.get_logger().info(f'result_tensor shape is {result_tensor.shape}')
                 output_data = np.array(result_tensor.data)
-                #output_data = output_data.view(np.float32)
-                #confidences = np.squeeze(output_data)
-                #confidences = self.softmax(confidences)
-                #max_value = np.max(confidences)
                 predicted_class = np.argmax(output_data)
                
                 class_id = self.class_names[predicted_class]
