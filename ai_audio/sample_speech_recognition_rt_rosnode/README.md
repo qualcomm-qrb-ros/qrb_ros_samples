@@ -26,10 +26,7 @@ The feature as follows:
   - Supports the remote bigger models, but user need to build them themselves, and we provide guidance.
   - Choice use local model or remote model via config the launch file.
 
-video link 
-<video width="1920" height="1080" controls>
-  <source src="test/asr_rt_rosnode.mp4" type="video/mp4">
-</video>
+![](./resource/asr_rt_rosnode.gif)
 
 ## Pipeline flow for Speech Recognition ROS Node
 
