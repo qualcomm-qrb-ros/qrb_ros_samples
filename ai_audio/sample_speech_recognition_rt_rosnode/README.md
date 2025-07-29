@@ -117,8 +117,8 @@ python ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode/test/test
 ```
 
 #### Run (qrb_ros_android_asr.launch.py) that is for support the robot call android application only
-- thia example used to receive the audio from android application and send to remote service ande get the feedback translated text.
-- 1: you must have the android app robot call.
+- this example used to receive the audio from remote ros node and send to remote service to get the feedback translated text.
+- 1: you must have the another ros node submit /audio_file topic.
 - 2: you must run the ros2 launch rosbridge_server rosbridge_websocket_launch.xml on device.
 - 3: you must follow the Remote service guidance to establish the remote service.
 
@@ -144,7 +144,7 @@ This is provide a guidance to let you can establish your remote service with big
   
 - Establish model in your service.
   Reference https://github.com/openai/whisper
-  Example service_asr.py:
+  Example ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode/test/service_asr.py:
 ```
 model = whisper.load_model("turbo", device="cuda")
 ```
