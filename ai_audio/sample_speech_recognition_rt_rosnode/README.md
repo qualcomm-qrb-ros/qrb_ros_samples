@@ -1,7 +1,16 @@
-# QRB Speech Recognition ROS Node
-qrb_ros_speech_recognition provide a ROS Node that enables Collect voice through USB MIC and use AI-HUB whisper tiny model convert it into text.
+# AI Samples Speech Recognition ROS Node
 
 ## Overview
+
+Samples Speech Recognition ROS Node provide a ASR RT ROS Node for developers to directly develop applications.
+
+This ASR RT ROS Node realizes real-time speech recognition of complete sentences through real-time detection of sound intensity.
+This ASR RT ROS Node enables Collect voice through USB MIC and supports three usage scenarios:
+1: local mode: Running the AI-Hub whisper tiny model in local to convert audio date into text;
+2: remote mode: Run a larger whisper model in a self-built remote service to convert audio data into text;
+3: In addition to USB mic, it also supports voice recognition of remote voice topic.
+Developers can directly use this ROS Node to group the application pipeline.
+
 To embrace open source and robotics developerment, we have developed the Speech Recognition ROS Node that support Speech to Text. 
 The feature as follows:
 
@@ -9,6 +18,7 @@ The feature as follows:
   - support Speech to Text.
   - submit /whisper_enable to enable/disable ASR function.
   - publish /whisper_text to output the result of speech recognition.
+  - submit /audio_file to receive remote voice topic.
 
 - limitation
   - Supprots USB MIC.
@@ -16,7 +26,20 @@ The feature as follows:
   - Supports the remote bigger models, but user need to build them themselves, and we provide guidance.
   - Choice use local model or remote model via config the launch file.
 
-## Quick Start
+video link 
+<video width="1920" height="1080" controls>
+  <source src="test/asr_rt_rosnode.mp4" type="video/mp4">
+</video>
+
+## Pipeline flow for Speech Recognition ROS Node
+
+### Key Principles of Recording
+![](./test/key_principles_of_recording.png)
+
+### usercase for robot face
+![](./test/usercase_for_robot_face.png)
+
+## Quick Start on UBUNTU
 
 > **Note：**
 > This document 's build & run is the latest.
@@ -28,31 +51,31 @@ The feature as follows:
 
 2. Clone this repository under `<qirp_decompressed_workspace>/qirp-sdk/ros_ws`.
 ```
-git clone https://github.com/qrb_ros_speech_recognition
+git clone https://github.com/quic-shouhu/qrb_ros_samples.git
 ```
 
 3. Prepare the environment and install dependent packages.
 ```
-source ./qrb_ros_speech_recognition/install_packages_2.sh
+source ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode/test/install_packages_2.sh
 ```
 
 4. prepare AI-HUB model.
 ```
-cd qrb_ros_speech_recognition
+cd ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode
 mkdir model
 ```
 
-download MEL FILTER FILE to qrb_ros_speech_recognition/model.
+download MEL FILTER FILE to ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode/model.
 ```
 https://qaihub-public-assets.s3.us-west-2.amazonaws.com/qai-hub-models/models/whisper_asr_shared/v1/openai_assets/mel_filters.npz
 ```
 
-download ENCODING MODEL to qrb_ros_speech_recognition/model.
+download ENCODING MODEL to ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode/model.
 ```
 https://aihub.qualcomm.com/models/whisper_tiny_en?domain=Audio&useCase=Speech+Recognition -> WhisperEncoder -> QCS8550 -> TFLite -> whisper_tiny_en-whisperencoder.tflite
 ```
 
-download DECODING MODEL to qrb_ros_speech_recognition/model.
+download DECODING MODEL to ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode/model.
 ```
 https://aihub.qualcomm.com/models/whisper_tiny_en?domain=Audio&useCase=Speech+Recognition -> WhisperDecoder -> QCS8550 -> TFLite -> whisper_tiny_en-whisperdecoder.tflite
 ```
@@ -61,7 +84,7 @@ https://aihub.qualcomm.com/models/whisper_tiny_en?domain=Audio&useCase=Speech+Re
 #### Build
 - Build this project.
 ```
-cd qrb_ros_speech_recognition
+cd ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode
 source /opt/ros/humble/setup.bash
 export WHISPER_MODEL_PATH="<path of your model>"
 
@@ -81,12 +104,12 @@ ros2 launch qrb_ros_speech_recognition qrb_ros_speech_recognition.launch.py
 
 Run the test Node.
 ```
-python qrb_ros_speech_recognition/test/qrb_ros_print.py
+python ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode/test/qrb_ros_print.py
 ```
 
 Run the enable Node. Please enter "true" and publish to enable.
 ```
-python qrb_ros_speech_recognition/test/test_asr_switch.py
+python ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode/test/test_asr_switch.py
 ```
 
 - You can modify the qrb_ros_speech_recognition.launch.py to set the configrations.
@@ -116,7 +139,7 @@ ros2 launch qrb_ros_speech_recognition qrb_ros_android_asr.launch.py
 
 Run the test Node.
 ```
-python qrb_ros_speech_recognition/test/qrb_ros_print.py
+python ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode/test/qrb_ros_print.py
 ```
 
 #### Remote service guidance
@@ -152,25 +175,3 @@ Example qrb_ros_speech_recognition.launch.py:
 <br>
 
 You can get more details from [here](https://quic-qrb-ros.github.io/main/index.html).
-
-## Contributing
-
-We would love to have you as a part of the QRB ROS community. Whether you are helping us fix bugs, proposing new features, improving our documentation, or spreading the word, please refer to our [contribution guidelines](./CONTRIBUTING.md) and [code of conduct](./CODE_OF_CONDUCT.md).
-
-- Bug report: If you see an error message or encounter failures, please create a [bug report](../../issues)
-- Feature Request: If you have an idea or if there is a capability that is missing and would make development easier and more robust, please submit a [feature request](../../issues)
-
-<Update link with template>
-
-
-## Authors
-
-* **shouyi Hu** - *Initial work* - [shouhu](https://github.com/shouhu)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-
-## License
-
-Project is licensed under the [BSD-3-clause License](https://spdx.org/licenses/BSD-3-Clause.html). See [LICENSE](./LICENSE) for the full license text.
-
