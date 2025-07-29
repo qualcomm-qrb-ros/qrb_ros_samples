@@ -44,9 +44,7 @@ The feature as follows:
 
 
 #### Setup
-1. Create `ros_ws` directory in `<qirp_decompressed_workspace>/qirp-sdk/`.
-
-2. Clone this repository under `<qirp_decompressed_workspace>/qirp-sdk/ros_ws`.
+2. Clone this repository.
 ```
 git clone https://github.com/quic-shouhu/qrb_ros_samples.git
 ```
