@@ -88,6 +88,9 @@ def generate_launch_description():
         package='sample_hand_detection',  # Replace with the actual package name
         executable='qrb_ros_hand_detector',  # Replace with the actual executable name
         output='screen',  # Output logs to terminal
+        parameters=[
+            {'model_path': model_path}  # Pass the model path as a parameter
+        ]
     )
 
     return LaunchDescription([

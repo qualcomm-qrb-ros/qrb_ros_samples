@@ -88,6 +88,9 @@ def generate_launch_description():
         remappings=[
             ('/image_raw', '/camera/color/image_raw'),  # Remap the image topic
         ],
+        parameters=[
+            {'model_path': model_path}  # Pass the model path as a parameter
+        ]
     )
 
     return LaunchDescription([
