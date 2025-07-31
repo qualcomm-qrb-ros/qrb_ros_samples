@@ -163,9 +163,9 @@ def main(args=None):
             continue
 
         print(f"Arrived at '{location}', waiting for detection of '{obj}'...")
-        detected = node.result_event.wait(timeout=60.0)
+        detected = node.result_event.wait(timeout=10.0)
         if not detected:
-            print(f"Target '{obj}' not detected within 60 seconds!")
+            print(f"Target '{obj}' not detected within 10 seconds!")
 
         print("Task finished. You can input new command or Ctrl+C to quit.\n")
 
