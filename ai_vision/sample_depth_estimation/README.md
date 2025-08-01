@@ -9,7 +9,7 @@ For more information, plaease refer to: [qrb_ros_sample/sample_depth_estimation]
 
 ## Pipeline flow for depth estimation
 
-![](./resource/depth_estimation_pipeline.png)
+![](./resource/depth_estimation_pipeline.jpg)
 
 ## Support platforms
 | Hardware               | Software                                 |
