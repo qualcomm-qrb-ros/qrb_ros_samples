@@ -16,7 +16,7 @@ It processes input images and publishes the following ROS 2 topics:
 - **`/pose_estimation_results`**: Output images with visualized pose keypoints.
 - **`/pose_estimation_points`**: Raw keypoint coordinates in a structured message format.
 
-![](./resource/sample_hr_pose_pipeline.png)
+![](./resource/sample_hrnet_pose_pipeline.png)
 
 | Node Name                                                    | Function                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
