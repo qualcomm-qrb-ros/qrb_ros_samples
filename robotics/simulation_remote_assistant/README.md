@@ -1,13 +1,12 @@
-
-
-<div >
+<div align="center">
   <h1>Simulation Remote Assistant</h1>
-  <p style="text-align: center;">
+  <p align="center">
+    <img src="./resource/detection.gif" alt="Detection Demo" />
+  </p>
+  <a href="https://ubuntu.com/download/qualcomm-iot" target="_blank"><img src="https://img.shields.io/badge/Qualcomm%20Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Qualcomm Ubuntu"></a>
+  <a href="https://docs.ros.org/en/jazzy/" target="_blank"><img src="https://img.shields.io/badge/ROS%20Jazzy-1c428a?style=for-the-badge&logo=ros&logoColor=white" alt="Jazzy"></a>
+  
 </div>
-
-![](./resource/detection.gif)
-
----
 
 ## 👋 Overview
 
@@ -31,7 +30,7 @@ The `simulation_remote_assistant` sample application is the ROS package that uti
 
 ## 🔎 Table of contents
 
-  * [Used ROS Topics](#-apis)
+  * [Used ROS Topics](#-used-ros-topics)
   * [Supported targets](#-supported-targets)
   * [Installation](#-installation)
   * [Usage](#-usage)
@@ -94,7 +93,9 @@ The `simulation_remote_assistant` sample application is the ROS package that uti
 
 ## ✨ Installation
 
-Coming soon...
+> [!IMPORTANT]
+> For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
+
 
 ## 🚀 Usage
 
@@ -177,8 +178,8 @@ Thanks to all our contributors who have helped make this project better!
 
 <details>
 <summary>Which locations and objects are supported in task manager?</summary><br>
-Location: office
-Object: person
+Location: office<br>
+Object: person<br>
 Sure, you could add new location and object in locaitons.yaml and objects.yaml
 </details>
 
