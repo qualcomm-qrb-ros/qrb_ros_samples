@@ -1,122 +1,201 @@
-# AI Samples depth estimation
 
-## Overview
 
-`sample_depth_estimation` is a Python-based depth estimation ROS node that uses QNN for model inference. The model is sourced from [Depth Anything V2](https://huggingface.co/qualcomm/Depth-Anything-V2) that a deep convolutional neural network model for depth estimation.This sample allows you to input an RGB image named `input_image.jpg` or `image_raw` topic published by ross-jazzy-usb-cam, then it will publish the result as ROS topic `/depth_map`. 
-For more information, plaease refer to: [qrb_ros_sample/sample_depth_estimation](https://github.qualcomm.com/QUIC-QRB-ROS/qrb_ros_samples/tree/jazzy/ai_vision/sample_depth_estimation)
+<div >
+  <h1>AI Sample Depth Estimation</h1>
+  <p align="center">
+</div>
 
 ![](./resource/depth_result.gif)
 
-## Pipeline flow for depth estimation
+---
 
-![](./resource/depth_estimation_pipeline.png)
+## 👋 Overview
 
-## Support platforms
-| Hardware               | Software                                 |
-| ---------------------- | ---------------------------------------- |
-| IQ-9075 Evaluation Kit | Qualcomm Linux, Qualcomm Ubuntu |
+- This sample allows you to input an RGB image named `input_image.jpg` or subscribe to the ROS topic `/cam0_stream1` from `qrb-ros-camera`. It then uses QNN to perform model inference and publishes the result as the `/depth_map` ROS topic containing per-pixel depth values.
+- The model is sourced from [Depth Anything V2](https://huggingface.co/qualcomm/Depth-Anything-V2) that a deep convolutional neural network model for depth estimation.
 
-## ROS Nodes used in depth estimation
+![image-20250723181610392](./resource/depth_estimation_architecture.jpg)
 
-| ROS Node                | Description                                                  |
-| ----------------------- | ------------------------------------------------------------ |
-| `depth_estimation_node`    | depth_estimation_node is a python-based ros jazzy packages realize depth estimation of each pixel,  uses the QNN tool for model inference. This ROS node subscribes image topic, and publishs depth map result topic after pre-post process. |
-| `image_publisher_node` | image_publisher_node is  a ros jazzy packages, can publish image ros topic with local path. source link: [ros-perception/image_pipeline: An image processing pipeline for ROS.](https://github.com/ros-perception/image_pipeline) |
-| `qrb_ros_camera_node` |  qrb_ros_camera_node is a ROS package to publish the images from Qualcomm CSI and GMSL cameras. source link: [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) |
+| Node Name                                                    | Function                                                     |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
+| image publisher                                              | Publishes image data to a ROS topic—can be camera frames, local files, or processed outputs. |
+| depth_estimation_node    | The node subscribes to input images for preprocessing, then performs postprocessing on the output tensor published by the qrb ros nn interface node. |
+| [qrb ros nn interface](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results. |
 
+## 🔎 Table of contents
 
+  * [Used ROS Topics](#-apis)
+  * [Supported targets](#-supported-targets)
+  * [Installation](#-installation)
+  * [Usage](#-usage)
+  * [Build from source](#-build-from-source)
+  * [Contributing](#-contributing)
+  * [Contributors](#%EF%B8%8F-contributors)
+  * [FAQs](#-faqs)
+  * [License](#-license)
 
-## ROS Topics used in depth estimation
+## ⚓ Used ROS Topics 
 
-| ROS Topic                      | Type                         | Published By            |
-| ------------------------------ | ---------------------------- | ----------------------- |
-| `depth_map ` | `<sensor_msgs.msg.Image> ` | `depth_estimation_node`     |
-| `image_raw`                   | `<sensor_msgs.msg.Image> `  | `image_publisher` |
-| `qrb_inference_input_tensor`                   | `<TensorList> `  | `depth_estimation_node` |
-| `qrb_inference_output_tensor`                   | `<TensorList> `  | `qrb_ros_nn_inference` |
+| ROS Topic                       | Type                                          | Description                    |
+| ------------------------------- | --------------------------------------------- | ------------------------------ |
+| `/image_raw `                   | `< sensor_msgs.msg.Image> `                   | public image info              |
+| `/qrb_inference_input_tensor `  | `< qrb_ros_tensor_list_msgs/msg/TensorList> ` | preprocess message             |
+| `/qrb_inference_output_tensor ` | `< qrb_ros_tensor_list_msgs/msg/TensorList> ` | nn interface result with model |
+| `depth_map ` | `<sensor_msgs.msg.Image> ` | depth map result              |
 
+## 🎯 Supported targets
 
-## Use cases on QCLINUX
+<table >
+  <tr>
+    <th>Development Hardware</th>
+     <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
+  </tr>
+  <tr>
+    <th>Hardware Overview</th>
+    <th><a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160"></a></th>
+  </tr>
+  <tr>
+    <th>GMSL Camera Support</th>
+    <td>LI-VENUS-OX03F10-OAX40-GM2A-118H(YUV)</td>
+  </tr>
+</table>
 
-### Prerequisites
-- Please refer to [Settings](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/download-the-prebuilt-robotics-image_3_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) to complete the device and host setup.
+## ✨ Installation
 
+> [!IMPORTANT]
+> **PREREQUISITES**: The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
+> Reference [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
+> For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
 
-### 1. On Host
-
-Step 1: Build sample project
-
-On the host machine, move to the artifacts directory and decompress the qirp-sdk package using the tar command.
+Add Qualcomm IOT PPA for Ubuntu:
 
 ```bash
-# set up qirp sdk environment
-tar -zxf qirp-sdk_<qirp_version>.tar.gz
-cd <qirp_decompressed_path>/qirp-sdk
-source setup.sh
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-noble-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
 
-# build sample
-cd <qirp_decompressed_path>/qirp-samples/ai_vision/sample_depth_estimation
+Install Debian package:
 
+```bash
+sudo apt install ros-jazzy-sample-depth-estimation
+```
+
+## 🚀 Usage
+
+<details>
+  <summary>Usage details</summary>
+
+```bash
+source /opt/ros/jazzy/setup.bash
+ros2 launch sample_depth_estimation launch_with_image_publisher.py
+or # You can also replace this with a custom image file or model path
+ros2 launch sample_depth_estimation launch_with_image_publisher.py image_path:=<your local image path> model_path:=<your local model path>
+or # You can launch with qrb ros camera
+ros2 launch sample_depth_estimation launch_with_qrb_ros_camera.py
+```
+
+When using this launch script, it will use the default parameters:
+
+```py
+    image_path_arg = DeclareLaunchArgument(
+        'image_path',
+        default_value=os.path.join(package_path, "resource", "input_image.jpg"),
+        description='Path to the input image file'
+    )
+
+    # Node for image_publisher
+    image_publisher_node = Node(
+        package='image_publisher',  
+        executable='image_publisher_node', 
+        namespace=namespace,
+        name='image_publisher_node', 
+        output='screen', 
+        parameters=[
+            {'filename': image_path},  
+            {'rate': 10.0},  # Set the publishing rate to 10 Hz
+        ]
+    )
+```
+
+It will send local input_image.jpg file, and outputs image at `10` Hz. 
+
+Then you can check ROS topics with the name`/depth_map` in rviz.
+
+</details>
+
+## 👨‍💻 Build from source
+
+<details>
+  <summary>Build from source details</summary>
+
+Install dependencies
+
+```
+sudo apt install ros-jazzy-rclpy \
+  ros-jazzy-sensor-msgs \
+  ros-jazzy-std-msgs \
+  ros-jazzy-cv-bridge \
+  ros-jazzy-ament-index-python \
+  ros-jazzy-qrb-ros-tensor-list-msgs \
+  python3-opencv \
+  python3-numpy \
+  ros-jazzy-image-publisher \
+  ros-jazzy-qrb-ros-nn-inference \
+  ros-jazzy-qrb-ros-camera \
+```
+
+Download the source code and build with colcon
+
+```bash
+source /opt/ros/jazzy/setup.bash
+git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+cd ai_vision/sample_depth_estimation
 colcon build
 ```
 
-Step 2: Package and push sample to device
-```bash
-# package depth estimation sample
-cd <qirp_decompressed_path>/qirp-samples/ai_vision/sample_depth_estimation/install/sample_depth_estimation
-tar -czvf sample_depth_estimation.tar.gz lib share
-
-
-# push to device
-scp sample_depth_estimation.tar.gz root@[ip-addr]:/opt/
-```
-
-
-### 2. On Device
-To Login to the device, please use the command `ssh root@[ip-addr]`, default password is `oelinux123`.
-
-Step 1: Decompress sample package
+Run and debug
 
 ```bash
-# Remount the /usr directory with read-write permissions
-(ssh) mount -o remount rw /usr
-
-# Install sample package and model package
-(ssh) cd /opt && tar --no-same-owner -zxf /opt/sample_depth_estimation.tar.gz -C /usr/
-```
-
-Step 2: Setup runtime environment
-
-```bash
-# Set HOME variable
-(ssh) export HOME=/opt
-
-# setup runtime environment
-(ssh) source /usr/bin/ros_setup.sh && source /usr/share/qirp-setup.sh
-(ssh) export ROS_DOMAIN_ID=42
-```
-
-Step 3: Run sample
-
-Launch the sample depth estimation node with an image publisher, please replace `image_path` with the path to your desired image, the `model_path` should be the path to the downloaded model file.
-
-- launch with image publisher
-```bash
+source install/setup.bash
 ros2 launch sample_depth_estimation launch_with_image_publisher.py
 ```
-- Launch with qrb ros camera
-```bash
-ros2 launch sample_depth_estimation launch_with_qrb_ros_camera.py
-```
-If success, the log `[depth_estimation_node-2] [INFO] [1742428958.023415773] [depth_estimation_node]: Published depth map` will be shown.
 
-Then, follow these steps to launch rqt and view the depth map results:
-1. Select `Plugins` from the menu.
-2. Navigate to `Visualization`.
-3. Choose `Image View`.
+</details>
 
-```bash
-(ssh) export DISPLAY=<YOUR_HOST_IP>:0
-(ssh) export ROS_DOMAIN_ID=42
-(ssh) rqt
+## 🤝 Contributing
+
+We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).<br>
+Feel free to create an issue for bug report, feature requests or any discussion💡.
+
+## ❤️ Contributors
+
+Thanks to all our contributors who have helped make this project better!
+
+<table>
+  <tr>
+    <td align="center">
+    <a href="https://github.com/orgs/qualcomm/dashboard"><sub>
+    <b>qualcomm</b></sub></a></td>
+  </tr>
+</table>
+
+
+## ❔ FAQs
+
+<details>
+<summary>How to get origin output of the QNN inference node?</summary><br>
+Comment the following code in depth_estimation_node.py to get the origin output of the QNN inference node.
+
+```python
+# Normalize to [0,255]
+normalized = cv2.normalize(output_image, None, 0, 255, cv2.NORM_MINMAX)
+colored = cv2.applyColorMap(normalized.astype(np.uint8), cv2.COLORMAP_INFERNO)
 ```
+</details>
+
+
+## 📜 License
+
+Project is licensed under the [BSD-3-Clause](https://spdx.org/licenses/BSD-3-Clause.html) License. See [LICENSE](./LICENSE) for the full license text.
