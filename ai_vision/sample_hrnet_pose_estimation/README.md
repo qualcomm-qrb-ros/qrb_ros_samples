@@ -1,6 +1,14 @@
-# Samples HR pose  estimation
+<div >
+  <h1>Samples HR pose estimation</h1>
+  <p align="center">
+</div>
 
-## Overview
+
+![](./resource/result_image.jpg)
+
+---
+
+## 👋 Overview
 
 The **sample_hrnet_pose_estimation** sample provides high-precision human pose estimation capabilities.
 It processes input images and publishes the following ROS 2 topics:
@@ -8,43 +16,39 @@ It processes input images and publishes the following ROS 2 topics:
 - **`/pose_estimation_results`**: Output images with visualized pose keypoints.
 - **`/pose_estimation_points`**: Raw keypoint coordinates in a structured message format.
 
-For more information, please refer to [sample_hrnet_pose_estimation](https://github.com/qualcomm-qrb-ros/qrb_ros_samples/tree/main/ai_vision/sample_hrnet_pose_estimation).
-
-
-![](./resource/result_image.jpg)
-
-## Pipeline flow
-
 ![](./resource/sample_hr_pose_pipeline.png)
 
-## Supported Platforms
-
-| Hardware               | Software                        |
-| ---------------------- | ------------------------------- |
-| IQ-9075 Evaluation Kit | Qualcomm Linux, Qualcomm Ubuntu |
-
-## ROS Nodes Used
-
-
-| ROS Node         | Description                                                  |
-| ---------------- | ------------------------------------------------------------ |
+| Node Name                                                    | Function                                                     |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `hrnet_pose_estimation_node` | Receive the `/image_raw` topic, perform pose detection on it, and publish the `pose_estimation_results` and `pose_estimation_points` topics. |
 | `image_publisher_node` | image_publisher is a ros jazzy packages, can publish image ros topic with local path. For more detail, Please refer to [image_publisher](https://github.com/ros-perception/image_pipeline). |
 |`qrb_ros_camera`| The QRB ROS Camera is a ROS package to publish the images from Qualcomm CSI and GMSL cameras. For more detail, Please refer to [QRB ROS CAMERA](https://github.com/qualcomm-qrb-ros/qrb_ros_camera).|
 |`qrb_ros_nn_inference`| QRB_ROS_NN_inference is a ROS2 package for performing neural network model, providing AI-based perception for robotics applications. For more detail, Please refer to [QRB ROS NN Inference](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference). |
 
-## ROS Topics Used
 
+## 🔎 Table of contents
 
-| ROS Topic | Type                         | Published By     |
-| --------- | ---------------------------- | ---------------- |
-| `/pose_estimation_results`  | `sensor_msgs.msg.Image` | `hrnet_pose_estimation_node` |
-|`/pose_estimation_points`| `geometry_msgs.msg.PolygonStamped` | `hrnet_pose_estimation_node` |
-| `/image_raw` | `sensor_msgs.msg.Image` | `image_publisher_node` ` qrb_ros_camera` |
-| `/qrb_inference_input_tensor` | `qrb_ros_tensor_list_msgs.msg.TensorList` | `hrnet_pose_estimation_node` |
-| `/qrb_inference_output_tensor` | `qrb_ros_tensor_list_msgs.msg.TensorList` | `qrb_ros_nn_inference` |
+  * [Used ROS Topics](#-apis)
+  * [Supported targets](#-supported-targets)
+  * [Installation](#-installation)
+  * [Usage](#-usage)
+  * [Build from source](#-build-from-source)
+  * [Contributing](#-contributing)
+  * [Contributors](#%EF%B8%8F-contributors)
+  * [FAQs](#-faqs)
+  * [License](#-license)
 
-Note:`/pose_estimation_points` contains the coordinates of 17 key points on the original image. Developers can subscribe to this topic for secondary development. Key points include: nose, left eye, right eye, etc. The specific correspondence is as follows: 
+## ⚓ Used ROS Topics 
+
+| ROS Topic                       | Type                                       | Description                                                  |
+| ------------------------------- | ------------------------------------------ | ------------------------------------------------------------ |
+| `/image_raw `                   | `sensor_msgs.msg.Image `                   | The sample hrnet pose estimation input image.                |
+| `/qrb_inference_input_tensor `  | `qrb_ros_tensor_list_msgs/msg/TensorList ` | The preprocessed image is converted into an input msg for nn inference. |
+| `/qrb_inference_output_tensor ` | `qrb_ros_tensor_list_msgs/msg/TensorList ` | Message after nn inference inference                         |
+| `/pose_estimation_results`      | `sensor_msgs.msg.Image`                    | Output images with visualized pose keypoints.                |
+| `/pose_estimation_points`       | `geometry_msgs.msg.PolygonStamped`         | Raw keypoint coordinates in a structured message format.     |
+
+Note: `/pose_estimation_points` contains the coordinates of 17 key points on the original image. Developers can subscribe to this topic for secondary development. Key points include: nose, left eye, right eye, etc. The specific correspondence is as follows: 
 
 | ID  | Body Part      | ID  | Body Part      |
 |-----|----------------|-----|----------------|
@@ -58,104 +62,131 @@ Note:`/pose_estimation_points` contains the coordinates of 17 key points on the 
 | 8   | Right Elbow    | 17  | Left Ankle     |
 | 9   | Left Elbow     |     |                |
 
-## Use cases on QCLINUX
+## 🎯 Supported targets
 
-### Prerequisites
-- Please refer to [Settings](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/quick_start.html?vproduct=1601111740013072&version=1.5&facet=Qualcomm%20Intelligent%20Robotics%20SDK#set-up-the-environment-for-running-sample-applications) to complete the device and host setup.
+<table >
+  <tr>
+    <th>Development Hardware</th>
+     <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
+  </tr>
+  <tr>
+    <th>Hardware Overview</th>
+    <th><a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160"></a></th>
+  </tr>
+  <tr>
+    <th>GMSL Camera Support</th>
+    <td>LI-VENUS-OX03F10-OAX40-GM2A-118H(YUV)</td>
+  </tr>
+</table>
 
-### Out of box usage
-Login to the device, please use the command `ssh root@[ip-addr]`
 
-**Step 1: Install sample package and model package**
+## ✨ Installation
+
+> [!IMPORTANT]
+> **PREREQUISITES**: The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
+> Reference [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
+> For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
+
+Add Qualcomm IOT PPA for Ubuntu:
 
 ```bash
-# Remount the /usr directory with read-write permissions
-(ssh) mount -o remount rw /usr
-
-# Install sample package and model package
-(ssh) tar --no-same-owner -zxf /opt/sample_hrnet_pose_estimation.tar.gz -C /usr/
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-noble-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
 ```
 
-**Step 2: Setup runtime environment**
+Install Debian package:
 
-```
-# Set HOME variable
-(ssh) export HOME=/opt
-
-# set SELinux to permissive mode
-(ssh) setenforce 0
-
-# setup runtime environment
-(ssh) source /usr/share/qirp-setup.sh -m
+```bash
+sudo apt install ros-jazzy-sample-hrnet-pose-estimation
 ```
 
-**Step 3: Run sample**
+## 🚀 Usage
 
-```
+
+```bash
+source /opt/ros/jazzy/setup.bash
+ros2 launch sample_hrnet_pose_estimation launch_with_image_publisher.py 
 # Launch the sample with local image, You can replace 'image_path' with the path to your desired image.
 ros2 launch sample_hrnet_pose_estimation launch_with_image_publisher.py image_path:=/usr/share/sample_hrnet_pose_estimation/input_image.jpg
-
 # Additionally, you can run the following command to see the pose estimation in real time.
 ros2 launch sample_hrnet_pose_estimation launch_with_qrb_ros_camera.py
 ```
 
-### On Host
-
-```
-source /opt/ros/jazzy/setup.bash
-rqt
-```
-
-After startup `rqt`, Click the following button.
+Then you can check ROS topic `/pose_estimation_results` in the `rqt`. After startup `rqt`, Click the following button.
 
 ```
 Plugins --> Visualization --> Image View
 ```
 
-Then, select  `pose_estimation_results` to see the result image.
-
-Besides, You can run the follow command to view key_points.
+Besides, You can run the follow command to view  `/pose_estimation_points` .
 
 ```
 ros topic echo /pose_estimation_points
 ```
 
+## 👨‍💻 Build from source
 
-### Build and Run
 
-**Step 1: Build sample project**
+Install dependencies
 
-On the host machine, move to the artifacts directory and decompress the package using the `tar` command.
+```
+sudo apt install ros-jazzy-rclpy \
+  ros-jazzy-sensor-msgs \
+  ros-jazzy-std-msgs \
+  ros-jazzy-geometry-msgs \
+  ros-jazzy-cv-bridge \
+  ros-jazzy-ament-index-python \
+  ros-jazzy-qrb-ros-tensor-list-msgs \
+  python3-opencv \
+  python3-numpy \
+  ros-jazzy-image-publisher \
+  ros-jazzy-qrb-ros-nn-inference \
+  ros-jazzy-qrb-ros-camera \
+  ros-jazzy-image-publisher
+```
+
+Download the source code and build with colcon
 
 ```bash
-# Set up qir sdk environment
-tar -zxf qirp-sdk_<qirp_version>.tar.gz
-cd <qirp_decompressed_path>/qirp-sdk
-source setup.sh
-
-# build sample
-cd <qirp_decompressed_path>/qirp-samples/ai_vision/sample_hrnet_pose_estimation
+source /opt/ros/jazzy/setup.bash
+git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+cd ai_vision/sample_hrnet_pose_estimation
 colcon build
 ```
 
-**Step 2: Package and push sample to device**
+Run and debug
 
 ```bash
-# package and push build result of sample
-cd <qirp_decompressed_path>/qirp-samples/ai_vision/sample_hrnet_pose_estimation/install/sample_hrnet_pose_estimation
-tar -czvf sample_hrnet_pose_estimation.tar.gz lib share
-scp sample_hrnet_pose_estimation.tar.gz root@[ip-addr]:/opt/
+source install/setup.bash
+ros2 launch sample_resnet101 launch_with_image_publisher.py
 ```
 
-**Step3 : Run the sample**
+## 🤝 Contributing
 
-Please refer to [Out of box usage](###Out of box usage).
+We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).<br>
+Feel free to create an issue for bug report, feature requests or any discussion💡.
 
-## Use cases on Ubuntu
+## ❤️ Contributors
 
-### Prerequisites
+Thanks to all our contributors who have helped make this project better!
 
-### Out of box usage
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/Ceere"><img src="https://avatars.githubusercontent.com/u/45758726?v=4" width="100" height="100" alt="Ceere"/><br /><sub><b>Ceere</b></sub></a></td>
+  </tr>
+</table>
 
 
-### Build and Compile
+## ❔ FAQs
+
+<details>
+<summary>Can multiple people be detected?</summary><br>
+No, if multiple people need to be detected, please segment the images of multiple people into individual ones and perform separate detection.
+</details>
+
+
+
+## 📜 License
+
+Project is licensed under the [BSD-3-Clause](https://spdx.org/licenses/BSD-3-Clause.html) License. See [LICENSE](./LICENSE) for the full license text.
