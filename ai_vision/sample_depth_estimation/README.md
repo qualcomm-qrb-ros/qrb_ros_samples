@@ -12,7 +12,7 @@
 ## 👋 Overview
 
 - This sample allows you to input an RGB image named `input_image.jpg` or subscribe to the ROS topic `/cam0_stream1` from `qrb-ros-camera`. It then uses QNN to perform model inference and publishes the result as the `/depth_map` ROS topic containing per-pixel depth values.
-- The model is sourced from [Depth Anything V2](https://huggingface.co/qualcomm/Depth-Anything-V2) that a deep convolutional neural network model for depth estimation.
+- The model is sourced from [Depth Anything V2](https://aihub.qualcomm.com/iot/models/depth_anything_v2?searchTerm=depth&domain=Computer+Vision) that a deep convolutional neural network model for depth estimation.
 
 ![image-20250723181610392](./resource/depth_estimation_architecture.jpg)
 
@@ -46,17 +46,21 @@
 
 ## 🎯 Supported targets
 
-<table >
+<table>
   <tr>
     <th>Development Hardware</th>
-     <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
-  </tr>
-  <tr>
     <th>Hardware Overview</th>
-    <th><a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160"></a></th>
   </tr>
   <tr>
-    <th>GMSL Camera Support</th>
+    <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
+    <td>
+      <a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075">
+        <img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>GMSL Camera Support</td>
     <td>LI-VENUS-OX03F10-OAX40-GM2A-118H(YUV)</td>
   </tr>
 </table>
@@ -64,23 +68,8 @@
 ## ✨ Installation
 
 > [!IMPORTANT]
-> **PREREQUISITES**: The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
-> Reference [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
-> For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
 
-Add Qualcomm IOT PPA for Ubuntu:
-
-```bash
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-noble-ppa
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
-sudo apt update
-```
-
-Install Debian package:
-
-```bash
-sudo apt install ros-jazzy-sample-depth-estimation
-```
+> **PREREQUISITES**: For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/quick_start.html?vproduct=1601111740013072&version=1.5&facet=Qualcomm%20Intelligent%20Robotics%20SDK#setup-demo-qs) documents.
 
 ## 🚀 Usage
 
@@ -88,7 +77,7 @@ sudo apt install ros-jazzy-sample-depth-estimation
   <summary>Usage details</summary>
 
 ```bash
-source /opt/ros/jazzy/setup.bash
+source /usr/share/qirp-setup.sh
 ros2 launch sample_depth_estimation launch_with_image_publisher.py
 or # You can also replace this with a custom image file or model path
 ros2 launch sample_depth_estimation launch_with_image_publisher.py image_path:=<your local image path> model_path:=<your local model path>
@@ -119,50 +108,15 @@ When using this launch script, it will use the default parameters:
     )
 ```
 
-It will send local input_image.jpg file, and outputs image at `10` Hz. 
+It will send local input_image.jpg file with a publishing rate of `10` Hz. 
 
-Then you can check ROS topics with the name`/depth_map` in rviz.
+Then you can check ROS topics with the topic name `/depth_map` in rviz.
 
 </details>
 
 ## 👨‍💻 Build from source
 
-<details>
-  <summary>Build from source details</summary>
-
-Install dependencies
-
-```
-sudo apt install ros-jazzy-rclpy \
-  ros-jazzy-sensor-msgs \
-  ros-jazzy-std-msgs \
-  ros-jazzy-cv-bridge \
-  ros-jazzy-ament-index-python \
-  ros-jazzy-qrb-ros-tensor-list-msgs \
-  python3-opencv \
-  python3-numpy \
-  ros-jazzy-image-publisher \
-  ros-jazzy-qrb-ros-nn-inference \
-  ros-jazzy-qrb-ros-camera \
-```
-
-Download the source code and build with colcon
-
-```bash
-source /opt/ros/jazzy/setup.bash
-git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
-cd ai_vision/sample_depth_estimation
-colcon build
-```
-
-Run and debug
-
-```bash
-source install/setup.bash
-ros2 launch sample_depth_estimation launch_with_image_publisher.py
-```
-
-</details>
+Coming soon ...
 
 ## 🤝 Contributing
 
@@ -175,9 +129,13 @@ Thanks to all our contributors who have helped make this project better!
 
 <table>
   <tr>
-    <td align="center">
-    <a href="https://github.com/orgs/qualcomm/dashboard"><sub>
-    <b>qualcomm</b></sub></a></td>
+    <td style="text-align: center;">
+      <a href="https://github.com/DotaIsMind">
+        <img src="https://github.com/DotaIsMind.png" width="100" height="100" alt="teng"/>
+        <br />
+        <sub><b>teng</b></sub>
+      </a>
+    </td>
   </tr>
 </table>
 

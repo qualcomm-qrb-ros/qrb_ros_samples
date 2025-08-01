@@ -17,7 +17,6 @@
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
   <exec_depend>image_publisher</exec_depend>
-  <exec_depend>usb_cam</exec_depend>
 
   <!-- Test dependencies -->  
   <test_depend>ament_copyright</test_depend>
