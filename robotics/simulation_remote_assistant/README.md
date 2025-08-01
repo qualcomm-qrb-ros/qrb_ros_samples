@@ -2,7 +2,7 @@
 
 <div >
   <h1>Simulation Remote Assistant</h1>
-  <p align="center">
+  <p style="text-align: center;">
 </div>
 
 ![](./resource/detection.gif)
@@ -11,25 +11,18 @@
 
 ## 👋 Overview
 
-The `simulation_remote_assistant` sample application is the ROS package, which showcasing the capabilities of the Remote Assistant robot. It integrates multiple ROS 2 components to simulate an indoor autonomous mobile robot (AMR) workflow:
-
-- Simulation: Based on [qrb_ros_simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation/tree/main) to simulate the robot in an office world.
-- SLAM: Uses Cartographer for building maps of the environment.
-- Navigation: Uses Nav2 for autonomous path planning and movement.
-- Perception: Uses a YOLOv8 model for real-time object detection.
-
-After building the map, users can interact with the robot by inputting natural language tasks such as "Go to office to check person". The robot will autonomously navigate to the specified location and perform object/person recognition tasks accordingly.
+The `simulation_remote_assistant` sample application is the ROS package that utilizes an AMR as a remote assistant within a virtual office environment. Users can interact with the robot by inputting natural language commands, such as "Go to the office to check the person." The robot will then autonomously navigate to the specified location and perform object detection tasks as instructed.
 
 ![pipeline](resource/pipeline.png) 
 
 | Node Name                                                    | Function                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| [qrb_ros_simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) | Set up the Qualcomm robotic simulation environment. |
-| [nn_inference_node](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results. |
-| [yolo_preprocess_node](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) | Execute pre/post-process for Yolo model. |
-| [yolo_detection_postprocess_node](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) | Same as above. |
-| [yolo_detection_overlay_node](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) | Same as above. |
-| cartographer_node                                              | Processes sensor data to perform SLAM. |
+| qrb_ros_simulation | Set up the Qualcomm robotic simulation environment, refer [qrb_ros_simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation). |
+| nn_inference_node | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results, refer [nn_inference_node](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference). |
+| yolo_preprocess_node | Execute pre/post-process for Yolo model, refer [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process). |
+| yolo_detection_postprocess_node | Same as above. |
+| yolo_detection_overlay_node | Same as above. |
+| cartographer_node           | Processes sensor data to perform SLAM. |
 | cartographer_occupancy_grid_node                              | Publishes a ROS occupancy grid map. |
 | nav2_bringup                              | The Navigation2 stack for robot navigation. |
 | build_map_node                             | Build the map of office world. |
@@ -101,24 +94,7 @@ After building the map, users can interact with the robot by inputting natural l
 
 ## ✨ Installation
 
-> [!IMPORTANT]
-> **PREREQUISITES**: The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
-> Reference [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
-> For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
-
-Add Qualcomm IOT PPA for Ubuntu:
-
-```bash
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-noble-ppa
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
-sudo apt update
-```
-
-Install Debian package:
-
-```bash
-sudo apt install ros-jazzy-sample-remote-assistant
-```
+Coming soon...
 
 ## 🚀 Usage
 
@@ -171,33 +147,7 @@ go to office to check person
 <details>
   <summary>Build from source details</summary>
 
-### Step1: Install dependencies
-
-```bash
-sudo apt install \
-  ros-jazzy-rclpy \
-  ros-jazzy-geometry-msgs \
-  ros-jazzy-nav-msgs \
-  ros-jazzy-vision-msgs \
-  ros-jazzy-ament-index-python \
-  ros-jazzy-qrb-ros-slam-msgs \
-  python3-pyyaml \
-
-```
-
-### Step2: Download the source code and build with colcon
-
-```bash
-source /opt/ros/jazzy/setup.bash
-git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
-cd robotics/simulation_remote_assistant
-colcon build
-source install/setup.bash
-```
-
-### Step3: Run and debug
-
-Reference the usage details
+Coming soon...
 
 </details>
 
