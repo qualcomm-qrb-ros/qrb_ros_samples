@@ -89,78 +89,15 @@ Note: `/pose_estimation_points` contains the coordinates of 17 key points on the
 
 Add Qualcomm IOT PPA for Ubuntu:
 
-```bash
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-noble-ppa
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
-sudo apt update
-```
-
-Install Debian package:
-
-```bash
-sudo apt install ros-jazzy-sample-hrnet-pose-estimation
-```
+coming soon
 
 ## 🚀 Usage
 
-
-```bash
-source /opt/ros/jazzy/setup.bash
-ros2 launch sample_hrnet_pose_estimation launch_with_image_publisher.py 
-# Launch the sample with local image, You can replace 'image_path' with the path to your desired image.
-ros2 launch sample_hrnet_pose_estimation launch_with_image_publisher.py image_path:=/usr/share/sample_hrnet_pose_estimation/input_image.jpg
-# Additionally, you can run the following command to see the pose estimation in real time.
-ros2 launch sample_hrnet_pose_estimation launch_with_qrb_ros_camera.py
-```
-
-Then you can check ROS topic `/pose_estimation_results` in the `rqt`. After startup `rqt`, Click the following button.
-
-```
-Plugins --> Visualization --> Image View
-```
-
-Besides, You can run the follow command to view  `/pose_estimation_points` .
-
-```
-ros topic echo /pose_estimation_points
-```
+coming soon
 
 ## 👨‍💻 Build from source
 
-
-Install dependencies
-
-```
-sudo apt install ros-jazzy-rclpy \
-  ros-jazzy-sensor-msgs \
-  ros-jazzy-std-msgs \
-  ros-jazzy-geometry-msgs \
-  ros-jazzy-cv-bridge \
-  ros-jazzy-ament-index-python \
-  ros-jazzy-qrb-ros-tensor-list-msgs \
-  python3-opencv \
-  python3-numpy \
-  ros-jazzy-image-publisher \
-  ros-jazzy-qrb-ros-nn-inference \
-  ros-jazzy-qrb-ros-camera \
-  ros-jazzy-image-publisher
-```
-
-Download the source code and build with colcon
-
-```bash
-source /opt/ros/jazzy/setup.bash
-git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
-cd ai_vision/sample_hrnet_pose_estimation
-colcon build
-```
-
-Run and debug
-
-```bash
-source install/setup.bash
-ros2 launch sample_resnet101 launch_with_image_publisher.py
-```
+coming soon
 
 ## 🤝 Contributing
 
