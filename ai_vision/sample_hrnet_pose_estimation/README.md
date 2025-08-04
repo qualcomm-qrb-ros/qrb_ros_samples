@@ -28,7 +28,7 @@ It processes input images and publishes the following ROS 2 topics:
 
 ## 🔎 Table of contents
 
-  * [Used ROS Topics](#-apis)
+  * [Used ROS Topics](#-used-ros-topics)
   * [Supported targets](#-supported-targets)
   * [Installation](#-installation)
   * [Usage](#-usage)
