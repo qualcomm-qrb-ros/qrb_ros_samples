@@ -1,14 +1,6 @@
-<!--AI Samples <sample_face_detection>-->
-
-# AI Samples Mediapipe Face Detection
-<div >
-  <h1>AI Sample Face Detection</h1>
-  <p align="center">
-</div>
+# AI Sample Face Detection
 
 ![](./resource/face_detection_cam.gif)
-
----
 
 ## 👋 Overview
 
@@ -16,26 +8,24 @@ The ` sample_face_detection` is a Python-based face recognition ROS node that us
 The models are sourced from Qualcomm AI-hub.Can detect faces and locate facial features from image
 It captures the `face_image.jpg` as input and publishes the result with the `/mediaface_det_image` and `output_image.jpg` .
 
-For more information, please refer to [qrb_ros_samples/ai_vision/sample_face_detection at jazzy · QUIC-QRB-ROS/qrb_ros_samples](https://github.qualcomm.com/QUIC-QRB-ROS/qrb_ros_samples/tree/jazzy/ai_vision/sample_face_detection) .
-
+For model information, please refer to [MediaPipe-Face-Detection - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/mediapipe_face?searchTerm=Media)
 
 ## Pipeline Flow For Face Detection
 
-![](./resource/sample_face_detection_pipeline.png)
+![](./resource/sample_face_detection_pipeline.jpg)
 
 | ROS Node         | Description                                                  |
 | ---------------- | ------------------------------------------------------------ |
-| `qrb_ros_face_detector` | `qrb_ros_face_detector is a python-based ros jazzy packages realize classify images. This ROS node subscribes image topic, and publishs classify result topic after pre-post process. ` |
-| `qrb_ros_nn_inference` | qrb_ros_nn_inference is a ROS2 package for performing neural network model, providing AI-based perception for robotics applications. source link: [qualcomm-qrb-ros/qrb_ros_nn_inference](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) |
-| `qrb_ros_camera` | qrb_ros_camera is a ROS package to publish the images from Qualcomm CSI and GMSL cameras. source link: [qualcomm-qrb-ros/qrb_ros_camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) |
-| `image_publisher_node` | image_publisher is  a ros jazzy packages, can publish image ros topic with local path. source link: [ros-perception/image_pipeline: An image processing pipeline for ROS.](https://github.com/ros-perception/image_pipeline) |
+| qrb_ros_face_detector | qrb_ros_face_detector is a python-based ros jazzy packages realize face images. This ROS node subscribes image topic, and publishs face image result topic after pre-post process. ` |
+| [qrb_ros_nn_inference](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | qrb_ros_nn_inference is a ROS2 package for performing neural network model, providing AI-based perception for robotics applications. |
+| [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
+| [image_publisher_node](https://github.com/ros-perception/image_pipeline) | image_publisher is  a ros jazzy packages, can publish image ros topic with local path. |
 
 
 ## 🔎 Table of contents
 
-  * [Used ROS Topics](#-apis)
+  * [Used ROS Topics](#-used-ros-topics)
   * [Supported targets](#-supported-targets)
-  * [Installation](#-installation)
   * [Usage](#-usage)
   * [Build from source](#-build-from-source)
   * [Contributing](#-contributing)
@@ -48,11 +38,11 @@ For more information, please refer to [qrb_ros_samples/ai_vision/sample_face_det
 | ROS Topic | Type                         | Published By     |
 | --------- | ---------------------------- | ---------------- |
 | `/mediaface_det_image`  | `< sensor_msgs.msg.Image > ` | `qrb_ros_face_detector` |
-| `image_raw`                   | `<sensor_msgs.msg.Image> `  | `image_publisher_node, camera_node` |
-| `face_detector_input_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_face_detector`     |
-| `face_detector_output_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_nn_inference`     |
-| `face_landmark_input_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_face_detector`     |
-| `face_landmark_output_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_nn_inference`     |
+| `/image_raw`                   | `<sensor_msgs.msg.Image> `  | `image_publisher_node, camera_node` |
+| `/face_detector_input_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_face_detector`     |
+| `/face_detector_output_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_nn_inference`     |
+| `/face_landmark_input_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_face_detector`     |
+| `/face_landmark_output_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_nn_inference`     |
 
 ## 🎯 Supported targets
 
@@ -71,33 +61,17 @@ For more information, please refer to [qrb_ros_samples/ai_vision/sample_face_det
   </tr>
 </table>
 
-## ✨ Installation
-> [!IMPORTANT]
-> **PREREQUISITES**: The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
-> Reference [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
-> For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
-
-Add Qualcomm IOT PPA for Ubuntu:
-
-```bash
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-noble-ppa
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
-sudo apt update
-```
-
-Install Debian package:
-
-```bash
-sudo apt install ros-jazzy-sample-face-detection
-```
-
 ## 🚀 Usage
 
 <details>
   <summary>Usage details</summary>
 
 ```bash
-source /opt/ros/jazzy/setup.bash
+# Set up the runtime environment
+export HOME=/opt
+source /usr/share/qirp-setup.sh
+export ROS_DOMAIN_ID=xx # Value range of ROS_DOMAIN_ID: [0, 232]
+
 # You can also replace this with a custom image file
 ros2 launch sample_face_detection launch_with_image_publisher.py image_path:=/opt/resource/face_image.jpg model_path:=/opt/model/
 or # You can launch with qrb ros camera
@@ -178,11 +152,7 @@ c:38:dummy call to rpcmem_init, rpcmem APIs will be used from libxdsprpc
 
 ```
 
-Then you can check ROS topics with the name`/mediaface_det_image` in other shell terminal
-
-```bash
-ros2 topic echo /mediaface_det_image
-```
+Then you can check ROS topics with the name`/mediaface_det_image` in rviz
 
 </details>
 
@@ -191,27 +161,10 @@ ros2 topic echo /mediaface_det_image
 <details>
   <summary>Build from source details</summary>
 
-Install dependencies
-
-```
-sudo apt install ros-jazzy-rclpy \
-  ros-jazzy-sensor-msgs \
-  ros-jazzy-std-msgs \
-  ros-jazzy-cv-bridge \
-  ros-jazzy-ament-index-python \
-  ros-jazzy-qrb-ros-tensor-list-msgs \
-  python3-opencv \
-  python3-numpy \
-  ros-jazzy-image-publisher \
-  ros-jazzy-qrb-ros-nn-inference \
-  ros-jazzy-qrb-ros-camera \
-  ros-jazzy-image-publisher
-```
-
 Download the source code and build with colcon
 
 ```bash
-source /opt/ros/jazzy/setup.bash
+source /usr/share/qirp-setup.sh
 git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
 cd ai_vision/sample_face_detection
 colcon build
@@ -248,8 +201,8 @@ Thanks to all our contributors who have helped make this project better!
 ## ❔ FAQs
 
 <details>
-<summary>Why only output text result?</summary><br>
-Post-processed text output is useful for integration into other ROS-based demo samples.
+<summary>Can detect muliplt face?</summary><br>
+No,it can support one face detection only.
 </details>
 
 
