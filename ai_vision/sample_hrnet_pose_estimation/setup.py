@@ -7,7 +7,7 @@ package_name = 'sample_hrnet_pose_estimation'
 
 setup(
     name=package_name,
-    version='0.1.0',
+    version='1.0.0',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',

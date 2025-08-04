@@ -1,10 +1,10 @@
 <div >
-  <h1>Samples HR pose estimation</h1>
+  <h1>Sample Hrnet Pose Estimation</h1>
   <p align="center">
 </div>
 
 
-![](./resource/result_image.jpg)
+![](./resource/result_image.gif)
 
 ---
 
@@ -16,11 +16,13 @@ It processes input images and publishes the following ROS 2 topics:
 - **`/pose_estimation_results`**: Output images with visualized pose keypoints.
 - **`/pose_estimation_points`**: Raw keypoint coordinates in a structured message format.
 
+For model information, please refer to [HRNetPose - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/hrnet_pose?searchTerm=hrnet)
+
 ![](./resource/sample_hrnet_pose_pipeline.png)
 
 | Node Name                                                    | Function                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `hrnet_pose_estimation_node` | Receive the `/image_raw` topic, perform pose detection on it, and publish the `pose_estimation_results` and `pose_estimation_points` topics. |
+| `hrnet_pose_estimation_node` | The node subscribes to /image_raw for image input, performs pose estimation, and publishes the results to /pose_estimation_results and /pose_estimation_points topics. |
 | `image_publisher_node` | image_publisher is a ros jazzy packages, can publish image ros topic with local path. For more detail, Please refer to [image_publisher](https://github.com/ros-perception/image_pipeline). |
 |`qrb_ros_camera`| The QRB ROS Camera is a ROS package to publish the images from Qualcomm CSI and GMSL cameras. For more detail, Please refer to [QRB ROS CAMERA](https://github.com/qualcomm-qrb-ros/qrb_ros_camera).|
 |`qrb_ros_nn_inference`| QRB_ROS_NN_inference is a ROS2 package for performing neural network model, providing AI-based perception for robotics applications. For more detail, Please refer to [QRB ROS NN Inference](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference). |

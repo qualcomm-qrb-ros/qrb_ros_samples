@@ -7,6 +7,10 @@ model_label:
 apt:
   - ros-jazzy-cv-bridge
   - python3-opencv
+  - python3-numpy
+  - ros-jazzy-image-publisher
+  - ros-jazzy-qrb-ros-camera
+  - ros-jazzy-qrb-ros-nn-inference
 
 # python packages
 pip:
