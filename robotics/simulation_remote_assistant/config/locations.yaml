@@ -1,0 +1,13 @@
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.  
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+
+office:
+  position:
+    x: 3.087
+    y: 0.108
+    z: 0.101
+  orientation:
+    x: 0.0
+    y: 0.0
+    z: 0.33
+    w: 0.944
