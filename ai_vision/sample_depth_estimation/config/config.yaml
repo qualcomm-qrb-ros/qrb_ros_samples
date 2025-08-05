@@ -7,7 +7,9 @@ apt:
   - ros-jazzy-cv-bridge
   - ros-jazzy-image-publisher
   - python3-opencv
+  - python3-numpy
+  - ros-jazzy-qrb-ros-camera
+  - ros-jazzy-qrb-ros-nn-inference
 
 # python packages
 pip:
-

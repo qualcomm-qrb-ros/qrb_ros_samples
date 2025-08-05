@@ -11,7 +11,7 @@
 
 ## 👋 Overview
 
-- This sample allows you to input an RGB image named `input_image.jpg` or subscribe to the ROS topic `/cam0_stream1` from `qrb-ros-camera`. It then uses QNN to perform model inference and publishes the result as the `/depth_map` ROS topic containing per-pixel depth values.
+- This sample allows you to input an RGB image named `input_image.jpg` or subscribe to the ROS topic `/cam0_stream1` from `qrb ros camera`. It then uses QNN to perform model inference and publishes the result as the `/depth_map` ROS topic containing per-pixel depth values.
 - The model is sourced from [Depth Anything V2](https://aihub.qualcomm.com/iot/models/depth_anything_v2?searchTerm=depth&domain=Computer+Vision) that a deep convolutional neural network model for depth estimation.
 
 ![image-20250723181610392](./resource/depth_estimation_architecture.jpg)
@@ -20,12 +20,12 @@
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
 | image publisher                                              | Publishes image data to a ROS topic—can be camera frames, local files, or processed outputs. |
-| depth_estimation_node    | The node subscribes to input images for preprocessing, then performs postprocessing on the output tensor published by the qrb ros nn interface node. |
+| sample depth estimation    | The node subscribes to input images for preprocessing, then performs postprocessing on the output tensor published by the qrb ros nn interface node. |
 | [qrb ros nn interface](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results. |
 
 ## 🔎 Table of contents
 
-  * [Used ROS Topics](#-apis)
+  * [Used ROS Topics](#-used-ros-topics)
   * [Supported targets](#-supported-targets)
   * [Installation](#-installation)
   * [Usage](#-usage)
@@ -39,10 +39,10 @@
 
 | ROS Topic                       | Type                                          | Description                    |
 | ------------------------------- | --------------------------------------------- | ------------------------------ |
-| `/image_raw `                   | `< sensor_msgs.msg.Image> `                   | public image info              |
-| `/qrb_inference_input_tensor `  | `< qrb_ros_tensor_list_msgs/msg/TensorList> ` | preprocess message             |
-| `/qrb_inference_output_tensor ` | `< qrb_ros_tensor_list_msgs/msg/TensorList> ` | nn interface result with model |
-| `depth_map ` | `<sensor_msgs.msg.Image> ` | depth map result              |
+| `/image_raw `                   | `<sensor_msgs.msg.Image> `                   | public image info              |
+| `/qrb_inference_input_tensor `  | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | preprocess message             |
+| `/qrb_inference_output_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | nn interface result with model |
+| `/depth_map ` | `<sensor_msgs.msg.Image> ` | depth map result              |
 
 ## 🎯 Supported targets
 
