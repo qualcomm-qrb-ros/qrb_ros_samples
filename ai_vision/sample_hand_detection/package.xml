@@ -20,11 +20,14 @@
   <!-- Execution dependencies -->
   <exec_depend>python3-opencv</exec_depend>
   <exec_depend>rclpy</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
   <exec_depend>ament_index_python</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
   <exec_depend>image_publisher</exec_depend>
-  <exec_depend>usb_cam</exec_depend>
+  <exec_depend>qrb_ros_tensor_list_msgs</exec_depend>
+  <exec_depend>qrb_ros_nn_inference</exec_depend>
+  <exec_depend>qrb_ros_camera</exec_depend>
 
   <!-- Test dependencies -->
   <test_depend>ament_copyright</test_depend>
