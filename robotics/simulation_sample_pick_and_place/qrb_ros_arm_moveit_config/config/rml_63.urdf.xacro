@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+SPDX-License-Identifier: BSD-3-Clause-Clear -->
+<!-- <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="$(arg robot_name)"> -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rml_63">
+  <xacro:arg name="topic_ns" default=""/>
+  <!-- Import description urdf file -->
+  <xacro:include filename="$(find qrb_ros_sim_description)/urdf/rml_63_gripper_arm/rml_63.urdf" />
+  <xacro:include filename="$(find qrb_ros_sim_description)/urdf/rml_63_gripper_arm/gripper.urdf" />
+  <xacro:include filename="$(find qrb_ros_sim_description)/urdf/orbbec_cameras/gemini335_336.urdf.xacro" />
+
+  <xacro:rml_63 ns=""/>
+  <xacro:rml_gripper ns=""/>
+  <xacro:gemini_335_336 ns=""/>
+
+  <!-- Arm RGB camera -->
+  <xacro:arg name="enable_rgb_camera" default="false"/>
+  <xacro:arg name="rgb_camera_config" default=""/>
+  <xacro:if value="${'$(arg enable_rgb_camera)' if '$(arg rgb_camera_config)' != '' else 'false'}">
+    <xacro:include filename="$(find qrb_ros_sim_gazebo)/urdf/xacro/gazebo_rgb_camera.xacro" />
+    <xacro:gazebo_camera ns="" reference_link="camera_color_frame"
+      camera_params_yaml_path="$(arg rgb_camera_config)"/>
+  </xacro:if>
+  <!-- Arm Depth camera -->
+  <xacro:arg name="enable_depth_camera" default="false"/>
+  <xacro:arg name="depth_camera_config" default=""/>
+  <xacro:if value="${'$(arg enable_depth_camera)' if '$(arg depth_camera_config)' != '' else 'false'}">
+    <xacro:include filename="$(find qrb_ros_sim_gazebo)/urdf/xacro/gazebo_depth_camera.xacro" />
+    <xacro:gazebo_depth_camera ns="" reference_link="camera_depth_frame"
+      depth_camera_params_yaml_path="$(arg depth_camera_config)"/>
+  </xacro:if>
+
+  <joint name="arm_camera_joint" type="fixed">
+    <origin xyz="0.080 0 0.015" rpy="3.1415926 -1.570796 0"/>
+    <parent link="link6"/>
+    <child link="camera_link"/>
+  </joint>
+
+  <link name="world"/>
+  <joint name="arm_virtual_joint" type="fixed">
+    <parent link="world"/>
+    <child link="arm_base_link"/>
+  </joint>
+
+  <!-- ros2_control -->
+  <xacro:include filename="$(find qrb_ros_sim_gazebo)/urdf/xacro/rml_63_gripper_ros2_control.xacro" />
+  <xacro:rml_63_gripper_ros2_control ns="" topic_ns="$(arg topic_ns)"
+      initial_positions_yaml_path="$(find qrb_ros_sim_gazebo)/config/params/initial_positions.yaml"
+      ros2_controllers_yaml_path="$(find qrb_ros_sim_gazebo)/config/params/rml_63_ros2_controllers.yaml"/>
+</robot>
+
