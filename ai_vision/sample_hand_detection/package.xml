@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>sample_hand_detection</name>
-  <version>0.2.0</version>
+  <version>1.0.0</version>
   <description>sample_hand_detection is a Python-based hand recognition ROS node that uses QNN for model inference.</description>
   <maintainer email="quic_dapeyuan@quicinc.com">root</maintainer>
   <license>BSD 3-Clause License</license>
