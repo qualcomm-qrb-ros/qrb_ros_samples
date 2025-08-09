@@ -19,6 +19,7 @@ setup(
         ('lib/' + package_name, [package_name + "/visualization.py"]),
         ('share/' + package_name, ['launch/' + "/launch_with_image_publisher.py"]),
         ('share/' + package_name, ['launch/' + "/launch_with_orbbec_camera.py"]),
+        ('share/' + package_name, ['launch/' + "/launch_with_qrb_ros_camera.py"]),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

@@ -6,6 +6,14 @@ import numpy as np
 import subprocess
 import os
 
+def nv12_to_bgr(nv12_image, width, height):
+    """
+    Convert NV12 image to BGR format.
+    """
+    yuv = nv12_image.reshape((height * 3 // 2, width))
+    bgr_data = cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR_NV12)
+    return bgr_data
+
 def resize_pad(img):
     """ resize and pad images to be input to the detectors
 

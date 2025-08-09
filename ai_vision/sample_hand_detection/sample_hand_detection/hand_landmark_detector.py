@@ -4,7 +4,7 @@
 import numpy as np
 import cv2
 import os
-from hand_palm_detector import resize_pad, denormalize_detections, BlazeDetector, BlazeLandmark
+from hand_palm_detector import nv12_to_bgr, resize_pad, denormalize_detections, BlazeDetector, BlazeLandmark
 from visualization import draw_detections, draw_landmarks, draw_roi, HAND_CONNECTIONS
 import rclpy
 from rclpy.node import Node
@@ -79,7 +79,15 @@ class HandLandmarkDetector(Node):
         self.get_logger().info("Received image on image_raw topic")
         try:
             # Convert the ROS Image message to OpenCV format and process it
-            self.latest_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+            if msg.encoding == "nv12":  # Check the encoding of the image
+                nv12_data = np.frombuffer(msg.data, dtype=np.uint8)
+                self.latest_image = nv12_to_bgr(nv12_data, msg.width, msg.height)  # Call the function to convert from NV12 to BGR
+            elif msg.encoding == "bgr8":
+                self.latest_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+            else:
+                self.get_logger().error(f"Unsupported image encoding: {msg.encoding}")
+                return
+
             img1, img2, scale, pad = resize_pad(self.latest_image)
             img1 = self.palm_detector.palm_detector_qnn_preprocess(img1)
 
