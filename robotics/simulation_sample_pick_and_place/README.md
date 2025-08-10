@@ -136,16 +136,6 @@ Thanks to all our contributors who have helped make this project better!
 
 ## ❔ FAQs
 
-<details>
-<summary>How to get origin output of the QNN inference node?</summary><br>
-Comment the following code in depth_estimation_node.py to get the origin output of the QNN inference node.
-
-```python
-# Normalize to [0,255]
-normalized = cv2.normalize(output_image, None, 0, 255, cv2.NORM_MINMAX)
-colored = cv2.applyColorMap(normalized.astype(np.uint8), cv2.COLORMAP_INFERNO)
-```
-</details>
 
 
 ## 📜 License
