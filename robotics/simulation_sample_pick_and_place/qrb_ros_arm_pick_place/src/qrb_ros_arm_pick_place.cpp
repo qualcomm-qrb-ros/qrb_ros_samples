@@ -128,7 +128,7 @@ int main(int argc, char * argv[])
     return 1;
   }
  
-  // Step 3: Move to target joint angles (from the image)
+  // Step 3: Move to target joint angles
   RCLCPP_INFO(logger, "Step 3: Moving to target joint angles...");
   
   // Get joint names
@@ -138,7 +138,7 @@ int main(int argc, char * argv[])
     RCLCPP_INFO(logger, "  %s", joint_name.c_str());
   }
  
-  // Set target joint angles (from the image)
+  // Set target joint angles
   std::map<std::string, double> target_joint_values;
   target_joint_values["joint1"] = 0.0;    // 0°
   target_joint_values["joint2"] = -46.0;  // -46°
@@ -214,17 +214,17 @@ int main(int argc, char * argv[])
     return 1;
   }
 
-  // Step 5: Move to new target joint angles (from the new image)
+  // Step 5: Move to new target joint angles
   RCLCPP_INFO(logger, "Step 5: Moving to new target joint angles...");
 
-  // Set new target joint angles (from the new image)
+  // Set new target joint angles
   std::map<std::string, double> raise_joint_values;
-  raise_joint_values["joint1"] = -22.0;  // -31°
-  raise_joint_values["joint2"] = -37.0;  // -42°
-  raise_joint_values["joint3"] = -48.0;  // -59°
-  raise_joint_values["joint4"] = 0.0;    // 0°
-  raise_joint_values["joint5"] = 0.0;   // -2°
-  raise_joint_values["joint6"] = 0.0;    // 0°
+  raise_joint_values["joint1"] = -22.0; 
+  raise_joint_values["joint2"] = -37.0; 
+  raise_joint_values["joint3"] = -48.0; 
+  raise_joint_values["joint4"] = 0.0;  
+  raise_joint_values["joint5"] = 0.0; 
+  raise_joint_values["joint6"] = 0.0; 
 
   // Convert degrees to radians
   for (auto& [joint_name, angle_deg] : raise_joint_values) {
@@ -252,17 +252,17 @@ int main(int argc, char * argv[])
     return 1;
   }
   
-  // Step 6: Move to new target joint angles (from the new image)
+  // Step 6: Move to new target joint angles
   RCLCPP_INFO(logger, "Step 6: Moving to new target joint angles...");
   
-  // Set new target joint angles (from the new image)
+  // Set new target joint angles
   std::map<std::string, double> new_target_joint_values;
-  new_target_joint_values["joint1"] = -31.0;  // -31°
-  new_target_joint_values["joint2"] = -42.0;  // -42°
-  new_target_joint_values["joint3"] = -59.0;  // -59°
-  new_target_joint_values["joint4"] = 0.0;    // 0°
-  new_target_joint_values["joint5"] = 0.0;   // -2°
-  new_target_joint_values["joint6"] = 0.0;    // 0°
+  new_target_joint_values["joint1"] = -31.0; 
+  new_target_joint_values["joint2"] = -42.0; 
+  new_target_joint_values["joint3"] = -59.0; 
+  new_target_joint_values["joint4"] = 0.0; 
+  new_target_joint_values["joint5"] = 0.0;  
+  new_target_joint_values["joint6"] = 0.0; 
  
   // Convert degrees to radians
   for (auto& [joint_name, angle_deg] : new_target_joint_values) {
@@ -332,16 +332,16 @@ int main(int argc, char * argv[])
   }
  
  // Step 8: Move to new target joint angles (from the new image)
-  RCLCPP_INFO(logger, "Step 5: Moving to new target joint angles...");
+  RCLCPP_INFO(logger, "Step 8: Moving to new target joint angles...");
 
   // Set new target joint angles (from the new image)
   std::map<std::string, double> re_raise_joint_values;
-  re_raise_joint_values["joint1"] = -22.0;  // -31°
-  re_raise_joint_values["joint2"] = -35.0;  // -42°
-  re_raise_joint_values["joint3"] = -52.0;  // -59°
-  re_raise_joint_values["joint4"] = 0.0;    // 0°
-  re_raise_joint_values["joint5"] = 0.0;   // -2°
-  re_raise_joint_values["joint6"] = 0.0;    // 0°
+  re_raise_joint_values["joint1"] = -22.0; 
+  re_raise_joint_values["joint2"] = -35.0; 
+  re_raise_joint_values["joint3"] = -52.0; 
+  re_raise_joint_values["joint4"] = 0.0;
+  re_raise_joint_values["joint5"] = 0.0; 
+  re_raise_joint_values["joint6"] = 0.0;  
 
   // Convert degrees to radians
   for (auto& [joint_name, angle_deg] : re_raise_joint_values) {
@@ -370,7 +370,7 @@ int main(int argc, char * argv[])
   }
  
   // Step 9: Return to ready state
-  RCLCPP_INFO(logger, "Step 7: Returning to ready state...");
+  RCLCPP_INFO(logger, "Step 9: Returning to ready state...");
   arm_group_interface.setNamedTarget("ready");
   
   auto const [return_ready_success, return_ready_plan] = [&arm_group_interface] {

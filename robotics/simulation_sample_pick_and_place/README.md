@@ -64,7 +64,7 @@
     <td>Qualcomm Dragonwing™ RB3 Gen2</td>
     <td>
       <a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/rb3-series/rb3-gen2">
-        <img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-RB3-Gen2?$QC_Responsive$&fmt=png-alpha" width="160">
+        <img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3-gen2-carousel?fmt=webp-alpha&qlt=85" width="160">
       </a>
     </td>
   </tr>
@@ -93,7 +93,7 @@ ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper.launch.py
 Click play button in Gazebo after rendered the world environment, and then use the following command to launch Rviz. 
 
 ```bash
-ros2 launch qrb_ros_arm_moveit_config demo.launch.py &
+ros2 launch qrb_ros_arm_moveit_config demo.launch.py
 ```
 Make sure that after you started Gazebo and Rviz in the host Docker, you can select arm predefined state `ready` and `home` in Rviz to start the arm motion.
 
