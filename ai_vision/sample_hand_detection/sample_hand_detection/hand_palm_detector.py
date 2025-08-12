@@ -5,10 +5,14 @@ import cv2
 import numpy as np
 import subprocess
 import os
-from ament_index_python.packages import get_package_share_directory
-# import rospy
 
-package_share_directory = get_package_share_directory("sample_hand_detection")
+def nv12_to_bgr(nv12_image, width, height):
+    """
+    Convert NV12 image to BGR format.
+    """
+    yuv = nv12_image.reshape((height * 3 // 2, width))
+    bgr_data = cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR_NV12)
+    return bgr_data
 
 def resize_pad(img):
     """ resize and pad images to be input to the detectors
@@ -44,9 +48,12 @@ def resize_pad(img):
     padw1 = padw//2
     padw2 = padw//2 + padw%2
     img1 = cv2.resize(img, (w1,h1))
-    img1 = np.pad(img1, ((padh1, padh2), (padw1, padw2), (0,0)))
+
+    img1 = np.pad(img1, ((padh1, padh2), (padw1, padw2), (0,0)), mode='constant', constant_values=0)
+
     pad = (int(padh1 * scale), int(padw1 * scale))
     img2 = cv2.resize(img1, (128,128))
+
     return img1, img2, scale, pad
 
 
@@ -68,6 +75,10 @@ def denormalize_detections(detections, scale, pad):
 
     Based on https://github.com/zmurez/MediaPipePyTorch/blob/master/blazebase.py
     """
+
+    if isinstance(detections, list):
+        detections = detections[0]
+
     detections[:, 0] = detections[:, 0] * scale * 256 - pad[0]
     detections[:, 1] = detections[:, 1] * scale * 256 - pad[1]
     detections[:, 2] = detections[:, 2] * scale * 256 - pad[0]
@@ -112,7 +123,7 @@ def jaccard(box_a, box_b):
 
 def overlap_similarity(box, other_boxes):
     """Computes the IOU between a bounding box and a set of other boxes.
-    
+
     Based on https://github.com/zmurez/MediaPipePyTorch/blob/master/blazebase.py
     """
     return jaccard(np.expand_dims(box, axis=0), other_boxes)
@@ -123,7 +134,7 @@ class BlazeDetector():
     Based on code from https://github.com/tkat0/PyTorch_BlazeFace/ and
     https://github.com/hollance/BlazeFace-PyTorch and
     https://github.com/google/mediapipe/
-        """
+    """
     def __init__(self):
         # These are the settings from the MediaPipe example graph
         # mediapipe/graphs/hand_tracking/subgraphs/hand_detection_gpu.pbtxt
@@ -161,86 +172,58 @@ class BlazeDetector():
         assert self.anchors.shape[0] == self.num_anchors, "Number of anchors does not match"
         assert self.anchors.shape[1] == 4, "Each anchor must have 4 coordinates"
 
-    def qnn_preprocess(self, image):
-        """Converts the image pixels to the range [-1, 1]."""
-        image.astype(np.float32).tofile(os.path.join(package_share_directory,"image_detector.raw"))
-    
-    def qnn_postprocess(self):
-        output0_path = os.path.join(package_share_directory,"output_MediaPipeHandDetector/Result_0/output_0.raw")
-        output0_raw = open(output0_path, 'rb')
-        out0 = np.fromfile(output0_raw, dtype=np.float32)
-        out0 = out0.reshape((1, 2944, 18))
-        output1_path = os.path.join(package_share_directory,"output_MediaPipeHandDetector/Result_0/output_1.raw")
-        output1_raw = open(output1_path, 'rb')
-        out1 = np.fromfile(output1_raw, dtype=np.float32)
-        out1 = out1.reshape((1, 2944, 1))
+    def palm_detector_qnn_preprocess(self, img):
+        """Preprocesses the image for the palm detector.
+        Arguments:
+            img: a NumPy array of shape (H, W, 3). The image's height and width should be
+                256 pixels.
+        Returns:
+            A NumPy array of shape (1, 256, 256, 3) with the image pixels normalized to the range [-1, 1].
+        """
+        if isinstance(img, np.ndarray):
+            img_batch = np.expand_dims(img, axis=0)
+        return self.predict_on_image_np(img_batch)[0]
 
-        return out0, out1
-
-    def _preprocess_np(self, x):
-        """Converts the image pixels to the range [-1, 1]."""
-        return x.astype(np.float32) / 255.0
-
-    def predict_on_image_np(self, img, model_file_path):
+    def predict_on_image_np(self, image):
         """Makes a prediction on a single image.
 
         Arguments:
-            img: a NumPy array of shape (H, W, 3). The image's height and width should be 
-                128 pixels.
+            img: a NumPy array of shape (H, W, 3). The image's height and width should be
+                256 pixels.
 
         Returns:
-            A numpy array with face detections.
+            A numpy array with hand detections.
         """
-        if isinstance(img, np.ndarray):
-            img = np.transpose(img, axes=[2, 0, 1])
-            img_batch = np.expand_dims(img, axis=0)
-        return self.predict_on_batch_np(img_batch, model_file_path)[0]
+        assert image.shape[3] == 3
+        assert image.shape[2] == self.y_scale
+        assert image.shape[1] == self.x_scale
 
-    def predict_on_batch_np(self, x, model_file_path):
-        """Makes a prediction on a batch of images.
+        # Converts the image pixels to the range [-1, 1].
+        image = image.astype(np.float32) / 255.0
 
-        Arguments:
-            x: a NumPy array of shape (b, H, W, 3) or a PyTorch tensor of
-               shape (b, 3, H, W). The height and width should be 128 pixels.
+        return image
 
-        Returns:
-            A list containing a tensor of face detections for each image in 
-            the batch. If no faces are found for an image, returns a tensor
-            of shape (0, 17).
+    def palm_tensor_to_data(self, msg):
+        box_coords_data = np.array(msg.tensor_list[1].data)
+        box_coords_data = box_coords_data.view(np.float32)
+        box_coords_data = box_coords_data.reshape((1, 2944, 18))
 
-        Each face detection is a PyTorch tensor consisting of 17 numbers:
-            - ymin, xmin, ymax, xmax
-            - x,y-coordinates for the 6 keypoints
-            - confidence score
-        """
-        assert x.shape[1] == 3
-        assert x.shape[2] == self.y_scale
-        assert x.shape[3] == self.x_scale
+        box_scores_data = np.array(msg.tensor_list[0].data)
+        box_scores_data = box_scores_data.view(np.float32)
+        box_scores_data = box_scores_data.reshape((1, 2944, 1))
 
-        # 1. Preprocess the images into tensors:
-        x = self._preprocess_np(x)
-        self.qnn_preprocess(x)
+        return box_coords_data, box_scores_data
 
-        # 2. Run the neural network:
-        input_file_path = os.path.join(package_share_directory,"image_detector.txt")
-        output_file_path = os.path.join(package_share_directory,"output_MediaPipeHandDetector")
-        with open(input_file_path, 'w') as file:
-            file.write(os.path.join(package_share_directory,"image_detector.raw"))
-        cmd = f"qtld-net-run --model {model_file_path} --input {input_file_path} --output {output_file_path}"
-        try:
-            subprocess.run(cmd, stdout=subprocess.DEVNULL, check=True, shell=True)
-        except subprocess.CalledProcessError as e:
-            # rospy.logdebug("Command execution failed:", e)
-            print("Command execution failed:", e)
+    def palm_detector_qnn_postprocess(self, palm_tensor_msg):
+        # 1. Postprocess the raw predictions:
+        out1, out2 = self.palm_tensor_to_data(palm_tensor_msg)
 
-
-        # 3. Postprocess the raw predictions:
-        out1, out2 = self.qnn_postprocess()
+        out1= np.expand_dims(out1[0], axis=0)
+        out2= np.expand_dims(out2[0], axis=0)
 
         detections = self._tensors_to_detections(out1, out2, self.anchors)
 
-        # return detections
-        # 4. Non-maximum suppression to remove overlapping detections:
+        # 2. Non-maximum suppression to remove overlapping detections:
         filtered_detections = []
         for i in range(len(detections)):
             faces = self._weighted_non_max_suppression(detections[i])
@@ -442,36 +425,18 @@ class BlazeLandmark():
         # size of ROIs used for input
         self.resolution = 256
 
-    def qnn_preprocess(self, image):
-        """Converts the image pixels to the range [-1, 1]."""
-        image.astype(np.float32).tofile(os.path.join(package_share_directory,"image_landmark.raw"))
-    
-    def qnn_postprocess(self):
-        output0_path = os.path.join(package_share_directory,"output_MediaPipeHandLandmarkDetector/Result_0/output_0.raw")
-        output0_raw = open(output0_path, 'rb')
-        out0 = np.fromfile(output0_raw, dtype=np.float32)
-        output1_path = os.path.join(package_share_directory,"output_MediaPipeHandLandmarkDetector/Result_0/output_1.raw")
-        output1_raw = open(output1_path, 'rb')
-        out1 = np.fromfile(output1_raw, dtype=np.float32)
-        output2_path = os.path.join(package_share_directory,"output_MediaPipeHandLandmarkDetector/Result_0/output_2.raw")
-        output2_raw = open(output2_path, 'rb')
-        out2 = np.fromfile(output2_raw, dtype=np.float32)
-        out2 = out2.reshape((1, 21, 3))
+    def landmark_tensor_to_data(self, msg):
+        scores_data = np.array(msg.tensor_list[0].data)
+        scores_data = scores_data.view(np.float32)
 
-        return out0, out1, out2
+        lr_data = np.array(msg.tensor_list[1].data)
+        lr_data = lr_data.view(np.float32)
 
-    def run_network(self, model_file_path):
-        input_file_path = os.path.join(package_share_directory,"image_landmark.txt")
-        output_file_path = os.path.join(package_share_directory,"output_MediaPipeHandLandmarkDetector")
-        with open(input_file_path, 'w') as file:
-            file.write(os.path.join(package_share_directory,"image_landmark.raw"))
-        cmd = f"qtld-net-run --model {model_file_path} --input {input_file_path} --output {output_file_path}"
-        try:
-            subprocess.run(cmd, stdout=subprocess.DEVNULL, check=True, shell=True)
-            return True
-        except subprocess.CalledProcessError as e:
-            # rospy.logdebug("Command execution failed:", e)
-            return False
+        landmarks_data = np.array(msg.tensor_list[2].data)
+        landmarks_data = landmarks_data.view(np.float32)
+        landmarks_data = landmarks_data.reshape((1, 21, 3))
+
+        return scores_data, lr_data, landmarks_data
 
     def extract_roi(self, frame, xc, yc, theta, scale):
         """Extract region of interest from the frame."""
@@ -506,8 +471,7 @@ class BlazeLandmark():
             affine = cv2.invertAffineTransform(M).astype('float32')
             affines.append(affine)
         if imgs:
-            imgs = np.stack(imgs)
-            imgs = np.transpose(imgs, axes=[0, 3, 1, 2]) / 255.0
+            imgs = np.stack(imgs) / 255.0
             affines = np.stack(affines)
         else:
             imgs = np.zeros((0, 3, res, res), dtype=np.float32)
