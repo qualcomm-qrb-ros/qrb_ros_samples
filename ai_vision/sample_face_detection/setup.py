@@ -9,13 +9,13 @@ package_name = 'sample_face_detection'
 
 setup(
     name=package_name,
-    version='0.1.0',
+    version='1.0.1',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
         ['resource/' + package_name]),
         (os.path.join('share', package_name), ['package.xml']),
-        (os.path.join('share', package_name, 'resource'), glob(os.path.join('resource', '*.jpg'))),
+        (os.path.join('share', package_name), glob(os.path.join('resource', 'face_image.jpg'))),
         (os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*.py'))),
         (os.path.join('lib', package_name, package_name), glob(os.path.join(package_name, '*.py'))),
     ],
