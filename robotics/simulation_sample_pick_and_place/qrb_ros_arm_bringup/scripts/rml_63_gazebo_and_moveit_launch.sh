@@ -19,5 +19,6 @@ ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper.launch.py world_model:=pand
 sleep 25
 ros2 launch qrb_ros_arm_moveit_config demo.launch.py &
 
+# ros2 run qrb_ros_arm_pick_place  qrb_ros_arm_pick_place
 # Keep the script running until Ctrl+C
 wait

@@ -1,3 +1,6 @@
+# Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+
 from moveit_configs_utils import MoveItConfigsBuilder
 from moveit_configs_utils.launches import generate_moveit_rviz_launch
 
