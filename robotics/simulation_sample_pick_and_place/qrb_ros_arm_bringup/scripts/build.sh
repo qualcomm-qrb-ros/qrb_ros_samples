@@ -23,4 +23,4 @@ done
 cd -
 echo "Info: build.sh finished."
 # Execute colcon build
-colcon build
+colcon build --merge-install
