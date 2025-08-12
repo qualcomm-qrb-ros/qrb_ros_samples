@@ -1,0 +1,6 @@
+# IMU parameters
+sensor_name: "imu"
+update_rate: 50
+always_on: 1
+visualize: "true"
+topic: "imu"

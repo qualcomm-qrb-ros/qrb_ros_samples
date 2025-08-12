@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="gazebo_depth_camera" params="ns:='' reference_link depth_camera_params_yaml_path">
+    <xacro:property name="namespace" value="${ns + '/' if ns != '' else ''}" />
+    <xacro:property name="depth_camera_params" value="${xacro.load_yaml(depth_camera_params_yaml_path)}"/>
+    <xacro:property name="depth_camera_sub" value="${depth_camera_params['camera']}"/>
+    <xacro:property name="depth_camera_sub_image" value="${depth_camera_sub['image']}"/>
+    <xacro:property name="depth_camera_sub_clip" value="${depth_camera_sub['depth_camera']['clip']}"/>
+    <xacro:property name="depth_camera_sub_noise" value="${depth_camera_sub['noise']}"/>
+
+    <gazebo reference="${reference_link}">
+    <sensor name="${namespace}${depth_camera_params['sensor_name']}" type="depth_camera">
+      <update_rate>${depth_camera_params['update_rate']}</update_rate>
+      <camera>
+        <optical_frame_id>${reference_link}</optical_frame_id>
+        <horizontal_fov>${depth_camera_sub['horizontal_fov']}</horizontal_fov>
+        <image>
+          <width>${depth_camera_sub_image['width']}</width>
+          <height>${depth_camera_sub_image['height']}</height>
+        </image>
+        <depth_camera>
+          <clip>
+            <near>${depth_camera_sub_clip['near']}</near>
+            <far>${depth_camera_sub_clip['far']}</far>
+          </clip>
+        </depth_camera>
+        <noise>
+          <type>${depth_camera_sub_noise['type']}</type>
+          <mean>${depth_camera_sub_noise['mean']}</mean>
+          <stddev>${depth_camera_sub_noise['stddev']}</stddev>
+        </noise>
+      </camera>
+      <always_on>${depth_camera_params['always_on']}</always_on>
+      <visualize>${depth_camera_params['visualize']}</visualize>
+      <topic>${namespace}${depth_camera_params['topic']}</topic>
+    </sensor>
+  </gazebo>
+  </xacro:macro>
+</robot>

@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+SPDX-License-Identifier: BSD-3-Clause-Clear -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="$(arg robot_name)">
+  <xacro:arg name="topic_ns" default=""/>
+  <!-- Robot base -->
+  <xacro:include filename="$(find qrb_ros_sim_description)/urdf/qrb_robot_base/qrb_robot_base.urdf" />
+  <xacro:include filename="$(find qrb_ros_sim_description)/urdf/rml_63_gripper_arm/rml_63.urdf" />
+  <xacro:include filename="$(find qrb_ros_sim_description)/urdf/rml_63_gripper_arm/gripper.urdf" />
+  <xacro:include filename="$(find qrb_ros_sim_description)/urdf/orbbec_cameras/gemini335_336.urdf.xacro" />
+
+  <xacro:qrb_robot_base ns=""/>
+  <xacro:rml_63 ns=""/>
+  <xacro:rml_gripper ns=""/>
+  <xacro:gemini_335_336 ns=""/>
+
+  <!-- Gazebo Sensors -->
+  <!-- Laser -->
+  <xacro:arg name="enable_laser" default="false"/>
+  <xacro:arg name="laser_config" default=""/>
+  <xacro:if value="${'$(arg enable_laser)' if '$(arg laser_config)' != '' else 'false'}">
+    <xacro:include filename="$(find qrb_ros_sim_gazebo)/urdf/xacro/gazebo_lidar.xacro" />
+    <xacro:gazebo_lidar ns="" reference_link="laser"
+      laser_params_yaml_path="$(arg laser_config)"/>
+  </xacro:if>
+  <!-- IMU -->
+  <xacro:arg name="enable_imu" default="false"/>
+  <xacro:arg name="imu_config" default=""/>
+  <xacro:if value="${'$(arg enable_imu)' if '$(arg imu_config)' != '' else 'false'}">
+    <xacro:include filename="$(find qrb_ros_sim_gazebo)/urdf/xacro/gazebo_imu.xacro" />
+    <xacro:gazebo_imu ns="" reference_link="base_imu_link"
+      imu_params_yaml_path="$(arg imu_config)"/>
+  </xacro:if>
+  <!-- Arm RGB camera -->
+  <xacro:arg name="enable_rgb_camera" default="false"/>
+  <xacro:arg name="rgb_camera_config" default=""/>
+  <xacro:if value="${'$(arg enable_rgb_camera)' if '$(arg rgb_camera_config)' != '' else 'false'}">
+    <xacro:include filename="$(find qrb_ros_sim_gazebo)/urdf/xacro/gazebo_rgb_camera.xacro" />
+    <xacro:gazebo_camera ns="" reference_link="camera_color_frame"
+      camera_params_yaml_path="$(arg rgb_camera_config)"/>
+  </xacro:if>
+  <!-- Arm Depth camera -->
+  <xacro:arg name="enable_depth_camera" default="false"/>
+  <xacro:arg name="depth_camera_config" default=""/>
+  <xacro:if value="${'$(arg enable_depth_camera)' if '$(arg depth_camera_config)' != '' else 'false'}">
+    <xacro:include filename="$(find qrb_ros_sim_gazebo)/urdf/xacro/gazebo_depth_camera.xacro" />
+    <xacro:gazebo_depth_camera ns="" reference_link="camera_depth_frame"
+      depth_camera_params_yaml_path="$(arg depth_camera_config)"/>
+  </xacro:if>
+
+  <!-- Gazebo Plugins -->
+  <!-- gz-sim-diff-drive-system controller -->
+  <xacro:property name="separation_multiplier" value="1.15"/>
+  <xacro:property name="radius_multiplier" value="1.0"/>
+  <xacro:property name="odom_update_rate" value="30"/>
+  <xacro:include filename="$(find qrb_ros_sim_gazebo)/urdf/xacro/gazebo_qrb_robot_base_diff_drive.xacro" />
+  <xacro:qrb_robot_base_diff_drive ns="" wheel_separation="${wheel_separation}" separation_multiplier="${separation_multiplier}"
+      wheel_radius="${wheel_radius}" radius_multiplier="${radius_multiplier}" update_rate="${odom_update_rate}"/>
+  <!-- gz-sim-joint-state-publisher-system controller -->
+  <xacro:include filename="$(find qrb_ros_sim_gazebo)/urdf/xacro/gazebo_qrb_robot_base_joint_state_pub.xacro" />
+  <xacro:qrb_robot_base_joint_state_pub ns=""/>
+
+  <joint name="arm_to_base_joint" type="fixed">
+    <origin xyz="0 0 ${box_height/2}" rpy="0 0 ${pi}"/>
+    <parent link="base_link"/>
+    <child link="arm_base_link"/>
+  </joint>
+
+  <joint name="arm_camera_joint" type="fixed">
+    <origin xyz="0.080 0 0.015" rpy="3.1415926 -1.570796 0"/>
+    <parent link="link6"/>
+    <child link="camera_link"/>
+  </joint>
+
+  <!-- ros2_control -->
+  <xacro:include filename="$(find qrb_ros_sim_gazebo)/urdf/xacro/rml_63_gripper_ros2_control.xacro" />
+  <xacro:rml_63_gripper_ros2_control ns="" topic_ns="$(arg topic_ns)"
+      initial_positions_yaml_path="$(find qrb_ros_sim_gazebo)/config/params/initial_positions.yaml"
+      ros2_controllers_yaml_path="$(find qrb_ros_sim_gazebo)/config/params/rml_63_ros2_controllers.yaml"/>
+</robot>
+

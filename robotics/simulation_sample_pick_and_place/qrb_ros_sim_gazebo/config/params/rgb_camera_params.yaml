@@ -1,0 +1,17 @@
+# rgb camera parameters
+sensor_name: "rgb_camera"
+update_rate: 15
+camera:
+  horizontal_fov: 1.640609
+  camera_info_topic: "camera/color/camera_info"
+  image:
+    width: 1280
+    height: 720
+    format: "R8G8B8"
+  clip:
+    near: 0.02
+    far: 100
+always_on: 1
+visualize: "true"
+enable_metrics: "true"
+topic: "camera/color/image_raw"

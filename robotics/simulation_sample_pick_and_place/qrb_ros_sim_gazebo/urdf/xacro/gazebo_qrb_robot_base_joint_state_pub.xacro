@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="qrb_robot_base_joint_state_pub" params="ns:='' ">
+  <xacro:property name="namespace" value="${ns + '/' if ns != '' else ''}" />
+    <gazebo>
+      <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+        <topic>joint_states</topic>
+        <joint_name>${namespace}wheel_right_joint</joint_name>
+        <joint_name>${namespace}wheel_left_joint</joint_name>
+        <joint_name>${namespace}caster_wheel_joint1</joint_name>
+        <joint_name>${namespace}caster_wheel_joint2</joint_name>
+        <joint_name>${namespace}caster_wheel_joint3</joint_name>
+        <joint_name>${namespace}caster_wheel_joint4</joint_name>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+</robot>

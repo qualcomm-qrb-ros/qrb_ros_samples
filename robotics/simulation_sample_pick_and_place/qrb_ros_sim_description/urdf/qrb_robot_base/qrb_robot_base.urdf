@@ -1,0 +1,279 @@
+<?xml version="1.0"?>
+<!--
+# Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+-->
+<!-- <xacro:macro name="qrb_robot_base_mini" params="ns "> -->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="qrb_robot_base" params="ns:=''">
+    <xacro:property name="namespace" value="${ns + '/' if ns != '' else ''}" />
+    <!-- Inertia matrices -->
+    <xacro:include filename="$(find qrb_ros_sim_description)/urdf/qrb_robot_base/inertia_macros.xacro" />
+    <!-- Material matrices -->
+    <xacro:include filename="$(find qrb_ros_sim_description)/urdf/qrb_robot_base/material_macros.xacro" />
+
+    <xacro:property name="box_length" value="0.62" />
+    <xacro:property name="box_width" value="0.5" />
+    <xacro:property name="box_height" value="0.285" scope="parent" />
+    <xacro:property name="chassis_height" value="0.0364" />
+    <xacro:property name="caster_wheel_radius" value="0.03"/>
+    <xacro:property name="wheel_radius" value="0.0655" scope="parent" />
+    <xacro:property name="wheel_space" value="0.3302" />
+    <xacro:property name="wheel_thickness" value="0.05" />
+    <xacro:property name="wheel_separation" value="0.33" scope="parent" />
+    <xacro:property name="laser_radius" value="0.038" />
+    <xacro:property name="laser_thickness" value="0.041" />
+    <xacro:property name="laser_heigth" value="0.176" />
+
+    <xacro:property name="base_link_mass" value="38"/>
+    <xacro:property name="laser_link_mass" value="0.3"/>
+    <xacro:property name="wheel_link_mass" value="1"/>
+    <xacro:property name="caster_wheel_link_mass" value="0.3"/>
+
+    <link name="${namespace}base_footprint"/>
+
+    <link name="${namespace}base_link">
+      <visual>
+        <origin rpy="0 0 ${pi}" xyz="0 0 -${box_height/2}"/>
+        <geometry>
+          <mesh filename="file://$(find qrb_ros_sim_description)/meshes/qrb_robot_base/wheelTec_AMR.STL" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="white"/>
+      </visual>
+      <inertial name="base_link_inertial">
+        <mass value="${base_link_mass}"/>
+        <xacro:box_inertia_calculator mass="${base_link_mass}" length="${box_length}" width="${box_width}" height="${box_height}" />
+      </inertial>
+      <collision name="base_link_collision">
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <box size="${box_length} ${box_width} ${box_height}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${namespace}base_link_joint" type="fixed">
+      <parent link="${namespace}base_footprint"/>
+      <child link="${namespace}base_link"/>
+      <origin xyz="0 0 ${chassis_height+box_height/2}"/>
+    </joint>
+
+    <link name="${namespace}laser">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 ${pi}"/>
+        <geometry>
+          <cylinder radius="${laser_radius}" length="${laser_thickness}" />
+        </geometry>
+        <material name="transparent"/>
+      </visual>
+      <inertial>
+          <mass value="${laser_link_mass}"/>
+          <xacro:cylinder_inertia_calculator mass="${laser_link_mass}" radius="${laser_radius}" length="${laser_thickness}"/>
+      </inertial>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 ${pi}"/>
+        <geometry>
+          <cylinder radius="${laser_radius}" length="${laser_thickness}" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="${namespace}laser_joint" type="fixed">
+      <parent link="${namespace}base_link"/>
+      <child link="${namespace}laser"/>
+      <origin xyz="${box_length/2-laser_radius-0.01} 0 ${laser_heigth-chassis_height-(box_height/2)}" rpy="0 0 0" />
+    </joint>
+
+    <!-- Wheel_left Link -->
+    <link name="${namespace}wheel_left">
+      <inertial name="wheel_left_inertial">
+        <mass value="${wheel_link_mass}"/>
+        <xacro:cylinder_inertia_calculator mass="${wheel_link_mass}" radius="${wheel_radius}" length="${wheel_thickness}"/>
+      </inertial>
+      <collision name="wheel_left_collision">
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
+        </geometry>
+      </collision>
+      <visual name="wheel_left_visual">
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
+        </geometry>
+        <material name="transparent"/>
+      </visual>
+    </link>	
+
+    <!-- Wheel_right Link -->
+    <link name="${namespace}wheel_right">
+      <inertial name="wheel_right_inertial">
+        <mass value="${wheel_link_mass}"/>
+        <xacro:cylinder_inertia_calculator mass="${wheel_link_mass}" radius="${wheel_radius}" length="${wheel_thickness}"/>
+      </inertial>
+      <collision name="wheel_right_collision">
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
+        </geometry>
+      </collision>
+      <visual name="wheel_right_visual">
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_thickness}"/>
+        </geometry>
+        <material name="transparent"/>
+      </visual>
+    </link>
+
+    <!-- Wheel_left Joint Link -->
+    <joint name="${namespace}wheel_left_joint" type="continuous">
+      <origin xyz="0 ${wheel_separation/2} -${chassis_height+box_height/2-wheel_radius}"/>
+      <child link="${namespace}wheel_left"/>
+      <parent link="${namespace}base_link"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+
+
+    <!-- Wheel_right Joint Link -->
+    <joint name="${namespace}wheel_right_joint" type="continuous">
+      <origin xyz="0 -${wheel_separation/2} -${chassis_height+box_height/2-wheel_radius}"/>
+      <child link="${namespace}wheel_right"/>
+      <parent link="${namespace}base_link"/>
+      <axis xyz="0 1 0" />
+    </joint>
+
+    <link name="${namespace}caster_wheel_link1">
+      <visual>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <sphere radius="${caster_wheel_radius}"/>
+        </geometry>
+        <material name="transparent"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <sphere radius="${caster_wheel_radius}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="${caster_wheel_link_mass}"/>
+        <xacro:sphere_inertia_calculator mass="${caster_wheel_link_mass}" radius="${caster_wheel_radius}" />
+      </inertial>
+    </link>
+    <joint name="${namespace}caster_wheel_joint1" type="continuous">
+      <parent link="${namespace}base_link" />
+      <child link="${namespace}caster_wheel_link1" />
+      <origin xyz="0.24 0.17 -${chassis_height+box_height/2-caster_wheel_radius}" />
+      <axis xyz="1 1 1" />
+    </joint>
+
+    <link name="${namespace}caster_wheel_link2">
+      <visual>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <sphere radius="${caster_wheel_radius}"/>
+        </geometry>
+        <material name="transparent"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <sphere radius="${caster_wheel_radius}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="${caster_wheel_link_mass}"/>
+        <xacro:sphere_inertia_calculator mass="${caster_wheel_link_mass}" radius="${caster_wheel_radius}" />
+      </inertial>
+    </link>
+    <joint name="${namespace}caster_wheel_joint2" type="continuous">
+      <parent link="${namespace}base_link" />
+      <child link="${namespace}caster_wheel_link2" />
+      <origin xyz="0.24 -0.17 -${chassis_height+box_height/2-caster_wheel_radius}" />
+      <axis xyz="1 1 1" />
+    </joint>
+
+    <link name="${namespace}caster_wheel_link3">
+      <visual>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <sphere radius="${caster_wheel_radius}"/>
+        </geometry>
+        <material name="transparent"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <sphere radius="${caster_wheel_radius}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="${caster_wheel_link_mass}"/>
+        <xacro:sphere_inertia_calculator mass="${caster_wheel_link_mass}" radius="${caster_wheel_radius}" />
+      </inertial>
+    </link>
+    <joint name="${namespace}caster_wheel_joint3" type="continuous">
+      <parent link="${namespace}base_link" />
+      <child link="${namespace}caster_wheel_link3" />
+      <origin xyz="-0.24 0.17 -${chassis_height+box_height/2-caster_wheel_radius}" />
+      <axis xyz="1 1 1" />
+    </joint>
+
+    <link name="${namespace}caster_wheel_link4">
+      <visual>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <sphere radius="${caster_wheel_radius}"/>
+        </geometry>
+        <material name="transparent"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <sphere radius="${caster_wheel_radius}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="${caster_wheel_link_mass}"/>
+        <xacro:sphere_inertia_calculator mass="${caster_wheel_link_mass}" radius="${caster_wheel_radius}" />
+      </inertial>
+    </link>
+    <joint name="${namespace}caster_wheel_joint4" type="continuous">
+      <parent link="${namespace}base_link" />
+      <child link="${namespace}caster_wheel_link4" />
+      <origin xyz="-0.24 -0.17 -${chassis_height+box_height/2-caster_wheel_radius}" />
+      <axis xyz="1 1 1" />
+    </joint>
+
+    <link name="${namespace}base_imu_link">
+      <inertial>
+        <mass value="0.01"/>
+        <inertia ixx="1.0" ixy="0" ixz="0" iyy="1.0" iyz="0" izz="1.0"/>
+      </inertial>
+    </link>
+    <joint name="${namespace}base_to_imu_joint" type="fixed">
+      <origin xyz="0.0 0.0 0.0"/>
+      <parent link="${namespace}base_link"/>
+      <child link="${namespace}base_imu_link"/>
+    </joint>
+
+    <!-- Gazebo elements -->
+    <gazebo reference="${namespace}caster_wheel_link1">
+      <mu1>0</mu1>
+      <mu2>0</mu2>
+    </gazebo>
+    <gazebo reference="${namespace}caster_wheel_link2">
+      <mu1>0</mu1>
+      <mu2>0</mu2>
+    </gazebo>
+    <gazebo reference="${namespace}caster_wheel_link3">
+      <mu1>0</mu1>
+      <mu2>0</mu2>
+    </gazebo>
+    <gazebo reference="${namespace}caster_wheel_link4">
+      <mu1>0</mu1>
+      <mu2>0</mu2>
+    </gazebo>
+  </xacro:macro>
+</robot>

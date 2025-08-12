@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="box_inertia_calculator" params="mass length width height">
+    <inertia
+      ixx="${mass / 12 * (width**2 + height**2)}"
+      ixy="0"
+      ixz="0"
+      iyy="${mass / 12 * (length**2 + height**2)}"
+      iyz="0"
+      izz="${mass / 12 * (length**2 + width**2)}"/>
+  </xacro:macro>
+
+  <xacro:macro name="cylinder_inertia_calculator" params="mass radius length">
+    <inertia
+      ixx="${mass / 12 * (3 * radius**2 + length**2)}"
+      ixy="0"
+      ixz="0"
+      iyy="${mass / 12 * (3 * radius**2 + length**2)}"
+      iyz="0"
+      izz="${mass / 2 * radius**2}"/>
+  </xacro:macro>
+
+  <xacro:macro name="sphere_inertia_calculator" params="mass radius">
+    <inertia
+      ixx="${2/5 * mass * radius**2}"
+      ixy="0"
+      ixz="0"
+      iyy="${2/5 * mass * radius**2}"
+      iyz="0"
+      izz="${2/5 * mass * radius**2}"/>
+  </xacro:macro>
+</robot>
