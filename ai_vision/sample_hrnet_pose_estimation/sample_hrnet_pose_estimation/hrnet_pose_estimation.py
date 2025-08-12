@@ -5,8 +5,7 @@ import os
 import numpy as np
 import cv2
 import rclpy
-import preprocess
-import postprocess
+from sample_hrnet_pose_estimation import preprocess, postprocess
 from rclpy.node import Node
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image

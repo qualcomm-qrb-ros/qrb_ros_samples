@@ -174,9 +174,13 @@ Run and debug
 
 ```bash
 source install/setup.bash
+# You can use defalut face image file
+ros2 launch sample_face_detection launch_with_image_publisher.py model_path:=/opt/model/
+
 # You can also replace this with a custom image file
-ros2 launch sample_face_detection launch_with_image_publisher.py image_path:=/opt/resource/face_image.jpg model_path:=/opt/model/
-or # You can launch with qrb ros camera
+ros2 launch sample_face_detection launch_with_image_publisher.py image_path:=/opt/resource/xxx.jpg model_path:=/opt/model/
+
+# You can launch with qrb ros camera
 ros2 launch sample_face_detection launch_with_qrb_ros_camera.py  model_path:=/opt/model/
 ```
 
