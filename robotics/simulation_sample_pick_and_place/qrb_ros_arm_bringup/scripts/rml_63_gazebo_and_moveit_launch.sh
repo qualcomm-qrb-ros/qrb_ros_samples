@@ -17,6 +17,9 @@ echo "Launching Gazebo simulation..."
 ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper.launch.py world_model:=panda_world initial_x:=0.0 initial_y:=0 initial_z:=1.025 initial_yaw:=0.0 initial_pitch:=0.0 initial_roll:=0.0 &
 
 sleep 25
+ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper_load_controller.launch.py
+
+sleep 25
 ros2 launch qrb_ros_arm_moveit_config demo.launch.py &
 
 # ros2 run qrb_ros_arm_pick_place  qrb_ros_arm_pick_place
