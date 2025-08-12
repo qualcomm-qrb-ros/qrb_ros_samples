@@ -1,11 +1,12 @@
 // Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
 // SPDX-License-Identifier: BSD-3-Clause-Clear
 
-#include <cmath> // For M_PI
+#include <moveit/move_group_interface/move_group_interface.h>
+
+#include <cmath>  // For M_PI
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <map>
 #include <memory>
-#include <moveit/move_group_interface/move_group_interface.h>
 #include <rclcpp/rclcpp.hpp>
 #include <string>
 #include <vector>
@@ -21,17 +22,16 @@
  * @return int A number indicating if our program finished successfully (0) or
  * not.
  */
-int main(int argc, char *argv[]) {
+int main(int argc, char * argv[])
+{
   // Start up ROS 2
   rclcpp::init(argc, argv);
 
   // Creates a node named "qrb_ros_arm_pick_place". The node is set up to
   // automatically handle any settings (parameters) we might want to change
   // later without editing the code.
-  auto const node = std::make_shared<rclcpp::Node>(
-      "qrb_ros_arm_pick_place",
-      rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(
-          true));
+  auto const node = std::make_shared<rclcpp::Node>("qrb_ros_arm_pick_place",
+      rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true));
 
   // Creates a "logger" that we can use to print out information or error
   // messages as our program runs.
@@ -68,12 +68,9 @@ int main(int argc, char *argv[]) {
   gripper_group_interface.setMaxAccelerationScalingFactor(0.3);
 
   // Display helpful logging messages on the terminal
-  RCLCPP_INFO(logger, "Planning pipeline: %s",
-              arm_group_interface.getPlanningPipelineId().c_str());
-  RCLCPP_INFO(logger, "Planner ID: %s",
-              arm_group_interface.getPlannerId().c_str());
-  RCLCPP_INFO(logger, "Planning time: %.2f",
-              arm_group_interface.getPlanningTime());
+  RCLCPP_INFO(logger, "Planning pipeline: %s", arm_group_interface.getPlanningPipelineId().c_str());
+  RCLCPP_INFO(logger, "Planner ID: %s", arm_group_interface.getPlannerId().c_str());
+  RCLCPP_INFO(logger, "Planning time: %.2f", arm_group_interface.getPlanningTime());
 
   // Step 1: Move to ready state
   RCLCPP_INFO(logger, "Step 1: Moving to ready state...");
@@ -142,25 +139,24 @@ int main(int argc, char *argv[]) {
   // Get joint names
   std::vector<std::string> joint_names = arm_group_interface.getJointNames();
   RCLCPP_INFO(logger, "Available joints:");
-  for (const auto &joint_name : joint_names) {
+  for (const auto & joint_name : joint_names) {
     RCLCPP_INFO(logger, "  %s", joint_name.c_str());
   }
 
   // Set target joint angles
   std::map<std::string, double> target_joint_values;
-  target_joint_values["joint1"] = 0.0;    // 0°
-  target_joint_values["joint2"] = -46.0;  // -46°
-  target_joint_values["joint3"] = -114.0; // -114°
-  target_joint_values["joint4"] = 0.0;    // 0°
-  target_joint_values["joint5"] = 74.0;   // 74°
-  target_joint_values["joint6"] = 0.0;    // 0°
+  target_joint_values["joint1"] = 0.0;     // 0°
+  target_joint_values["joint2"] = -46.0;   // -46°
+  target_joint_values["joint3"] = -114.0;  // -114°
+  target_joint_values["joint4"] = 0.0;     // 0°
+  target_joint_values["joint5"] = 74.0;    // 74°
+  target_joint_values["joint6"] = 0.0;     // 0°
 
   // Convert degrees to radians
-  for (auto &[joint_name, angle_deg] : target_joint_values) {
+  for (auto & [joint_name, angle_deg] : target_joint_values) {
     double angle_rad = angle_deg * M_PI / 180.0;
     target_joint_values[joint_name] = angle_rad;
-    RCLCPP_INFO(logger, "Target %s: %.2f° (%.4f rad)", joint_name.c_str(),
-                angle_deg, angle_rad);
+    RCLCPP_INFO(logger, "Target %s: %.2f° (%.4f rad)", joint_name.c_str(), angle_deg, angle_rad);
   }
 
   // Set target joint angles
@@ -173,8 +169,7 @@ int main(int argc, char *argv[]) {
   }();
 
   if (target_success) {
-    RCLCPP_INFO(logger,
-                "Target joint angles planning successful! Executing...");
+    RCLCPP_INFO(logger, "Target joint angles planning successful! Executing...");
     arm_group_interface.execute(target_plan);
     RCLCPP_INFO(logger, "Target joint angles movement completed!");
   } else {
@@ -190,16 +185,14 @@ int main(int argc, char *argv[]) {
   RCLCPP_INFO(logger, "Resetting gripper to safe state before closing...");
   gripper_group_interface.setNamedTarget("open");
 
-  auto const [reset_close_success,
-              reset_close_plan] = [&gripper_group_interface] {
+  auto const [reset_close_success, reset_close_plan] = [&gripper_group_interface] {
     moveit::planning_interface::MoveGroupInterface::Plan msg;
     auto const ok = static_cast<bool>(gripper_group_interface.plan(msg));
     return std::make_pair(ok, msg);
   }();
 
   if (reset_close_success) {
-    RCLCPP_INFO(logger,
-                "Gripper reset before close planning successful! Executing...");
+    RCLCPP_INFO(logger, "Gripper reset before close planning successful! Executing...");
     gripper_group_interface.execute(reset_close_plan);
     RCLCPP_INFO(logger, "Gripper reset before close completed!");
   } else {
@@ -239,26 +232,24 @@ int main(int argc, char *argv[]) {
   raise_joint_values["joint6"] = 0.0;
 
   // Convert degrees to radians
-  for (auto &[joint_name, angle_deg] : raise_joint_values) {
+  for (auto & [joint_name, angle_deg] : raise_joint_values) {
     double angle_rad = angle_deg * M_PI / 180.0;
     raise_joint_values[joint_name] = angle_rad;
-    RCLCPP_INFO(logger, "New target %s: %.2f° (%.4f rad)", joint_name.c_str(),
-                angle_deg, angle_rad);
+    RCLCPP_INFO(
+        logger, "New target %s: %.2f° (%.4f rad)", joint_name.c_str(), angle_deg, angle_rad);
   }
 
   // Set new target joint angles
   arm_group_interface.setJointValueTarget(raise_joint_values);
 
-  auto const [raise_target_success,
-              raise_target_plan] = [&arm_group_interface] {
+  auto const [raise_target_success, raise_target_plan] = [&arm_group_interface] {
     moveit::planning_interface::MoveGroupInterface::Plan msg;
     auto const ok = static_cast<bool>(arm_group_interface.plan(msg));
     return std::make_pair(ok, msg);
   }();
 
   if (raise_target_success) {
-    RCLCPP_INFO(logger,
-                "New target joint angles planning successful! Executing...");
+    RCLCPP_INFO(logger, "New target joint angles planning successful! Executing...");
     arm_group_interface.execute(raise_target_plan);
     RCLCPP_INFO(logger, "New target joint angles movement completed!");
   } else {
@@ -280,11 +271,11 @@ int main(int argc, char *argv[]) {
   new_target_joint_values["joint6"] = 0.0;
 
   // Convert degrees to radians
-  for (auto &[joint_name, angle_deg] : new_target_joint_values) {
+  for (auto & [joint_name, angle_deg] : new_target_joint_values) {
     double angle_rad = angle_deg * M_PI / 180.0;
     new_target_joint_values[joint_name] = angle_rad;
-    RCLCPP_INFO(logger, "New target %s: %.2f° (%.4f rad)", joint_name.c_str(),
-                angle_deg, angle_rad);
+    RCLCPP_INFO(
+        logger, "New target %s: %.2f° (%.4f rad)", joint_name.c_str(), angle_deg, angle_rad);
   }
 
   // Set new target joint angles
@@ -297,8 +288,7 @@ int main(int argc, char *argv[]) {
   }();
 
   if (new_target_success) {
-    RCLCPP_INFO(logger,
-                "New target joint angles planning successful! Executing...");
+    RCLCPP_INFO(logger, "New target joint angles planning successful! Executing...");
     arm_group_interface.execute(new_target_plan);
     RCLCPP_INFO(logger, "New target joint angles movement completed!");
   } else {
@@ -314,17 +304,14 @@ int main(int argc, char *argv[]) {
   RCLCPP_INFO(logger, "Resetting gripper to safe state before releasing...");
   gripper_group_interface.setNamedTarget("open");
 
-  auto const [reset_release_success,
-              reset_release_plan] = [&gripper_group_interface] {
+  auto const [reset_release_success, reset_release_plan] = [&gripper_group_interface] {
     moveit::planning_interface::MoveGroupInterface::Plan msg;
     auto const ok = static_cast<bool>(gripper_group_interface.plan(msg));
     return std::make_pair(ok, msg);
   }();
 
   if (reset_release_success) {
-    RCLCPP_INFO(
-        logger,
-        "Gripper reset before release planning successful! Executing...");
+    RCLCPP_INFO(logger, "Gripper reset before release planning successful! Executing...");
     gripper_group_interface.execute(reset_release_plan);
     RCLCPP_INFO(logger, "Gripper reset before release completed!");
   } else {
@@ -364,26 +351,24 @@ int main(int argc, char *argv[]) {
   re_raise_joint_values["joint6"] = 0.0;
 
   // Convert degrees to radians
-  for (auto &[joint_name, angle_deg] : re_raise_joint_values) {
+  for (auto & [joint_name, angle_deg] : re_raise_joint_values) {
     double angle_rad = angle_deg * M_PI / 180.0;
     re_raise_joint_values[joint_name] = angle_rad;
-    RCLCPP_INFO(logger, "New target %s: %.2f° (%.4f rad)", joint_name.c_str(),
-                angle_deg, angle_rad);
+    RCLCPP_INFO(
+        logger, "New target %s: %.2f° (%.4f rad)", joint_name.c_str(), angle_deg, angle_rad);
   }
 
   // Set new target joint angles
   arm_group_interface.setJointValueTarget(re_raise_joint_values);
 
-  auto const [re_raise_target_success,
-              re_raise_target_plan] = [&arm_group_interface] {
+  auto const [re_raise_target_success, re_raise_target_plan] = [&arm_group_interface] {
     moveit::planning_interface::MoveGroupInterface::Plan msg;
     auto const ok = static_cast<bool>(arm_group_interface.plan(msg));
     return std::make_pair(ok, msg);
   }();
 
   if (re_raise_target_success) {
-    RCLCPP_INFO(logger,
-                "New target joint angles planning successful! Executing...");
+    RCLCPP_INFO(logger, "New target joint angles planning successful! Executing...");
     arm_group_interface.execute(re_raise_target_plan);
     RCLCPP_INFO(logger, "New target joint angles movement completed!");
   } else {
@@ -396,16 +381,14 @@ int main(int argc, char *argv[]) {
   RCLCPP_INFO(logger, "Step 9: Returning to ready state...");
   arm_group_interface.setNamedTarget("ready");
 
-  auto const [return_ready_success,
-              return_ready_plan] = [&arm_group_interface] {
+  auto const [return_ready_success, return_ready_plan] = [&arm_group_interface] {
     moveit::planning_interface::MoveGroupInterface::Plan msg;
     auto const ok = static_cast<bool>(arm_group_interface.plan(msg));
     return std::make_pair(ok, msg);
   }();
 
   if (return_ready_success) {
-    RCLCPP_INFO(logger,
-                "Return to ready state planning successful! Executing...");
+    RCLCPP_INFO(logger, "Return to ready state planning successful! Executing...");
     arm_group_interface.execute(return_ready_plan);
     RCLCPP_INFO(logger, "Return to ready state completed!");
   } else {
