@@ -23,16 +23,16 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     # launch move_group
-    my_generate_move_group_launch(ld, moveit_config)
+    generate_move_group_launch(ld, moveit_config)
     # launch rviz
-    # my_generate_moveit_rviz_launch(ld, moveit_config)
+    # generate_moveit_rviz_launch(ld, moveit_config)
 
     # generate_rsp_launch(ld, moveit_config)
 
     return ld
 
 
-def my_generate_move_group_launch(ld, moveit_config):
+def generate_move_group_launch(ld, moveit_config):
 
     ld.add_action(DeclareBooleanLaunchArg("debug", default_value=False))
     ld.add_action(
@@ -97,7 +97,7 @@ def my_generate_move_group_launch(ld, moveit_config):
     )
     return ld
 
-def my_generate_moveit_rviz_launch(ld, moveit_config):
+def generate_moveit_rviz_launch(ld, moveit_config):
     """Launch file for rviz"""
 
     ld.add_action(DeclareBooleanLaunchArg("debug", default_value=False))

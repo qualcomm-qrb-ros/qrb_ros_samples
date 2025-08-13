@@ -84,31 +84,38 @@
 
 > [!IMPORTANT]
 
-> **PREREQUISITES**: For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/quick_start.html?vproduct=1601111740013072&version=1.5&facet=Qualcomm%20Intelligent%20Robotics%20SDK#setup-demo-qs) documents.
+> **PREREQUISITES**: 
+For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/quick_start.html?vproduct=1601111740013072&version=1.5&facet=Qualcomm%20Intelligent%20Robotics%20SDK#setup-demo-qs) documents.
+
+
 
 ## 🚀 Usage
 
 <details>
   <summary>Usage details</summary>
-Launch Gazebo and Rviz on HOST docker
 
-```bash
-source /usr/share/qirp-setup.sh
-bash ./install/qrb_ros_arm_bringup/share/qrb_ros_arm_bringup/scripts/rml_63_gazebo_and_moveit_launch.sh
-```
-You can also launch the launch file with the following command:
+- Launch Gazebo and Rviz on HOST docker
+
+Please refer to the Quick Start of [QRB ROS Simulation](https://teams.microsoft.com/l/message/19:1cb9d7ffecc142a4a564dffbc4347ada@thread.v2/1755048373725?context=%7B%22contextType%22%3A%22chat%22%7D) to launch `QRB Robot ARM` on host. Use the same local network and same `ROS_DOMAIN_ID` to ensure that the device can communicate with each other via ROS communication.
+
+You can also launch Gazebo with the following command:
 ```bash
 ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper.launch.py
 ```
-Click play button in Gazebo after rendered the world environment, and then use the following command to launch Rviz. 
-
+Click play button in Gazebo after rendered the world environment, and then use the following command to launch controller.
 ```bash
-ros2 launch qrb_ros_arm_moveit_config demo.launch.py &
-```
+ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper_load_controller.launch.py
+``` 
 Make sure that after you started Gazebo and Rviz in the host Docker, you can select arm predefined state `ready` and `home` in Rviz to start the arm motion.
 
-On device
-if arm motion work normall, you can use the following command to start the pick and place node.
+- On device
+
+Then you can launche the MoveIt! configuration and launch the demo launch file to start the arm motion.
+```bash
+source /usr/share/qirp-setup.sh
+ros2 launch qrb_ros_arm_moveit_config demo.launch.py
+```
+If arm motion work normall， open another terminal, , you can use the following command to start the pick and place node.
 ```bash
 source /usr/share/qirp-setup.sh
 ros2 run qrb_ros_arm_pick_place qrb_ros_arm_pick_place
