@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="gazebo_imu" params="ns:='' reference_link imu_params_yaml_path">
+    <xacro:property name="namespace" value="${ns + '/' if ns != '' else ''}" />
+    <xacro:property name="imu_params" value="${xacro.load_yaml(imu_params_yaml_path)}"/>
+    <gazebo reference="${reference_link}">
+      <sensor name="${namespace}${imu_params['sensor_name']}" type="imu">
+        <update_rate>${imu_params['update_rate']}</update_rate>
+        <always_on>${imu_params['always_on']}</always_on>
+        <visualize>${imu_params['visualize']}</visualize>
+        <topic>${namespace}${imu_params['topic']}</topic>
+        <gz_frame_id>${reference_link}</gz_frame_id>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+</robot>

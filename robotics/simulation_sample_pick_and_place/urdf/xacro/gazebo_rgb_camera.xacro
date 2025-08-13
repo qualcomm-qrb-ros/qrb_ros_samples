@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="gazebo_camera" params="ns:='' reference_link camera_params_yaml_path">
+    <xacro:property name="namespace" value="${ns + '/' if ns != '' else ''}" />
+    <xacro:property name="camera_params" value="${xacro.load_yaml(camera_params_yaml_path)}"/>
+    <xacro:property name="camera_sub" value="${camera_params['camera']}"/>
+    <xacro:property name="camera_sub_image" value="${camera_sub['image']}"/>
+    <xacro:property name="camera_sub_clip" value="${camera_sub['clip']}"/>
+
+    <gazebo reference="${reference_link}">
+      <sensor name="${namespace}${camera_params['sensor_name']}" type="camera">
+        <update_rate>${camera_params['update_rate']}</update_rate>
+        <camera>
+          <optical_frame_id>${reference_link}</optical_frame_id>
+          <horizontal_fov>${camera_sub['horizontal_fov']}</horizontal_fov>
+          <image>
+            <width>${camera_sub_image['width']}</width>
+            <height>${camera_sub_image['height']}</height>
+            <format>${camera_sub_image['format']}</format>
+          </image>
+          <camera_info_topic>${namespace}${camera_sub['camera_info_topic']}</camera_info_topic>
+          <clip>
+            <near>${camera_sub_clip['near']}</near>
+            <far>${camera_sub_clip['far']}</far>
+          </clip>
+        </camera>
+        <always_on>${camera_params['always_on']}</always_on>
+        <visualize>${camera_params['visualize']}</visualize>
+        <enable_metrics>${camera_params['enable_metrics']}</enable_metrics>
+        <topic>${namespace}${camera_params['topic']}</topic>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+</robot>
