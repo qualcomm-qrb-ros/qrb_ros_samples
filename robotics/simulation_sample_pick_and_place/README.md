@@ -96,6 +96,7 @@ For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product 
 
 - Launch Gazebo and Rviz on HOST docker
 
+
 Please refer to the Quick Start of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to launch `QRB Robot ARM` on host. Use the same local network and same `ROS_DOMAIN_ID` to ensure that the device can communicate with each other via ROS communication.
 
 You can also launch Gazebo with the following command:
@@ -114,6 +115,7 @@ Then you can launche the MoveIt! configuration and launch the demo launch file t
 ```bash
 source /usr/share/qirp-setup.sh
 ros2 launch simulation_sample_pick_and_place simulation_sample_pick_and_place.launch.py
+
 ```
 If arm motion work normall， open another terminal, , you can use the following command to start the pick and place node.
 ```bash

@@ -1,6 +1,6 @@
 #AI model 
 model: 
-  - Depth-Anythin-V2.bin,https://huggingface.co/qualcomm/Depth-Anything-V2/resolve/19ce3645e11de17eed7e869eebcc07dd352834f3/Depth-Anything-V2.bin?download=true
+  - Depth-Anything-V2.bin,https://huggingface.co/qualcomm/Depth-Anything-V2/resolve/19ce3645e11de17eed7e869eebcc07dd352834f3/Depth-Anything-V2.bin?download=true
 
 # apt packages
 apt:
