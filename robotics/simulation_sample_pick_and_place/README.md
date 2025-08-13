@@ -96,7 +96,7 @@ For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product 
 
 - Launch Gazebo and Rviz on HOST docker
 
-Please refer to the Quick Start of [QRB ROS Simulation](https://teams.microsoft.com/l/message/19:1cb9d7ffecc142a4a564dffbc4347ada@thread.v2/1755048373725?context=%7B%22contextType%22%3A%22chat%22%7D) to launch `QRB Robot ARM` on host. Use the same local network and same `ROS_DOMAIN_ID` to ensure that the device can communicate with each other via ROS communication.
+Please refer to the Quick Start of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to launch `QRB Robot ARM` on host. Use the same local network and same `ROS_DOMAIN_ID` to ensure that the device can communicate with each other via ROS communication.
 
 You can also launch Gazebo with the following command:
 ```bash
