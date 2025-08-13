@@ -24,6 +24,7 @@ find_package(std_msgs REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(eigen_stl_containers REQUIRED)
 
+include_directories(${EIGEN3_INCLUDE_DIRS}) 
 # Set link directories for cross-compilation
 if(DEFINED ENV{OECORE_TARGET_SYSROOT})
   link_directories("$ENV{OECORE_TARGET_SYSROOT}/usr/lib")
