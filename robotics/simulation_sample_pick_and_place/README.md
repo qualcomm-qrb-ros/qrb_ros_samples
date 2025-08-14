@@ -113,12 +113,12 @@ Make sure that after you started Gazebo and Rviz in the host Docker, you can sel
 Then you can launche the MoveIt! configuration and launch the demo launch file to start the arm motion.
 ```bash
 source /usr/share/qirp-setup.sh
-ros2 launch qrb_ros_arm_moveit_config demo.launch.py
+ros2 launch simulation_sample_pick_and_place simulation_sample_pick_and_place.launch.py
 ```
 If arm motion work normall， open another terminal, , you can use the following command to start the pick and place node.
 ```bash
 source /usr/share/qirp-setup.sh
-ros2 run qrb_ros_arm_pick_place qrb_ros_arm_pick_place
+ros2 run simulation_sample_pick_and_place qrb_ros_arm_pick_place
 ```
 
 Then you can view the arm execute pick and place operation in Gazebo and Rviz.

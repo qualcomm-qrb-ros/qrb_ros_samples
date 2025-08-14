@@ -1,0 +1,12 @@
+# Default initial positions for rml_63_gripper_description's ros2_control fake system
+initial_positions:
+  joint1: 0
+  joint2: 1.2967269
+  joint3: -1.8044695
+  joint4: -0.0600454
+  joint5: -1.092387480
+  joint6: 0.0157049996
+  joint01: 0.1
+  joint02: -0.1
+  joint11: -0.1
+  joint22: 0.1
