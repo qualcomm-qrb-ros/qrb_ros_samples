@@ -4,9 +4,9 @@
 
 ## 👋 Overview
 
-The ` sample_face_detection` is a Python-based face recognition ROS node that uses QNN for model inference.
-The models are sourced from Qualcomm AI-hub.Can detect faces and locate facial features from image
-It captures the `face_image.jpg` as input and publishes the result with the `/mediaface_det_image` and `output_image.jpg` .
+The ` sample_face_detection` is a Python-based face detection ROS node that uses QNN for model inference.
+The models are sourced from Qualcomm AI-hub.It can detect face and locate facial features from face image
+It captures the `face_image.jpg` as input and publishes the result to the `/mediaface_det_image` topic.
 
 For model information, please refer to [MediaPipe-Face-Detection - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/mediapipe_face?searchTerm=Media)
 
@@ -16,7 +16,7 @@ For model information, please refer to [MediaPipe-Face-Detection - Qualcomm AI H
 
 | ROS Node         | Description                                                  |
 | ---------------- | ------------------------------------------------------------ |
-| qrb_ros_face_detector | qrb_ros_face_detector is a python-based ros jazzy packages realize face images. This ROS node subscribes image topic, and publishs face image result topic after pre-post process. ` |
+| qrb_ros_face_detector | qrb_ros_face_detector is a Python-based ros jazzy packages that processes face images. This ROS node subscribes to an image topic, and publishes face image result topic after pre/post processing. ` |
 | [qrb_ros_nn_inference](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | qrb_ros_nn_inference is a ROS2 package for performing neural network model, providing AI-based perception for robotics applications. |
 | [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
 | [image_publisher_node](https://github.com/ros-perception/image_pipeline) | image_publisher is  a ros jazzy packages, can publish image ros topic with local path. |
@@ -67,14 +67,16 @@ For model information, please refer to [MediaPipe-Face-Detection - Qualcomm AI H
   <summary>Usage details</summary>
 
 ```bash
-# Set up the runtime environment
+# Set up the runtime environment for QClinux platform.
 export HOME=/opt
 source /usr/share/qirp-setup.sh
 export ROS_DOMAIN_ID=xx # Value range of ROS_DOMAIN_ID: [0, 232]
 
+# You can use defalut face image file
+ros2 launch sample_face_detection launch_with_image_publisher.py model_path:=/opt/model/
 # You can also replace this with a custom image file
-ros2 launch sample_face_detection launch_with_image_publisher.py image_path:=/opt/resource/face_image.jpg model_path:=/opt/model/
-or # You can launch with qrb ros camera
+ros2 launch sample_face_detection launch_with_image_publisher.py image_path:=/opt/resource/xxx.jpg model_path:=/opt/model/
+or # You can launch with qrb_ros_camera lacunch file
 ros2 launch sample_face_detection launch_with_qrb_ros_camera.py  model_path:=/opt/model/
 ```
 
@@ -152,7 +154,7 @@ c:38:dummy call to rpcmem_init, rpcmem APIs will be used from libxdsprpc
 
 ```
 
-Then you can check ROS topics with the name`/mediaface_det_image` in rviz
+Then you can check the /mediaface_det_image ROS topic in rviz.
 
 </details>
 
@@ -188,7 +190,8 @@ ros2 launch sample_face_detection launch_with_qrb_ros_camera.py  model_path:=/op
 
 ## 🤝 Contributing
 
-We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).<br>
+We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).
+
 Feel free to create an issue for bug report, feature requests or any discussion💡.
 
 ## ❤️ Contributors
@@ -205,8 +208,8 @@ Thanks to all our contributors who have helped make this project better!
 ## ❔ FAQs
 
 <details>
-<summary>Can detect muliplt face?</summary><br>
-No,it can support one face detection only.
+<summary>Can detect multiple face?</summary><br>
+No,it can only support single face detection.
 </details>
 
 
