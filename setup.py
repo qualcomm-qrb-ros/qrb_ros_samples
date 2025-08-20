@@ -7,7 +7,7 @@ package_name = 'simulation_sample_amr_simple_motion'
 
 setup(
     name=package_name,
-    version='0.1.0',
+    version='1.0.0',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -16,8 +16,8 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='weijshen',
-    maintainer_email='quic_weijshen@quicinc.com',
+    maintainer='Weijie Shen',
+    maintainer_email='weijshen@qti.qualcomm.com',
     description='package for simple motion control of QRB AMRs within the simulator',
     license='BSD-3-Clause-Clear',
     tests_require=['pytest'],

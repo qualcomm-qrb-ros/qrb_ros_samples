@@ -1,106 +1,170 @@
-# Simulation Sample AMR Simple Motion
+<div align="center">
+  <h1>Simulation Sample AMR Simple Motion</h1>
+  <p align="center">
+    <img src="./resource/simulation-amr-simple-motion-result.gif" alt="Qualcomm QRB ROS" title="Qualcomm QRB ROS" />
+  </p>
+  <p>ROS Packages for simple movements control of QRB AMRs within a simulated environment</p>
+  
+  <a href="https://ubuntu.com/download/qualcomm-iot" target="_blank"><img src="https://img.shields.io/badge/Qualcomm%20Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Qualcomm Ubuntu"></a>
+  <a href="https://docs.ros.org/en/jazzy/" target="_blank"><img src="https://img.shields.io/badge/ROS%20Jazzy-1c428a?style=for-the-badge&logo=ros&logoColor=white" alt="Jazzy"></a>
+  
+</div>
 
-## Overview
+---
 
-The `AMR simple motion` sample is a Python-based ROS node used to control the simple movements of QRB AMRs within the simulator.
+## 👋 Overview
 
-This sample allows you to control the movement of QRB AMRs via publishing the ROS messages to `/qrb_robot_base/cmd_vel` topic.
+The [Simulation Sample AMR Simple Motion](https://github.com/qualcomm-qrb-ros/qrb_ros_samples/tree/main/robotics/simulation_sample_amr_simple_motion) is a ROS package designed to control the simple movements of QRB Autonomous Mobile Robots(AMRs) within a simulated environment. 
 
-For more information, please refer to [qrb_ros_samples/robotics/simulation_sample_amr_simple_motion at jazzy · QUIC-QRB-ROS/qrb_ros_samples](https://github.qualcomm.com/QUIC-QRB-ROS/qrb_ros_samples/tree/jazzy/robotics/simulation_sample_amr_simple_motion)
+<div align="center">
+  <img src="./resource/simulation-amr-simple-motion-pipeline.png" alt="pipeline">
+</div>
 
-![result](./resource/result.gif)
+<br>
 
-## Pipeline flow for QRB AMR simple motion
+## 🔎 Table of contents
+  * [APIs](#-apis)
+     * [ROS interfaces](#ROS-interfaces)
+  * [Supported targets](#-supported-targets)
+  * [Installation](#-installation)
+  * [Usage](#-usage)
+     * [Prerequisites](#-prerequisites)
+     * [Start the ROS2 node](#-start-the-ROS2-node-on-device)
+  * [Build from source](#-build-from-source)
+  * [Contributing](#-contributing)
+  * [Contributors](#%EF%B8%8F-contributors)
+  * [License](#-license)
 
-![pipeline](./resource/pipeline.png)
+## ⚓ APIs
 
+### ROS interfaces
 
+<table>
+  <tr>
+    <th>Interface</th>
+    <th>Name</th>
+    <th>Type</th>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>Publisher</td>
+    <td>/qrb_robot_base/cmd_vel</td>
+    <td>geometry_msgs/msg/Twist</td>
+    <td>AMR movement control message</td>
+  </tr>
+</table>
 
-## Supported Platforms 
+## 🎯 Supported targets
 
-| Hardware                   | Software                                 |
-| -------------------------- | ---------------------------------------- |
-| Qualcomm RB3 gen2          | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
-| IQ-9075 Evaluation Kit     | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
-| IQ-8 Beta   Evaluation Kit | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
+<table >
+  <tr>
+    <th>Development Hardware</th>
+    <td>Qualcomm Dragonwing™ RB3 Gen2</td>
+    <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
+    <td>Qualcomm Dragonwing™ IQ-8275 EVK</td>
+  </tr>
+  <tr>
+    <th>Hardware Overview</th>
+    <th><a href="https://www.qualcomm.com/developer/hardware/rb3-gen-2-development-kit"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3-gen2-carousel?fmt=webp-alpha&qlt=85" width="180"/></a></th>
+    <th><a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160"></a></th>
+    <th>Coming soon...</th>
+  </tr>
+</table>
 
-## ROS Nodes Used in QRB AMR simple motion pipeline
+---
 
-|                               | Table : ROS nodes used in QRB AMR simple motion pipeline               |
-| :---------------------------- | ------------------------------------------------------------ |
-| ROS node                   | Description                                                  |
-| `qrb_ros_simulation `             | qrb ros simulation is a ROS package designed to set up the Qualcomm robotic simulation environment. Source link: [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) |
+## ✨ Installation
 
-## ROS Topics Used in QRB AMR simple motion pipeline
+> [!IMPORTANT]
+> **PREREQUISITES**: The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
+> Reference [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
+> For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
 
-|                                 | Table : ROS topics used in QRB AMR simple motion pipeline |                        |
-| ------------------------------- | --------------------------------------------------- | ---------------------- |
-| ROS topic                       | Type                                                | Published by           |
-| `/qrb_robot_base/cmd_vel`       | `< geometry_msgs/msg/Twist >`            | simulation_sample_amr_simple_motion         |
-
-## Use cases on QCLINUX
-
-### Prerequisites
-
-- Please refer to [Settings](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/download-the-prebuilt-robotics-image_3_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) to complete the device and host setup.
-
-### Simulation Env Setup
-
-- Please refer to the `Quick Start` of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to launch `QRB Robot Base AMR` on host. Ensure that the device and the host are on the same local network and can communicate with each other via ROS communication.
-
-### On Host
-
-**Step 1: Build sample project**
-
-On the host machine, move to the artifacts directory and decompress the package using the `tar` command.
-
-```bash
-# set up qirp sdk environment
-tar -zxf qirp-sdk_<qirp_version>.tar.gz
-cd <qirp_decompressed_path>/qirp-sdk
-source setup.sh
-
-# build sample
-cd <qirp_decompressed_path>/qirp-sdk/qirp-samples/robotics/simulation_sample_amr_simple_motion
-colcon build
-```
-
-**Step 2: Package and push sample to device**
-
-```bash
-# package and push build result of sample
-cd <qirp_decompressed_path>/qirp-sdk/qirp-samples/robotics/simulation_sample_amr_simple_motion/install/simulation_sample_amr_simple_motion
-tar -czf simulation_sample_amr_simple_motion.tar.gz lib share
-scp simulation_sample_amr_simple_motion.tar.gz root@[ip-addr]:/opt/
-```
-
-### On Device
-
-To Login to the device, please use the command `ssh root@[ip-addr]`
-
-**Step 1: Install sample package**
-
-```bash
-# Remount the /usr directory with read-write permissions
-(ssh) mount -o remount rw /usr
-
-# Install sample package
-(ssh) tar --no-same-owner -zxf /opt/simulation_sample_amr_simple_motion.tar.gz -C /usr/
-```
-
-**Step 2: Setup runtime environment**
+Add Qualcomm IOT PPA for Ubuntu:
 
 ```bash
-# setup runtime environment
-(ssh) source /usr/share/qirp-setup.sh
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-noble-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
 ```
 
-**Step 3: Run sample**
+Install Debian package:
+
 ```bash
-# Launch the simulation sample amr simple motion node.
-(ssh) ros2 run simulation_sample_amr_simple_motion simple_motion
+sudo apt install ros-jazzy-simulation-sample-amr-simple-motion
 ```
 
-If the ROS node is launched successfully, the log `=== AMR Simple Motion Control Usage: ===` will be shown.
+## 🚀 Usage
 
-Then, you can input the motion control commands and check the movement status of the QRB AMR within the simulator on host.
+### 🔹 Prerequisites
+
+#### Simulation environment setup on host
+
+Please refer to the `Quick Start` of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to set up the simulation development environment and `build` the `QRB ROS Simulation` project on your host machine. Ensure that the device and the host are on the same local network and can communicate with each other via ROS2.
+
+#### Launch the `QRB Robot Base AMR` on host
+
+```bash
+ros2 launch qrb_ros_sim_gazebo gazebo_robot_base.launch.py namespace:=qrb_robot_base enable_laser:=false
+```
+
+### 🔹 Start the ROS2 node on device
+
+```bash
+source /opt/ros/jazzy/setup.bash
+ros2 run simulation_sample_amr_simple_motion simple_motion
+```
+
+The output for these commands:
+
+```bash
+=== AMR Simple Motion Control Usage: ===
+i - Forward movement
+, - Backward movement
+j - Counter-clockwise rotation
+l - Clockwise rotation
+k - Stop
+q - Quit program
+=========================================
+
+Input command >
+```
+
+---
+
+## 👨‍💻 Build from source
+
+Download the source code and build with `colcon`
+```bash
+source /opt/ros/jazzy/setup.bash
+git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+colcon build --packages-select simulation_sample_amr_simple_motion
+```
+
+Run and debug
+
+```bash
+source install/setup.bash
+ros2 run simulation_sample_amr_simple_motion simple_motion
+```
+
+## 🤝 Contributing
+
+We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).<br>
+Feel free to create an issue for bug report, feature requests or any discussion💡.
+
+## ❤️ Contributors
+
+Thanks to all our contributors who have helped make this project better!
+
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/quic-weijshen"><img src="https://avatars.githubusercontent.com/u/191950784?s=96&v=4" width="100" height="100" alt="quic-weijshen"/><br /><sub><b>quic-weijshen</b></sub></a></td>
+    <td align="center"><a href="https://github.com/fulaliu"><img src="https://avatars.githubusercontent.com/u/129727781?v=4" width="100" height="100" alt="fulaliu"/><br /><sub><b>fulaliu</b></sub></a></td>
+    <td align="center"><a href="https://github.com/jiaxshi"><img src="https://avatars.githubusercontent.com/u/147487233?v=4" width="100" height="100" alt="jiaxshi"/><br /><sub><b>jiaxshi</b></sub></a></td>
+  </tr>
+</table>
+
+## 📜 License
+
+Project is licensed under the [BSD-3-Clause](https://spdx.org/licenses/BSD-3-Clause.html) License. See [LICENSE](./LICENSE) for the full license text.
