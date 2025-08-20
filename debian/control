@@ -2,7 +2,7 @@ Source: ros-jazzy-sample-hand-detection
 Section: misc
 Priority: optional
 Maintainer: Dapeng Yuan <dapeyuan@qti.qualcomm.com>
-Build-Depends: debhelper(=13), python3-numpy, python3-opencv, python3-pytest <!nocheck>, ros-jazzy-ament-cmake-python, ros-jazzy-ament-copyright <!nocheck>, ros-jazzy-ament-flake8 <!nocheck>, ros-jazzy-ament-index-python, ros-jazzy-ament-pep257 <!nocheck>, ros-jazzy-rclpy, ros-jazzy-sensor-msgs, python3-all, python3-setuptools, dh-python
+Build-Depends: debhelper-compat(=13), python3-numpy, python3-opencv, python3-pytest <!nocheck>, ros-jazzy-ament-cmake-python, ros-jazzy-ament-copyright <!nocheck>, ros-jazzy-ament-flake8 <!nocheck>, ros-jazzy-ament-index-python, ros-jazzy-ament-pep257 <!nocheck>, ros-jazzy-rclpy, ros-jazzy-sensor-msgs, python3-all, python3-setuptools, dh-python
 Homepage: 
 Standards-Version: 3.9.2
 
