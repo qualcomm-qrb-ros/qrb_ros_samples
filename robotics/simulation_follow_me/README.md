@@ -20,10 +20,11 @@ For more information, please refer to  https://github.com/qualcomm-qrb-ros/qrb_r
 
 ## 🔎 Table of contents
 
-  * [Used ROS Topics](#-apis)
+  * [Used ROS Topics](#-used-ros-topics)
   * [Supported targets](#-supported-targets)
   * [Installation](#-installation)
   * [Usage](#-usage)
+  * [Build from source](#-build-from-source)
   * [Contributing](#-contributing)
   * [Contributors](#%EF%B8%8F-contributors)
   * [FAQs](#-faqs)
@@ -44,13 +45,16 @@ For more information, please refer to  https://github.com/qualcomm-qrb-ros/qrb_r
     <th>Development Hardware</th>
     <td>Qualcomm Dragonwing™ RB3 Gen2</td>
     <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
+    <td>Qualcomm Dragonwing™ IQ-8275 EVK</td>
   </tr>
   <tr>
     <th>Hardware Overview</th>
     <th><a href="https://www.qualcomm.com/developer/hardware/rb3-gen-2-development-kit"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3-gen2-carousel?fmt=webp-alpha&qlt=85" width="180"/></a></th>
     <th><a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160"></a></th>
+    <th>coming soon...</th>
   </tr>
 </table>
+
 
 ## ✨ Installation
 
