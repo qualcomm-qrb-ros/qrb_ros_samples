@@ -33,7 +33,6 @@ The `main` branch serves as the development branch and includes all samples curr
 | [simulation_2d_lidar_slam](robotics/simulation_2d_lidar_slam)       | N                    | N                        | Y                   | Y                      | Y                          | The `Simulation 2D Lidar SLAM` sample demonstrates how to run 2D lidar SLAM on Qualcomm robotics platform in a simulated environment, enabling simultaneous localization and mapping.  |
 | [sample apriltag](robotics/sample_apriltag) | N                    | Y                        | Y                   | Y                      | Y                          | The `sample_apriltag` is the ROS package to provide AprilTag pipeline samples for Qualcomm robotics platforms. |
 
-
 ## System Requirements
 
 - Canonical Ubuntu Image
