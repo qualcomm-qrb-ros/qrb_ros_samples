@@ -27,7 +27,7 @@ The `sample_resnet101` is a Python-based ROS node that performs image classifica
 
 ## 🔎 Table of contents
 
-  * [Used ROS Topics](#-apis)
+  * [Used ROS Topics](#-used-ros-topics)
   * [Supported targets](#-supported-targets)
   * [Installation](#-installation)
   * [Usage](#-usage)
