@@ -1,6 +1,13 @@
-# AI Samples speech recognition
+<div >
+  <h1>AI Samples Speech Recogniztion	</h1>
+  <p align="center">
+</div>
 
-## Overview
+![](./resource/output.gif)
+
+---
+
+## 👋 Overview
 
 The ` speech recognition` sample enables a function that ASR case with qrb ros nodes.
 
@@ -8,57 +15,112 @@ It captures the audio input and publishes the result with the `/whisper_result`.
 
 This figure contains the basic messages and data transfer channels, with the relevant client/server and ROS node.
 
-![](./resource/output.gif)
-
-
-
-video link (https://qaihub-public-assets.s3.us-west-2.amazonaws.com/accelerating_on-device_development_and_deployment_with_qualcomm_ai_hub_siddhika_nevrekar.mp4)
-
-
-
-## Pipeline flow for  speech recognition
-
 ![](./resource/pipeline.png)
 
 
 
 Details workflow <img src="./resource/workflow.png" style="zoom:75%;" />
 
-## Supported Platforms
-
-| Hardware                   | Software               |
-| -------------------------- | ---------------------- |
-| Qualcomm RB3 gen2          | Canonical Ubuntu Image |
-| IQ-9075 Evaluation Kit     | Canonical Ubuntu Image |
-| IQ-8 Beta   Evaluation Kit | Canonical Ubuntu Image |
 
 
+## 🔎 Table of contents
 
-## ROS Topics Used in Speech recognition
+  * [Used ROS Topics](#-used-ros-topics)
+  * [Supported targets](#-supported-targets)
+  * [Installation](#-installation)
+  * [Usage](#-usage)
+  * [Build from source](#-build-from-source)
+  * [Contributing](#-contributing)
+  * [Contributors](#%EF%B8%8F-contributors)
+  * [FAQs](#-faqs)
+  * [License](#-license)
 
-| ROS Topic         | Type          | Published By     |
-| ----------------- | ------------- | ---------------- |
-| `/whisper_result` | `< String > ` | qrb ros whisperr |
+## ⚓ Used ROS Topics 
 
-## Use cases on Ubuntu
+| ROS Topic         | Type          | Published By    |
+| ----------------- | ------------- | --------------- |
+| `/whisper_result` | `< String > ` | qrb ros whisper |
 
-### Prerequisites
+## 🎯 Supported targets
 
-- `SSH` is enabled in ‘Permissive’ mode with the steps mentioned in [Log in using SSH](https://docs.qualcomm.com/bundle/publicresource/topics/80-70017-254/how_to.html?state=preview#use-ssh).
+<table >
+  <tr>
+    <th>Development Hardware</th>
+     <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
+     <td>Qualcomm Dragonwing™ IQ-8275 EVK</td>
+  </tr>
+  <tr>
+    <th>Hardware Overview</th>
+    <th><a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160"></a></th>
+    <th>coming soon...</th>
+  </tr>
+  <tr>
+    <th>GMSL Camera Support</th>
+    <td>LI-VENUS-OX03F10-OAX40-GM2A-118H(YUV)</td>
+    <td>LI-VENUS-OX03F10-OAX40-GM2A-118H(YUV)</td>
+  </tr>
+</table>
 
-- Download and run QIRP SDK environment setup scripts  from :[qualcomm-linux/meta-qcom-robotics-sdk](https://github.com/qualcomm-linux/meta-qcom-robotics-sdk) 
 
-  ```
-  (ssh) wget https://raw.githubusercontent.com/qualcomm-linux/meta-qcom-robotics-sdk/refs/heads/kirkstone/recipes-sdk/files/qirp-setup.sh /home/qirp-setup.sh
-  ```
 
-### On device
 
- run the following commands in a terminal to set up QIRP SDK and ROS2 environment.
+## ✨ Installation
+
+> [!IMPORTANT]
+> **PREREQUISITES**: The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
+> Reference [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
+
+## 👨‍💻 Build from source
+
+<details>
+  <summary>Build from source details</summary>
+
+Prepare Model
 
 ```
-source /home/qirp-setup.sh 
-export ADSP_LIBRARY_PATH=/lib/aarch64-oe-linux-gcc11.2:/lib/hexagon-v68/unsigned:${ADSP_LIBRARY_PATH};export PATH=/bin/aarch64-oe-linux-gcc11.2:$PATH;source /opt/ros/jazzy/setup.bash;source /home/ubuntu/qirp-sdk/install/setup.bash;ros2 run sample_speech_recognition qrb_ros_whisper
+sudo mkdir /opt/model
+cd /opt/model
+sudo wget https://raw.githubusercontent.com/openai/whisper/refs/heads/main/whisper/assets/mel_filters.npz
+sudo wget https://raw.githubusercontent.com/openai/whisper/refs/heads/main/whisper/assets/gpt2.tiktoken
+sudo wget https://huggingface.co/qualcomm/Whisper-Tiny-En/resolve/main/WhisperEncoder.tflite?download=true -O whisper_tiny_en-whisperencoder.tflite
+sudo wget https://huggingface.co/qualcomm/Whisper-Tiny-En/resolve/main/WhisperDecoder.tflite?download=true -O WhisperDecoder.tflite
+```
+
+Install dependencies
+
+
+```
+sudo apt install ros-jazzy-rclpy \
+  ros-jazzy-sensor-msgs \
+  ros-jazzy-std-msgs \
+  ros-jazzy-cv-bridge \
+  ros-jazzy-ament-index-python \
+  ros-jazzy-qrb-ros-tensor-list-msgs \
+  python3-opencv \
+  python3-numpy \
+  libsamplerate0-dev \
+  ros-jazzy-qrb-ros-nn-inference \
+  python3-scipy \
+  ffmpeg
+  
+pip3 install  audio2numpy samplerate torch tiktoken
+```
+
+Download the source code and build with colcon
+
+```bash
+source /opt/ros/jazzy/setup.bash
+git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+cd ai_audio/sample_speech_recognition
+colcon build
+```
+
+Run the sample env on device
+
+```
+source /usr/share/qirp-setup.sh 
+
+ros2 run sample_speech_recognition qrb_ros_whisper
 
 #open an ssh terminal to start recording audio
 while true; do [ ! -f "/home/qirp_ws/rec.wav.lock" ] && timeout 8 parec -v --rate=16000 --format=s16le --channels=1 --file-format=wav "/home/qirp_ws/rec.wav"; touch /home/qirp_ws/rec.wav.lock; sleep 1; done
@@ -66,65 +128,38 @@ while true; do [ ! -f "/home/qirp_ws/rec.wav.lock" ] && timeout 8 parec -v --rat
 #open an ssh terminal to get whisper node output
 ```
 
-## Use cases on QCLINUX
 
-### Prerequisites
 
-- `SSH` is enabled in ‘Permissive’ mode with the steps mentioned in [Log in using SSH](https://docs.qualcomm.com/bundle/publicresource/topics/80-70017-254/how_to.html?state=preview#use-ssh).
+</details>
 
-- Download and run QIRP SDK environment setup scripts  from [qualcomm-linux/meta-qcom-robotics-sdk](https://github.com/qualcomm-linux/meta-qcom-robotics-sdk) 
+## 🤝 Contributing
 
-### On Host
+We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).<br>
+Feel free to create an issue for bug report, feature requests or any discussion💡.
 
-Generate QIRP Docker, which includes ai samples
+## ❤️ Contributors
 
-```
-source setup.sh docker
+Thanks to all our contributors who have helped make this project better!
 
-#outputs can be found here:
-runtime/qirp-docker.tar.gz
-```
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/quic-fulan"><img src="https://avatars.githubusercontent.com/u/129727781?v=4" width="100" height="100" alt="quic-fulan"/><br /><sub><b>quic-fulan</b></sub></a></td>
+  </tr>
+</table>
 
-Push RP Docker to device
 
-```
-scp runtime/qirp-docker.tar.gz root@(ip):/opt
-```
 
-### On Device
 
-Run QIRP SDK scripts to load docker images 
+## ❔ FAQs
 
-```
-source /usr/share/qirp-setup.sh docker --docker-path /opt/qirp-docker.tar.gz
+<details>
+<summary>NA</summary><br>
+</details>
 
-#run in docker 
-root@xxxxx:/# export ADSP_LIBRARY_PATH=/lib/aarch64-oe-linux-gcc11.2:/lib/hexagon-v68/unsigned:${ADSP_LIBRARY_PATH};export PATH=/bin/aarch64-oe-linux-gcc11.2:$PATH;source /opt/ros/jazzy/setup.bash;source /home/ubuntu/qirp-sdk/install/setup.bash;ros2 run sample_speech_recognition qrb_ros_whisper
-```
 
-open an SSH terminal to start recording audio
 
-```
-while true; do [ ! -f "/opt/qirp_ws/rec.wav.lock" ] && timeout 8 parec -v --rate=16000 --format=s16le --channels=1 --file-format=wav "/opt/qirp_ws/rec.wav"; touch /opt/qirp_ws/rec.wav.lock; sleep 1; done
-```
 
-open an SSH terminal to get whisper node output
+## 📜 License
 
-```
-source  /usr/share/qirp-setup.sh docker
+Project is licensed under the [BSD-3-Clause](https://spdx.org/licenses/BSD-3-Clause.html) License. See [LICENSE](./LICENSE) for the full license text.
 
-#run in docker 
-root@xxxxx:/# source /opt/ros/jazzy/setup.sh
-root@xxxxx:/# ros topic list
-#ros topic outputs can be found here:
-```
-
-```
-source /home/qirp-setup.sh 
-export ADSP_LIBRARY_PATH=/lib/aarch64-oe-linux-gcc11.2:/lib/hexagon-v68/unsigned:${ADSP_LIBRARY_PATH};export PATH=/bin/aarch64-oe-linux-gcc11.2:$PATH;source /opt/ros/jazzy/setup.bash;source /home/ubuntu/qirp-sdk/install/setup.bash;ros2 run sample_speech_recognition qrb_ros_whisper
-
-#open an ssh terminal to start recording audio
-while true; do [ ! -f "/home/qirp_ws/rec.wav.lock" ] && timeout 8 parec -v --rate=16000 --format=s16le --channels=1 --file-format=wav "/home/qirp_ws/rec.wav"; touch /home/qirp_ws/rec.wav.lock; sleep 1; done
-
-#open an ssh terminal to get whisper node output
-```
