@@ -62,11 +62,31 @@ jobs:
           export AMENT_PREFIX_PATH="${OECORE_NATIVE_SYSROOT}/usr:${OECORE_TARGET_SYSROOT}/usr"
           export PYTHONPATH=${PYTHONPATH}:${OECORE_NATIVE_SYSROOT}/usr/lib/python3.12/site-packages/:${OECORE_TARGET_SYSROOT}/usr/lib/python3.12/site-packages/
 
+          # Add liboctoma*.so soft links
+          # Check if OECORE_TARGET_SYSROOT is empty
+          if [ -z "$OECORE_TARGET_SYSROOT" ]; then
+              echo "Error: OECORE_TARGET_SYSROOT is empty or not set."
+              exit 1
+          fi
+
+          # Enter the specified directory
+          cd "$OECORE_TARGET_SYSROOT/usr/lib" || { echo "Failed to enter directory"; exit 1; }
+
+          # Create symbolic links
+          for lib in liboctomath.so liboctomap.so libosqp.so; do
+              if [ -e "$lib" ]; then
+                  echo "Info: $lib exist."
+                  ln -sf "$lib" "${lib%.so}.a"
+                  echo "Info: $lib symbolic link created."
+              else
+                  echo "Warning: $lib does not exist, skipping symbolic link creation."
+              fi
+          done
+
+          cd -
+
           colcon build --continue-on-error --cmake-args \
-            -DCMAKE_TOOLCHAIN_FILE=${OE_CMAKE_TOOLCHAIN_FILE} \
-            -DPYTHON_EXECUTABLE=${OECORE_NATIVE_SYSROOT}/usr/bin/python3 \
             -DPython3_NumPy_INCLUDE_DIR=${OECORE_NATIVE_SYSROOT}/usr/lib/python3.12/site-packages/numpy/core/include \
-            -DCMAKE_MAKE_PROGRAM=/usr/bin/make \
             -DBUILD_TESTING=OFF
 
       - name: Publish artifacts
