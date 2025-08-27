@@ -4,14 +4,13 @@
   <h1>AI Samples Object Detection	</h1>
   <p align="center">
 </div>
-
 <img src="./resource/yolo-detect.gif" style="zoom:80%;" />
 
 ---
 
 ## 👋 Overview
 
-The `sample_object_setection` is a Python launch file utilizing QNN for model inference. It demonstrates camera data streaming, AI-based inference, and real-time visualization of object detection results.
+The `sample_object_detection` is a Python launch file utilizing QNN for model inference. It demonstrates camera data streaming, AI-based inference, and real-time visualization of object detection results.
 
 Ultralytics YOLOv8 is a machine learning model that predicts bounding boxes, segmentation masks and classes of objects in an image.
 
@@ -20,10 +19,10 @@ Ultralytics YOLOv8 is a machine learning model that predicts bounding boxes, seg
 | Node Name                                                    | Function                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
-| yolo preprocess                                              | Subscribes to image data, reshapes/resizes it, and republishes it to a downstream topic. |
+| [yolo preprocess](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) | Subscribes to image data, reshapes/resizes it, and republishes it to a downstream topic. |
 | [qrb ros nn interface](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results. |
-| yolo postprocess                                             | Matches inference output with yolo label files               |
-| yolo overlay                                                 | Subscribes yolo postprocess and image data, show the object detect results with ros topic |
+| [yolo postprocess](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) | Matches inference output with yolo label files               |
+| [yolo overlay](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) | Subscribes yolo postprocess and image data, show the object detect results with ros topic |
 
 ## 🔎 Table of contents
 
@@ -88,7 +87,7 @@ Download the yolo object object model
 Reference the [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) README to build and download the yolo model
 
 ```
-#when download yolo model , please using qnn_context_binary and device like bellow
+#when download yolo model , please using qnn_context_binary and device like bellow for IQ-8275 
  
 python3 -m qai_hub_models.models.yolov8_det.export --target-runtime qnn_context_binary  --device "QCS8275 (Proxy)"
 ```
@@ -102,13 +101,13 @@ mkdir /opt/model/
 mv coco8.yaml yolov8_det_qcs9075.bin /opt/model/
 
 source /opt/ros/jazzy/setup.bash
-ros2 launch sample_object_detection launch_with_qrb_ros_camera.py  
+ros2 launch sample_object_detection launch_with_qrb_ros_camera.py  model_path:=<the device model>
 ```
 
 The output for these commands:
 
 ```
-root@qcs8300-ride-sx:/root# ros2 launch sample_object_detction launch_with_qrb_ros_camera.py
+root@qcs8300-ride-sx:/root# ros2 launch sample_object_detection launch_with_qrb_ros_camera.py
 [INFO] [launch]: All log files can be found below /opt/.ros/log/1970-01-01-00-57-22-354131-qcs8300-ride-sx-57950
 [INFO] [launch]: Default logging verbosity is set to INFO
 [INFO] [component_container-1]: process started with pid [58040]
@@ -157,8 +156,6 @@ Then you can check ROS topics with the name`/yolo_detect_overlay` in  rvize2
 
 <details>
   <summary>Build from source details</summary>
-
-
 Install dependencies
 
 ```
@@ -182,13 +179,6 @@ source /opt/ros/jazzy/setup.bash
 git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
 cd ai_vision/sample_object_detection
 colcon build
-```
-
-Run and debug
-
-```bash
-source install/setup.bash
-ros2 launch sample_object_detection launch_with_qrb_ros_camera.py
 ```
 
 </details>

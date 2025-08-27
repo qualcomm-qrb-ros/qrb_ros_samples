@@ -8,7 +8,7 @@ package_name = 'sample_resnet101'
 
 setup(
     name=package_name,
-    version='0.1.0',
+    version='1.0.0',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/' + package_name,

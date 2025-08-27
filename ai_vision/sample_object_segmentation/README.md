@@ -4,7 +4,6 @@
   <h1>AI Samples Object Segmentation</h1>
   <p align="center">
 </div>
-
 <img src="./resource/yolo-segment.gif" style="zoom:80%;" />
 
 ---
@@ -20,10 +19,10 @@ Ultralytics YOLOv8 is a machine learning model that predicts bounding boxes, seg
 | Node Name                                                    | Function                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
-| yolo preprocess                                              | Subscribes to image data, reshapes/resizes it, and republishes it to a downstream topic. |
+| [yolo preprocess](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) | Subscribes to image data, reshapes/resizes it, and republishes it to a downstream topic. |
 | [qrb ros nn interface](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results. |
-| yolo postprocess                                             | Matches inference output with yolo label files               |
-| yolo overlay                                                 | Subscribes yolo postprocess and image data, show the object detect results with ros topic |
+| [yolo postprocess](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) | Matches inference output with yolo label files               |
+| [yolo overlay](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) | Subscribes yolo postprocess and image data, show the object detect results with ros topic |
 
 ## 🔎 Table of contents
 
@@ -90,7 +89,7 @@ Download the yolo object segmentation model
 Reference the [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) README to build and download the yolo model
 
 ```
-#when download yolo model , please using qnn_context_binary and device like bellow
+#when download yolo model , please using qnn_context_binary and device like bellow for IQ-8275 
  
 python3 -m qai_hub_models.models.yolov8_seg.export --target-runtime qnn_context_binary  --device "QCS8275 (Proxy)"
 ```
@@ -105,7 +104,7 @@ mv coco8.yaml yolov8_seg_qcs9075.bin /opt/model/
 
 source /opt/ros/jazzy/setup.bash
 
-ros2 launch sample_sample_segmentation launch_with_qrb_ros_camera.py  
+ros2 launch sample_sample_segmentation launch_with_qrb_ros_camera.py  model_path:=<the device model>
 ```
 
 The output for these commands:
@@ -186,13 +185,6 @@ source /opt/ros/jazzy/setup.bash
 git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
 cd ai_vision/sample_sample_segmentation
 colcon build
-```
-
-Run and debug
-
-```bash
-source install/setup.bash
-ros2 launch sample_sample_segmentation launch_with_qrb_ros_camera.py
 ```
 
 </details>
