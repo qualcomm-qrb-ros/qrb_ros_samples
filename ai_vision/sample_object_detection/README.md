@@ -1,16 +1,16 @@
 
 
 <div >
-  <h1>AI Samples Object Segmentation</h1>
+  <h1>AI Samples Object Detection	</h1>
   <p align="center">
 </div>
-<img src="./resource/yolo-segment.gif" style="zoom:80%;" />
+<img src="./resource/yolo-detect.gif" style="zoom:80%;" />
 
 ---
 
 ## 👋 Overview
 
-The `sample_object_segmentation` is a Python launch file utilizing QNN for model inference. It demonstrates camera data streaming, AI-based inference, and real-time visualization of object segmentation results.”
+The `sample_object_detection` is a Python launch file utilizing QNN for model inference. It demonstrates camera data streaming, AI-based inference, and real-time visualization of object detection results.
 
 Ultralytics YOLOv8 is a machine learning model that predicts bounding boxes, segmentation masks and classes of objects in an image.
 
@@ -38,13 +38,13 @@ Ultralytics YOLOv8 is a machine learning model that predicts bounding boxes, seg
 
 ## ⚓ Used ROS Topics 
 
-| ROS Topic                      | Type                                          | Published By                     |
-| ------------------------------ | --------------------------------------------- | -------------------------------- |
-| `/camera/color/image_raw `     | `< sensor_msgs.msg.Image> `                   | `orbbec_camera `                 |
-| `/qrb_inference_input_tensor ` | `< qrb_ros_tensor_list_msgs/msg/TensorList> ` | `yolo_preprocess_node `          |
-| `/yolo_segment_result `        | `<vision_msgs/msg/Detection2DArray> `         | `nn_inference_node `             |
-| `/yolo_segment_tensor_output ` | `< qrb_ros_tensor_list_msgs/msg/TensorList> ` | `yolo_segment_postprocess_node ` |
-| `/yolo_segment_overlay `       | `< sensor_msgs.msg.Image> `                   | `yolo_segment_overlay_node `     |
+| ROS Topic                      | Type                                          | Published By                       |
+| ------------------------------ | --------------------------------------------- | ---------------------------------- |
+| `/camera/color/image_raw `     | `< sensor_msgs.msg.Image> `                   | `qrb_ros_camera `                  |
+| `/qrb_inference_input_tensor ` | `< qrb_ros_tensor_list_msgs/msg/TensorList> ` | `yolo_preprocess_node `            |
+| `/yolo_detect_result `         | `<vision_msgs/msg/Detection2DArray> `         | `nn_inference_node `               |
+| `/yolo_detect_tensor_output `  | `< qrb_ros_tensor_list_msgs/msg/TensorList> ` | `yolo_detection_postprocess_node ` |
+| `/yolo_detect_overlay `        | `< sensor_msgs.msg.Image> `                   | `yolo_detection_overlay_node `     |
 
 ## 🎯 Supported targets
 
@@ -68,8 +68,6 @@ Ultralytics YOLOv8 is a machine learning model that predicts bounding boxes, seg
 
 
 
-
-
 ## ✨ Installation
 
 > [!IMPORTANT]
@@ -84,14 +82,14 @@ Coming soon...
 <details>
   <summary>Usage details</summary>
 
-Download the yolo object segmentation model
+Download the yolo object object model
 
 Reference the [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) README to build and download the yolo model
 
 ```
 #when download yolo model , please using qnn_context_binary and device like bellow for IQ-8275 
  
-python3 -m qai_hub_models.models.yolov8_seg.export --target-runtime qnn_context_binary  --device "QCS8275 (Proxy)"
+python3 -m qai_hub_models.models.yolov8_det.export --target-runtime qnn_context_binary  --device "QCS8275 (Proxy)"
 ```
 
 Run the sample env on device
@@ -100,17 +98,16 @@ Run the sample env on device
 ```bash
 #Prepare the model and move to default model path
 mkdir /opt/model/
-mv coco8.yaml yolov8_seg_qcs9075.bin /opt/model/
+mv coco8.yaml yolov8_det_qcs9075.bin /opt/model/
 
 source /opt/ros/jazzy/setup.bash
-
-ros2 launch sample_sample_segmentation launch_with_qrb_ros_camera.py  model_path:=<the device model>
+ros2 launch sample_object_detection launch_with_qrb_ros_camera.py  model_path:=<the device model>
 ```
 
 The output for these commands:
 
 ```
-root@qcs8300-ride-sx:/root# ros2 launch sample_sample_segmentation launch_with_qrb_ros_camera.py
+root@qcs8300-ride-sx:/root# ros2 launch sample_object_detection launch_with_qrb_ros_camera.py
 [INFO] [launch]: All log files can be found below /opt/.ros/log/1970-01-01-00-57-22-354131-qcs8300-ride-sx-57950
 [INFO] [launch]: Default logging verbosity is set to INFO
 [INFO] [component_container-1]: process started with pid [58040]
@@ -127,11 +124,11 @@ root@qcs8300-ride-sx:/root# ros2 launch sample_sample_segmentation launch_with_q
 [component_container-1] [INFO] [0000003443.005055725] [yolo_detection_postprocess_node]: score_thres: 0.700000
 [component_container-1] YAML Exception: bad file: /opt/coco8.yaml
 [component_container-1] [INFO] [0000003443.008653955] [yolo_detection_postprocess_node]: init done~
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/yolo_segmentation_postprocess_node' in container '/yolo_node_container'
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/yolo_detection_postprocess_node' in container '/yolo_node_container'
 [component_container-1] [INFO] [0000003443.024663017] [yolo_node_container]: Load Library: /usr/lib/libqrb_ros_inference_node.so
 [component_container-1] [INFO] [0000003443.031113798] [yolo_node_container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
 [component_container-1] [INFO] [0000003443.031221975] [yolo_node_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
-[component_container-1] [QRB INFO] Loading model from binary file: /opt/model/ yolov8_seg_qcs9075.bin
+[component_container-1] [QRB INFO] Loading model from binary file: /opt/model/yolov8_det_qcs9075.bin
 [component_container-1]  <W> Initializing HtpProvider
 [component_container-1] [QRB INFO] /usr/lib/libQnnHtp.so initialize successfully
 [component_container-1] /prj/qct/webtech_scratch20/mlg_user_admin/qaisw_source_repo/rel/qairt-2.35.0/release/snpe_src/avante-tools/prebuilt/dsp/hexagon-sdk-5.4.0/ipc/fastrpc/rpcmem/src/rpcmem_android.c:38:dummy call to rpcmem_init, rpcmem APIs will be used from libxdsprpc
@@ -149,10 +146,9 @@ root@qcs8300-ride-sx:/root# ros2 launch sample_sample_segmentation launch_with_q
 [component_container-1] [INFO] [0000003443.413547809] [yolo_node_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::cv_tensor_common_process::CvTensorCommonProcessNode>
 [component_container-1] [INFO] [0000003443.466812861] [yolo_preprocess_node]: params list -> resoltuion: 640x640, tensor format: nhwc, dtype: float32, normalize: 1
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/yolo_preprocess_node' in container '/yolo_node_container'
-
 ```
 
-Then you can check ROS topics with the name`/yolo_segment_overlay` in  rvize2
+Then you can check ROS topics with the name`/yolo_detect_overlay` in  rvize2
 
 </details>
 
@@ -160,8 +156,6 @@ Then you can check ROS topics with the name`/yolo_segment_overlay` in  rvize2
 
 <details>
   <summary>Build from source details</summary>
-
-
 Install dependencies
 
 ```
@@ -183,7 +177,7 @@ Download the source code and build with colcon
 ```bash
 source /opt/ros/jazzy/setup.bash
 git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
-cd ai_vision/sample_sample_segmentation
+cd ai_vision/sample_object_detection
 colcon build
 ```
 

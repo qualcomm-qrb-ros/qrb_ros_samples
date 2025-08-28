@@ -80,7 +80,7 @@ def generate_launch_description():
         description="iou threshold value, between 0.0 ~ 1.0",
     )
 
-     #qrb ros camera
+    #qrb ros camera
     camera_info_config_file_path =PathJoinSubstitution([
         get_package_share_directory('qrb_ros_camera'),
         'config', 'camera_info_imx577.yaml'])
