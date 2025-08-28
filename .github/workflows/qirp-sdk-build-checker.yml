@@ -5,6 +5,15 @@ on: [push, pull_request]
 jobs:
   qirp-sdk-build-checker:
     uses: qualcomm-qrb-ros/.github/.github/workflows/qirp-sdk-build-checker.yml@qirp-sdk-build
+    with:
+      pre_build_commands: |
+        if [ -e "${WORKSPACE}/robotics/simulation_sample_pick_and_place/scripts/build.sh" ]; then
+          echo "Info: ${WORKSPACE}/robotics/simulation_sample_pick_and_place/scripts/build.sh exist."
+          chmod +x ${WORKSPACE}/robotics/simulation_sample_pick_and_place/scripts/build.sh
+          ${WORKSPACE}/robotics/simulation_sample_pick_and_place/scripts/build.sh
+        else
+          echo "Warning: ${WORKSPACE}/robotics/simulation_sample_pick_and_place/scripts/build.sh does not exist, skipping symbolic link creation."
+        fi
     # with:
     #   dependencies: qualcomm-qrb-ros/qrb_ros_interfaces
     #   colcon_args:  --cmake-clean-first
