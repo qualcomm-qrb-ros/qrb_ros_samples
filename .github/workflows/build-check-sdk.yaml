@@ -71,7 +71,9 @@ jobs:
 
           # Enter the specified directory
           cd "$OECORE_TARGET_SYSROOT/usr/lib" || { echo "Failed to enter directory"; exit 1; }
-
+          echo "OECORE_TARGET_SYSROOT: $OECORE_TARGET_SYSROOT"
+          echo "CURRENT_DIR: $(pwd)"
+          
           # Create symbolic links
           for lib in liboctomath.so liboctomap.so libosqp.so; do
               if [ -e "$lib" ]; then
