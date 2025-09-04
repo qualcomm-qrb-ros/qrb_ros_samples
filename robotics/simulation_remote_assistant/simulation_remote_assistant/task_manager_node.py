@@ -88,15 +88,17 @@ class TaskManagerNode(Node):
                     self.result_event.set()
                     self.detection_enabled = False
                     return
+                    
+def spin_until_event(node, stop_event):
+    while rclpy.ok() and not stop_event.is_set():
+        try:
+            rclpy.spin_once(node, timeout_sec=0.1)
+        except rclpy._rclpy_pybind11.RCLError as e:
+            break
+        except Exception:
+            break
 
 def main(args=None):
-
-    def sigint_handler(signum, frame):
-        print("\nReceived kill signal, input enter to quit...")
-        rclpy.shutdown()
-
-    signal.signal(signal.SIGINT, sigint_handler)
-
     rclpy.init(args=args)
     node = TaskManagerNode()
     pkg_share = get_package_share_directory('simulation_remote_assistant')
@@ -120,57 +122,66 @@ def main(args=None):
         print(f"objects.yaml must contain a list under key 'objects'")
         sys.exit(1)
     valid_objects = objects_data['objects']
-
-    spin_thread = threading.Thread(target=rclpy.spin, args=(node,), daemon=True)
+    stop_event = threading.Event()
+    spin_thread = threading.Thread(target=spin_until_event, args=(node, stop_event))
     spin_thread.start()
 
-    while rclpy.ok():
-        print("\nWhat can I help you with?")
-        print(f"Supported locations: {', '.join(valid_locations)}")
-        print(f"Supported objects: {', '.join(valid_objects)}")
-        print('Example: Go to office to check person\n')
-        sys.stdout.flush()
-        user_cmd = sys.stdin.readline()
-        if not user_cmd:
-            break
-        user_cmd = user_cmd.strip().lower()
-        location = next((loc for loc in valid_locations if loc in user_cmd), None)
-        obj = next((o for o in valid_objects if o in user_cmd), None)
+    try:
+        while rclpy.ok():
+            print("\nWhat can I help you with?")
+            print(f"Supported locations: {', '.join(valid_locations)}")
+            print(f"Supported objects: {', '.join(valid_objects)}")
+            print('Example: Go to office to check person\n')
+            sys.stdout.flush()
+            user_cmd = sys.stdin.readline()
+            if not user_cmd:
+                break
+            user_cmd = user_cmd.strip().lower()
+            location = next((loc for loc in valid_locations if loc in user_cmd), None)
+            obj = next((o for o in valid_objects if o in user_cmd), None)
 
-        if not location or not obj:
-            print("Command must specify both a location and an object to run.\n"
-                  f"Available locations: {', '.join(valid_locations)}\n"
-                  f"Available objects: {', '.join(valid_objects)}")
-            continue
+            if not location or not obj:
+                print("Command must specify both a location and an object to run.\n"
+                      f"Available locations: {', '.join(valid_locations)}\n"
+                      f"Available objects: {', '.join(valid_objects)}")
+                continue
 
-        node.target_class = obj
-        node.nav_destination = location
+            node.target_class = obj
+            node.nav_destination = location
 
-        nav_done_event = threading.Event()
-        nav_result_holder = {}
+            nav_done_event = threading.Event()
+            nav_result_holder = {}
 
-        def nav_done_cb(success):
-            nav_result_holder['success'] = success
-            nav_done_event.set()
+            def nav_done_cb(success):
+                nav_result_holder['success'] = success
+                nav_done_event.set()
 
-        node.result_event.clear()
-        node.goto_location_action('locations.yaml', location, nav_done_cb)
-        print(f"Navigation command sent to '{location}', waiting to arrive at destination...")
+            node.result_event.clear()
+            node.goto_location_action('locations.yaml', location, nav_done_cb)
+            print(f"Navigation command sent to '{location}', waiting to arrive at destination...")
 
-        nav_done = nav_done_event.wait(timeout=180)
-        if not nav_done or not nav_result_holder.get('success', False):
-            print("Navigation timed out or failed")
-            continue
+            nav_done = nav_done_event.wait(timeout=180)
+            if not nav_done or not nav_result_holder.get('success', False):
+                print("Navigation timed out or failed")
+                continue
 
-        print(f"Arrived at '{location}', waiting for detection of '{obj}'...")
-        detected = node.result_event.wait(timeout=10.0)
-        if not detected:
-            print(f"Target '{obj}' not detected within 10 seconds!")
+            print(f"Arrived at '{location}', waiting for detection of '{obj}'...")
+            detected = node.result_event.wait(timeout=10.0)
+            if not detected:
+                print(f"Target '{obj}' not detected within 10 seconds!")
 
-        print("Task finished. You can input new command or Ctrl+C to quit.\n")
-
-    rclpy.shutdown()
-    spin_thread.join(timeout=2)
+            print("Task finished. You can input new command or Ctrl+C to quit.\n")
+    except KeyboardInterrupt:
+        print("\nReceived kill signal, shutting down...")
+    finally:
+        stop_event.set()
+        spin_thread.join()
+        if node is not None:
+            node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
+
+
