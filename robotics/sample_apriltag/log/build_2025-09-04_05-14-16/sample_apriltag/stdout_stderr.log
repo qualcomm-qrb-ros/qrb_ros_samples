@@ -1,0 +1,40 @@
+-- The C compiler identification is GNU 13.3.0
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /local/mnt/workspace/fulan/test/qirp-sdk/toolchain/install_dir/sysroots/x86_64-qcomsdk-linux/usr/bin/aarch64-qcom-linux/aarch64-qcom-linux-gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /local/mnt/workspace/fulan/test/qirp-sdk/toolchain/install_dir/sysroots/x86_64-qcomsdk-linux/usr/bin/aarch64-qcom-linux/aarch64-qcom-linux-g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found ament_cmake_auto: 2.5.2 (/local/mnt/workspace/fulan/test/qirp-sdk/toolchain/install_dir/sysroots/armv8-2a-qcom-linux/usr/share/ament_cmake_auto/cmake)
+-- Found Python3: /local/mnt/workspace/fulan/test/qirp-sdk/toolchain/install_dir/sysroots/x86_64-qcomsdk-linux/usr/bin/python3 (found version "3.12.9") found components: Interpreter 
+-- Configuring done (3.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/build/sample_apriltag
+-- Install configuration: ""
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/launch
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/launch/sample_apriltag_v4l2.launch.py
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/launch/sample_apriltag.launch.py
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/config
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/config/realsense_depth_435i_640x480.yaml
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/config/realsense_depth_435i_1920x1080.yaml
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/config/tags_41h12.yaml
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/ament_index/resource_index/package_run_dependencies/sample_apriltag
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/ament_index/resource_index/parent_prefix_path/sample_apriltag
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/environment/ament_prefix_path.sh
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/environment/ament_prefix_path.dsv
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/environment/path.sh
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/environment/path.dsv
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/local_setup.bash
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/local_setup.sh
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/local_setup.zsh
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/local_setup.dsv
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/package.dsv
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/ament_index/resource_index/packages/sample_apriltag
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/cmake/sample_apriltagConfig.cmake
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/cmake/sample_apriltagConfig-version.cmake
+-- Installing: /local/mnt/workspace/fulan/demo_templ/qrb_ros_samples_fulan/robotics/sample_apriltag/install/sample_apriltag/share/sample_apriltag/package.xml

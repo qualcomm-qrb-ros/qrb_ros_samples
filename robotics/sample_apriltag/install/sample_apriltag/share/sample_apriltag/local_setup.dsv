@@ -1,0 +1,2 @@
+source;share/sample_apriltag/environment/ament_prefix_path.sh
+source;share/sample_apriltag/environment/path.sh
