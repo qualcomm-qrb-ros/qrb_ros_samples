@@ -1,0 +1,12 @@
+Source: ros-jazzy-sample-object-detection
+Section: misc
+Priority: optional
+Maintainer: Fulan Liu <fulaliu@qti.qualcomm.com>
+Build-Depends: debhelper-compat (= 13), python3-pytest <!nocheck>, ros-jazzy-ament-copyright <!nocheck>, ros-jazzy-ament-flake8 <!nocheck>, ros-jazzy-ament-pep257 <!nocheck>, ros-jazzy-launch-ros, ros-jazzy-rclcpp-components, ros-jazzy-rclpy, python3-all, python3-setuptools, dh-python
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-jazzy-sample-object-detection
+Architecture: any
+Depends: ${python3:Depends}, ${misc:Depends}, ros-jazzy-launch-ros, ros-jazzy-qrb-ros-camera (>= 2.0.0), ros-jazzy-qrb-ros-nn-inference, ros-jazzy-qrb-ros-tensor-list-msgs, ros-jazzy-qrb-ros-vision-msgs, ros-jazzy-qrb-ros-yolo-process, ros-jazzy-rclcpp-components, ros-jazzy-rclpy
+Description: sample object detection with yolov8 model
