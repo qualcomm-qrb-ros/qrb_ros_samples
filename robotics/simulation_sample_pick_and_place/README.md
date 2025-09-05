@@ -143,6 +143,9 @@ Then you can view the arm execute pick and place operation in Gazebo and Rviz.
 
 ## 👨‍💻 Build from source
 
+<details>
+  <summary>Usage details</summary>
+
 - Install dependencies
 ```bash
 sudo apt install ros-dev-tools
@@ -170,7 +173,9 @@ colcon build
 source install/setup.bash
 ```
 
-- Refer to the "Launch demo steps" section in Usage details to run the demo.
+- Please refer to the "Launch demo steps" section in Usage details to run the demo.
+
+</details>
 
 ## 🤝 Contributing
 

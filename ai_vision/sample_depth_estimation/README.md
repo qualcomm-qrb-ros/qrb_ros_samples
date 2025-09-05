@@ -182,7 +182,7 @@ colcon build
 source install/setup.bash
 ```
 
-- Refer to the "Launch demo steps" section in Usage details to run the demo.
+- Please refer to the "Launch demo steps" section in Usage details to run the demo.
 
 </details>
 
