@@ -2,11 +2,11 @@ Source: ros-jazzy-sample-resnet101
 Section: misc
 Priority: optional
 Maintainer: Fulan Liu <fulaliu@qti.qualcomm.com>
-Build-Depends: debhelper-compat(=13), python3-pytest <!nocheck>, ros-jazzy-ament-copyright <!nocheck>, ros-jazzy-ament-flake8 <!nocheck>, ros-jazzy-ament-pep257 <!nocheck>, python3-all, python3-setuptools, dh-python
+Build-Depends: debhelper-compat (= 13), python3-pytest <!nocheck>, ros-jazzy-ament-copyright <!nocheck>, ros-jazzy-ament-flake8 <!nocheck>, ros-jazzy-ament-pep257 <!nocheck>, python3-all, python3-setuptools, dh-python
 Homepage: 
 Standards-Version: 3.9.2
 
 Package: ros-jazzy-sample-resnet101
 Architecture: any
-Depends: ${python3:Depends}, ${misc:Depends}, ros-jazzy-ament-index-python, ros-jazzy-cv-bridge, ros-jazzy-image-publisher, ros-jazzy-launch-ros, ros-jazzy-qrb-ros-camera, ros-jazzy-qrb-ros-nn-inference, ros-jazzy-qrb-ros-tensor-list-msgs, ros-jazzy-rclcpp-components, ros-jazzy-rclpy, ros-jazzy-sensor-msgs, ros-jazzy-std-msgs
+Depends: ${python3:Depends}, ${misc:Depends}, ros-jazzy-ament-index-python, ros-jazzy-cv-bridge, ros-jazzy-image-publisher, ros-jazzy-launch-ros, ros-jazzy-qrb-ros-camera (>= 2.0.0), ros-jazzy-qrb-ros-nn-inference (>= 1.1.1), ros-jazzy-qrb-ros-tensor-list-msgs, ros-jazzy-rclcpp-components, ros-jazzy-rclpy, ros-jazzy-sensor-msgs, ros-jazzy-std-msgs
 Description: Imagenet classifier and general purpose backbone with resnet101 model
