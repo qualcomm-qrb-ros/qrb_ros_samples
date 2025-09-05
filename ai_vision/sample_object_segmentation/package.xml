@@ -17,8 +17,8 @@
   <exec_depend>qrb_ros_tensor_list_msgs</exec_depend>
   <exec_depend>qrb_ros_nn_inference</exec_depend>
   <exec_depend>qrb_ros_camera</exec_depend>
-  <exec_depend>ros-jazzy-qrb-ros-yolo-process</exec_depend>
-  <exec_depend>ros-jazzy-qrb-ros-vision-msgs</exec_depend>
+  <exec_depend>qrb_ros_yolo_process</exec_depend>
+  <exec_depend>qrb_ros_vision_msgs</exec_depend>
 
   <export>
     <build_type>ament_python</build_type>

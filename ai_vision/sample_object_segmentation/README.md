@@ -77,7 +77,21 @@ Ultralytics YOLOv8 is a machine learning model that predicts bounding boxes, seg
 > Reference [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
 > For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
 
-Coming soon...
+Add Qualcomm IOT PPA for Ubuntu:
+
+```
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
+
+
+
+Install Debian package:
+
+```
+sudo apt install ros-jazzy-sample-object-segmentation
+```
 
 ## 🚀 Usage
 
@@ -91,7 +105,7 @@ Reference the [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_r
 ```
 #when download yolo model , please using qnn_context_binary and device like bellow for IQ-8275 
  
-python3 -m qai_hub_models.models.yolov8_seg.export --target-runtime qnn_context_binary  --device "QCS8275 (Proxy)"
+python3 -m qai_hub_models.models.yolov8_seg.export --target-runtime tflite  --device "QCS8275 (Proxy)"
 ```
 
 Run the sample env on device
@@ -100,7 +114,7 @@ Run the sample env on device
 ```bash
 #Prepare the model and move to default model path
 mkdir /opt/model/
-mv coco8.yaml yolov8_seg_qcs9075.bin /opt/model/
+mv coco8.yaml yolov8_seg.tflite /opt/model/
 
 source /opt/ros/jazzy/setup.bash
 
@@ -131,7 +145,7 @@ root@qcs8300-ride-sx:/root# ros2 launch sample_sample_segmentation launch_with_q
 [component_container-1] [INFO] [0000003443.024663017] [yolo_node_container]: Load Library: /usr/lib/libqrb_ros_inference_node.so
 [component_container-1] [INFO] [0000003443.031113798] [yolo_node_container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
 [component_container-1] [INFO] [0000003443.031221975] [yolo_node_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
-[component_container-1] [QRB INFO] Loading model from binary file: /opt/model/ yolov8_seg_qcs9075.bin
+[component_container-1] [QRB INFO] Loading model from binary file: /opt/model/yolov8_seg.tflite
 [component_container-1]  <W> Initializing HtpProvider
 [component_container-1] [QRB INFO] /usr/lib/libQnnHtp.so initialize successfully
 [component_container-1] /prj/qct/webtech_scratch20/mlg_user_admin/qaisw_source_repo/rel/qairt-2.35.0/release/snpe_src/avante-tools/prebuilt/dsp/hexagon-sdk-5.4.0/ipc/fastrpc/rpcmem/src/rpcmem_android.c:38:dummy call to rpcmem_init, rpcmem APIs will be used from libxdsprpc
@@ -160,8 +174,6 @@ Then you can check ROS topics with the name`/yolo_segment_overlay` in  rvize2
 
 <details>
   <summary>Build from source details</summary>
-
-
 Install dependencies
 
 ```

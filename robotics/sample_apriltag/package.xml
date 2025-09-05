@@ -12,7 +12,6 @@
   <exec_depend>ros2launch</exec_depend>
   <exec_depend>rclcpp_components</exec_depend>
   <exec_depend>qrb_ros_camera</exec_depend>
-  <exec_depend>qrb_ros_colorspace_convert</exec_depend>
   <exec_depend>image_proc</exec_depend>
   <exec_depend>apriltag_ros</exec_depend>
 
