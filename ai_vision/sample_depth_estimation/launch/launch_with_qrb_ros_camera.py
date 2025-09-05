@@ -51,18 +51,6 @@ def generate_launch_description():
             'camera_info_path': camera_info_config_file_path,
         }]
     )
-    camera_test_node = ComposableNode(
-        package='qrb_ros_camera',
-        namespace=namespace,
-        plugin='qrb_ros::camera::TestNode',
-        name='camera_test_node',
-        remappings=[('/camera_info', '/cam0_stream1_camera_info'),
-                    ('/image', '/cam0_stream1')],
-        parameters=[{
-            'dump': False,
-            'dump_camera_info_': False,
-        }]
-    )
 
     # Node fir qnn inference
     nn_inference_node = ComposableNode(
@@ -85,8 +73,7 @@ def generate_launch_description():
         output = "screen",
         composable_node_descriptions = [
             nn_inference_node, 
-            camera_node,
-            camera_test_node
+            camera_node
         ]
     )
 

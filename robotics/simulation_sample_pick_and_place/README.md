@@ -81,41 +81,59 @@
 ## ✨ Installation
 
 > [!IMPORTANT]
-
-> **PREREQUISITES**: 
-For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/quick_start.html?vproduct=1601111740013072&version=1.5&facet=Qualcomm%20Intelligent%20Robotics%20SDK#setup-demo-qs) documents.
-
-
+> The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
+> Refer to [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
+> For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
 
 ## 🚀 Usage
 
 <details>
   <summary>Usage details</summary>
 
-- Launch Gazebo and Rviz on HOST docker
+1. Prerequisites
 
-Please refer to the Quick Start of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to launch `QRB Robot ARM` on host. Use the same local network and same `ROS_DOMAIN_ID` to ensure that the device can communicate with each other via ROS communication.
-
-You can also launch Gazebo with the following command:
+- Add Qualcomm IOT PPA for Ubuntu.
 ```bash
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
+
+- Install sample depth estimation Debian packages.
+```bash
+sudo apt install ros-jazzy-simulation-sample-pick-and-place
+```
+
+2. Launch Gazebo and Rviz on HOST docker
+
+- Please refer to the Quick Start of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to launch `QRB Robot ARM` on host. Use the same local network and same `ROS_DOMAIN_ID` to ensure that the device can communicate with each other via ROS communication.
+
+- You can also launch Gazebo with the following command:
+```bash
+source install/setup.bash
+export ROS_DOMAIN_ID=55
 ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper.launch.py world_model:=warehouse initial_x:=2.2 initial_y:=-2 initial_z:=1.025 initial_yaw:=3.14159 initial_pitch:=0.0 initial_roll:=0.0
 ```
-Click play button in Gazebo after rendered the world environment, and then use the following command to launch controller.
+
+- Click play button in Gazebo after rendered the world environment, and then use the following command to launch controller.
 ```bash
+source install/setup.bash
+export ROS_DOMAIN_ID=55
 ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper_load_controller.launch.py
 ``` 
-Make sure that after you started Gazebo and Rviz in the host Docker, you can select arm predefined state `ready` and `home` in Rviz to start the arm motion.
 
-- On device
+- Make sure that after you started Gazebo and Rviz in the host Docker, you can select arm predefined state `ready` and `home` in Rviz to start the arm motion.
+
+3. Run pick and place node
 
 Then you can launche the MoveIt! configuration and launch the demo launch file to start the arm motion.
 ```bash
-source /usr/share/qirp-setup.sh
+export ROS_DOMAIN_ID=55
 ros2 launch simulation_sample_pick_and_place simulation_sample_pick_and_place.launch.py
 ```
 If arm motion works normally, open another terminal, you can use the following command to start the pick and place node.
 ```bash
-source /usr/share/qirp-setup.sh
+export ROS_DOMAIN_ID=55
 ros2 run simulation_sample_pick_and_place qrb_ros_arm_pick_place
 ```
 
@@ -125,7 +143,34 @@ Then you can view the arm execute pick and place operation in Gazebo and Rviz.
 
 ## 👨‍💻 Build from source
 
-Coming soon ...
+- Install dependencies
+```bash
+sudo apt install ros-dev-tools
+sudo apt install ros-jazzy-moveit
+``` 
+
+- Install dependency Debian packages from qcom ppa.
+```bash
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
+
+- Download source code from qrb-ros-sample repository.
+```bash
+mkdir -p ~/qrb_ros_sample_ws/src && cd ~/qrb_ros_sample_ws/src
+git clone -b jazzy-rel https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+```
+
+- Build sample from source code.
+```bash
+cd ~/qrb_ros_sample_ws/src/qrb_ros_samples/robotics/simulation_sample_pick_and_place
+rosdep install -i --from-path ./ --rosdistro jazzy -y
+colcon build
+source install/setup.bash
+```
+
+- Refer to the "Launch demo steps" section in Usage details to run the demo.
 
 ## 🤝 Contributing
 

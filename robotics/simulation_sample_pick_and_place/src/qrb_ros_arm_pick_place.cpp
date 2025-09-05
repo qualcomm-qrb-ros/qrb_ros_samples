@@ -34,12 +34,12 @@ public:
     try {
       RCLCPP_INFO(logger_, "Starting pick and place task...");
 
-      // Step 1: Move to ready state
+  // Step 1: Move to ready state
       if (!moveToNamedTarget(arm_group_, "ready", "Ready State")) {
         return false;
-      }
+  }
 
-      // Step 2: Open gripper
+  // Step 2: Open gripper
       if (!moveToNamedTarget(gripper_group_, "open", "Open Gripper")) {
         return false;
       }
@@ -133,7 +133,7 @@ private:
     if (success) {
       RCLCPP_INFO(logger_, "%s completed", description.c_str());
       return true;
-    } else {
+  } else {
       RCLCPP_ERROR(logger_, "%s failed", description.c_str());
       return false;
     }
@@ -147,7 +147,7 @@ private:
   {
     RCLCPP_INFO(logger_, "Step: %s", description.c_str());
 
-    // Convert degrees to radians
+  // Convert degrees to radians
     std::map<std::string, double> joint_angles_rad = convertToRadians(joint_angles_deg);
 
     // Print target angles
@@ -162,7 +162,7 @@ private:
     if (success) {
       RCLCPP_INFO(logger_, "%s completed", description.c_str());
       return true;
-    } else {
+  } else {
       RCLCPP_ERROR(logger_, "%s failed", description.c_str());
       return false;
     }

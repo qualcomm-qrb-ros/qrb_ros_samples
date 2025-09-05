@@ -11,8 +11,8 @@
 
 ## 👋 Overview
 
-- This sample allows you to input an RGB image named `input_image.jpg` or subscribe to the ROS topic `/cam0_stream1` from `qrb ros camera`. It then uses QNN to perform model inference and publishes the result as the `/depth_map` ROS topic containing per-pixel depth values.
-- The model is sourced from [Depth Anything V2](https://aihub.qualcomm.com/iot/models/depth_anything_v2?searchTerm=depth&domain=Computer+Vision) that a deep convolutional neural network model for depth estimation.
+- This sample processes RGB images from `input_image.jpg` or subscribes to the `/cam0_stream1` ROS topic from `qrb ros camera`. It uses QNN for model inference and publishes per-pixel depth values via the `/depth_map` ROS topic.
+- The model is sourced from [Depth Anything V2](https://aihub.qualcomm.com/iot/models/depth_anything_v2?searchTerm=depth&domain=Computer+Vision), a deep convolutional neural network for depth estimation.
 
 ![image-20250723181610392](./resource/depth_estimation_architecture.jpg)
 
@@ -39,10 +39,10 @@
 
 | ROS Topic                       | Type                                          | Description                    |
 | ------------------------------- | --------------------------------------------- | ------------------------------ |
-| `/image_raw `                   | `<sensor_msgs.msg.Image> `                   | public image info              |
-| `/qrb_inference_input_tensor `  | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | preprocess message             |
-| `/qrb_inference_output_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | nn interface result with model |
-| `/depth_map ` | `<sensor_msgs.msg.Image> ` | depth map result              |
+| `/image_raw`                    | `<sensor_msgs.msg.Image>`                    | Input image data              |
+| `/qrb_inference_input_tensor`   | `<qrb_ros_tensor_list_msgs.msg.TensorList>`  | Preprocessed tensor data      |
+| `/qrb_inference_output_tensor`  | `<qrb_ros_tensor_list_msgs.msg.TensorList>`  | Model inference results       |
+| `/depth_map`                    | `<sensor_msgs.msg.Image>`                    | Depth map output              |
 
 ## 🎯 Supported targets
 
@@ -68,24 +68,52 @@
 ## ✨ Installation
 
 > [!IMPORTANT]
-
-> **PREREQUISITES**: For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/quick_start.html?vproduct=1601111740013072&version=1.5&facet=Qualcomm%20Intelligent%20Robotics%20SDK#setup-demo-qs) documents.
+> The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
+> Refer to [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
+> For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
 
 ## 🚀 Usage
 
 <details>
   <summary>Usage details</summary>
 
+1. Prerequisites
+
+- Add Qualcomm IOT PPA for Ubuntu.
+```bash
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
+
+- Install sample depth estimation Debian packages.
+```bash
+sudo apt install ros-jazzy-sample-depth-estimation
+```
+
+- Download Depth Anything V2 model.
+```bash
+mkdir -p /opt/model && cd /opt/model
+
+wget https://huggingface.co/qualcomm/Depth-Anything-V2/resolve/19ce3645e11de17eed7e869eebcc07dd352834f3/Depth-Anything-V2.bin?download=true -O Depth-Anything-V2.bin
+```
+
+2. Launch demo steps
+- Source environment and launch demo.
 ```bash
 source /usr/share/qirp-setup.sh
 ros2 launch sample_depth_estimation launch_with_image_publisher.py
-or # You can also replace this with a custom image file or model path
+```
+- You can replace this with a custom image file or model path.
+```bash
 ros2 launch sample_depth_estimation launch_with_image_publisher.py image_path:=<your local image path> model_path:=<your local model path>
-or # You can launch with qrb ros camera
+```
+- You can also launch with qrb ros camera if you connect the GMSL camera.
+```bash
 ros2 launch sample_depth_estimation launch_with_qrb_ros_camera.py
 ```
 
-When using this launch script, it will use the default parameters:
+- When using this launch script, it will use the default parameters:
 
 ```py
     image_path_arg = DeclareLaunchArgument(
@@ -108,20 +136,60 @@ When using this launch script, it will use the default parameters:
     )
 ```
 
-It will send local input_image.jpg file with a publishing rate of `10` Hz. 
+It will send local `input_image.jpg` file with a publishing rate of 10 Hz. 
 
-Then you can check ROS topics with the topic name `/depth_map` in rviz.
+- View the depth map results in rviz using the `/depth_map` topic. 
+For rqt installation, refer to the [ROS 2 Jazzy documentation](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Introducing-Turtlesim/Introducing-Turtlesim.html).
 
 </details>
 
 ## 👨‍💻 Build from source
 
-Coming soon ...
+<details>
+  <summary>Usage details</summary>
+
+- Install `ros-dev-tools`
+```bash
+sudo apt install ros-dev-tools
+``` 
+
+- Install dependency Debian packages from qcom ppa.
+```bash
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+sudo apt install ros-jazzy-qrb-ros-camera
+```
+
+- Download source code from qrb-ros-sample repository.
+```bash
+mkdir -p ~/qrb_ros_sample_ws/src && cd ~/qrb_ros_sample_ws/src
+git clone -b jazzy-rel https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+```
+
+- Download Depth Anything V2 model.
+```bash
+mkdir -p /opt/model && cd /opt/model
+
+wget https://huggingface.co/qualcomm/Depth-Anything-V2/resolve/19ce3645e11de17eed7e869eebcc07dd352834f3/Depth-Anything-V2.bin?download=true -O Depth-Anything-V2.bin
+```
+
+- Build sample from source code.
+```bash
+cd ~/qrb_ros_sample_ws/src/qrb_ros_samples/ai_vision/sample_depth_estimation
+rosdep install -i --from-path ./ --rosdistro jazzy -y
+colcon build
+source install/setup.bash
+```
+
+- Refer to the "Launch demo steps" section in Usage details to run the demo.
+
+</details>
 
 ## 🤝 Contributing
 
 We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).<br>
-Feel free to create an issue for bug report, feature requests or any discussion💡.
+Feel free to create an issue for bug reports, feature requests, or any discussion💡.
 
 ## ❤️ Contributors
 
@@ -143,8 +211,8 @@ Thanks to all our contributors who have helped make this project better!
 ## ❔ FAQs
 
 <details>
-<summary>How to get origin output of the QNN inference node?</summary><br>
-Comment the following code in depth_estimation_node.py to get the origin output of the QNN inference node.
+<summary>How to get the original output of the QNN inference node?</summary><br>
+Comment out the following code in depth_estimation_node.py to get the original output of the QNN inference node.
 
 ```python
 # Normalize to [0,255]
