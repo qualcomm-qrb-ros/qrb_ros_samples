@@ -1,1 +1,0 @@
-ros2launch;rclcpp_components;qrb_ros_camera;qrb_ros_colorspace_convert;image_proc;apriltag_ros;ament_lint_auto;ament_lint_common
