@@ -1,63 +1,197 @@
-# QRB ROS Samples
-
-## Overview
-
-This repository is a comprehensive collection of QRB ROS (Robot Operating System) example codes. It serves as a valuable resource for developers and enthusiasts looking to explore and implement QRB functionalities within the ROS framework. Each example is designed to demonstrate specific features and use cases, providing a practical guide to enhance your understanding and application of QRB in ROS environments.
 
 
+<div >
+  <h1>AI Sample Depth Estimation</h1>
+  <p align="center">
+</div>
 
-The `main` branch serves as the development branch and includes all samples currently under active development. It is primarily supported on Ubuntu by default.    For stable releases, please refer to the `jazzy-rel` branch.
+![](./resource/depth_result.gif)
 
-## List of AI Samples
+---
 
-| Sample                                                       | Peripherals required | RB3 Gen2 Vision Kit | IQ-9075 Evaluation Kit | IQ-8 Beta   Evaluation Kit | Description                                                  |
-| ------------------------------------------------------------ | -------------------- | ------------------- | ---------------------- | -------------------------- | ------------------------------------------------------------ |
-| [Face detection](ai_vision/sample_face_detection/)           | N                    | N                   | Y                      | N                          | The Face detection is a machine learning pipeline that predicts bounding boxes and key point of face in an image. For model information, please refer to [MediaPipe-Face-Detection](https://huggingface.co/qualcomm/MediaPipe-Face-Detection). |
-| [Hand detection](ai_vision/sample_hand_detection/)           | N                    | N                   | Y                      | N                          | The Hand detection is a machine learning pipeline that predicts bounding boxes and pose skeletons of hands in an image. For model information, please refer to [MediaPipe-Hand-Detection](https://huggingface.co/qualcomm/MediaPipe-Hand-Detection). |
-| [sample_resnet101](ai_vision/sample_resnet101)               | N                    | Y                   | Y                      | Y                          | The Image Classification is a machine learning model that can classify images from the Imagenet dataset. For model information, please refer to [ResNet101Quantized](https://huggingface.co/qualcomm/ResNet101Quantized). |
-| [speech recognition](ai_audio/sample_speech_recognition/)    | N                    | Y                   | Y                      | Y                          | captures the audio input and publishes the ros topic with the speech recognition result, For model information, please refer to [Whisper-Tiny-En - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/whisper_tiny_en?domain=Audio) |
-| [sample_object_detction](ai_vision/sample_object_detction/)  | Gemini 335L          | N                   | Y                      | Y                          | The `sample_object_setection` is a Python launch file utilizing QNN for model inference. It demonstrates camera data streaming, AI-based inference, and real-time visualization of object detection results. For model information, please refer to  [YOLOv8-Detection - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/yolov8_det?searchTerm=yolov8&domain=Computer+Vision) |
-| [sample_object_segmentation](ai_vision/sample_object_segmentation/) | Gemini 335L          | N                   | Y                      | Y                          | The `sample_object_segmentation` is a Python launch file utilizing QNN for model inference. It demonstrates camera data streaming, AI-based inference, and real-time visualization of object segmentation results.”. For model information, please refer to [YOLOv8-Segmentation - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/yolov8_seg?searchTerm=yolov8&domain=Computer+Vision) |
-| [sample_hrnet_pose_estimation](ai_vision/sample_hrnet_pose_estimation/) | N                    | N                   | Y                      | N                          | `sample_hrnet_pose_estimation` sample provides high-precision human pose estimation capabilities. For model information, please refer to [HRNetPose - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/hrnet_pose?searchTerm=hrnet) |
-| [sample_depth_estimation](ai_vision/sample_depth_estimation/) | N                    | N                   | Y                      | N                          | The `sample_depth_estimation` include the pre/post-processs for estimating the depth of each pixel using QNN inference. For model information, please refer to [Depth Anything V2 - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/depth_anything_v2?searchTerm=depth&domain=Computer+Vision) |
+## 👋 Overview
+
+- This sample allows you to input an RGB image named `input_image.jpg` or subscribe to the ROS topic `/cam0_stream1` from `qrb ros camera`. It then uses QNN to perform model inference and publishes the result as the `/depth_map` ROS topic containing per-pixel depth values.
+- The model is sourced from [Depth Anything V2](https://aihub.qualcomm.com/iot/models/depth_anything_v2?searchTerm=depth&domain=Computer+Vision), a deep convolutional neural network model for depth estimation.
+
+![image-20250723181610392](./resource/depth_estimation_architecture.jpg)
+
+| Node Name                                                    | Function                                                     |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
+| image publisher                                              | Publishes image data to a ROS topic—can be camera frames, local files, or processed outputs. |
+| sample depth estimation    | Subscribes to input images for preprocessing, then performs postprocessing on the output tensor published by the qrb ros nn interface node. |
+| [qrb ros nn interface](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results. |
+
+## 🔎 Table of contents
+
+  * [Used ROS Topics](#-used-ros-topics)
+  * [Supported targets](#-supported-targets)
+  * [Installation](#-installation)
+  * [Usage](#-usage)
+  * [Build from source](#-build-from-source)
+  * [Contributing](#-contributing)
+  * [Contributors](#%EF%B8%8F-contributors)
+  * [FAQs](#-faqs)
+  * [License](#-license)
+
+## ⚓ Used ROS Topics 
+
+| ROS Topic                       | Type                                          | Description                    |
+| ------------------------------- | --------------------------------------------- | ------------------------------ |
+| `/image_raw `                   | `<sensor_msgs.msg.Image> `                   | Published image information              |
+| `/qrb_inference_input_tensor `  | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | Preprocessed message             |
+| `/qrb_inference_output_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | Neural network interface result with model |
+| `/depth_map ` | `<sensor_msgs.msg.Image> ` | Depth map result              |
+
+## 🎯 Supported targets
+
+<table>
+  <tr>
+    <th>Development Hardware</th>
+    <th>Hardware Overview</th>
+  </tr>
+  <tr>
+    <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
+    <td>
+      <a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075">
+        <img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>GMSL Camera Support</td>
+    <td>LI-VENUS-OX03F10-OAX40-GM2A-118H(YUV)</td>
+  </tr>
+</table>
+
+## ✨ Installation
+
+> [!IMPORTANT]
+> The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
+> Refer to [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
+> For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
 
 
-## List of Robotics Samples
+## 🚀 Usage
 
-| Sample                                                       | Peripherals required | RB3 Gen2 Vision Kit | IQ-9075 Evaluation Kit | IQ-8 Beta   Evaluation Kit | Description                                                  |
-| ------------------------------------------------------------ | -------------------- | ------------------- | ---------------------- | -------------------------- | ------------------------------------------------------------ |
-| [simulation_sample_amr_simple_motion](robotics/simulation_sample_amr_simple_motion) | N                    | Y                   | Y                      | Y                          | The `AMR simple motion sample` is a Python-based ROS node used to control the simple movements of QRB AMRs within the simulator. This sample allows you to control the movement of QRB AMRs via publishing the ROS messages to `/qrb_robot_base/cmd_vel` topic. |
-| [2D LiDAR SLAM](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/2d_lidar_slam.html?state=releasecandidate) | RPLIDAR A3M1         | Y                   | N                      | N                          | The 2D LiDAR SLAM sample is designed based on `Cartographer`, which is capable of completing indoor map construction and localization based on 2D LiDAR sensors. |
-| [follow-me](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/followme.html?state=releasecandidate) | Gemini 335L          | Y                   | N                      | N                          | The FollowMe is a lightweight application that enables robots to track targets in real-time. |
-| [simulation follow me](simulation_follow_me)                 | N                    | Y                   | N                      | N                          | The `Simulation Follow Me` sample is a AMR to detect, track, and follow a moving person in real time. It integrates sensor emulation and motion control to follow human-following behavior in simulated environments. |
-| [simulation_sample_pick_and_place](robotics/simulation_sample_pick_and_place)                 | N                    | Y                   | Y                      | Y                          | The `simulation sample pick and place` is a C++-based robotic manipulation ROS2 node that demonstrates autonomous pick-and-place operations using MoveIt2 for motion planning and Gazebo for physics simulation. |
+<details>
+  <summary>Usage details</summary>
 
-## List of Platform Samples
+## 👨‍💻 Build from source
 
-| Sample                                                       | Peripherals required | RB3 Gen2 Vision Kit | IQ-9075 Evaluation Kit | IQ-8 Beta   Evaluation Kit | Description                                                  |
-| ------------------------------------------------------------ | -------------------- | ------------------- | ---------------------- | -------------------------- | ------------------------------------------------------------ |
-| [Orbbec-camera](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/orbbec-camera_5_2_8.html?state=releasecandidate) | Gemini 335L          | Y                   | Y                      | N                          | The Orbbec-camera sample application enables the Orbbec Gemini camera 335L to work in RGB or depth mode. This application generates the RGB and depth information by topics. |
-| [RPLIDAR-ROS2](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/rplidar-ros2_5_2_3.html?state=releasecandidate) | RPLIDAR A3M1         | Y                   | Y                      | Y                          | The RPLIDAR-ROS2 sample application enables the RPLIDAR A3M1 to work in RGB or depth mode. This application generates the RGB and depth information by topics. |
-| [Qrb-ros-imu](https://github.com/qualcomm-qrb-ros/qrb_ros_imu) | N                    | Y                   | N                      | N                          | The QRB-ROS-IMU sample application enables the IMU to work in RGB or depth mode. This application generates the RGB and depth information by topics. |
-| [Qrb-ros-system-monitor](https://github.com/qualcomm-qrb-ros/qrb_ros_system_monitor) | N                    | Y                   | Y                      | Y                          | The QRB-ROS-system-monitor sample application enables the system monitor to work in RGB or depth mode. This application generates the RGB and depth information by topics. |
-| [Qrb-ros-battery]([qualcomm-qrb-ros/qrb_ros_battery](https://github.com/qualcomm-qrb-ros/qrb_ros_battery)) | N                    | Y                   | N                      | N                          | The QRB-ROS-battery sample application is a package that publishes the battery state data from the system node. |
-| [Qrb-ros-camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | N                    | Y                   | N                      | N                          | The QRB-ROS-camera implements a camera ROS2 node to enable zero-copy performance when data is coming out of the camera-server. |
-| [sample_ocr](platform/sample_ocr)                            | N                    | Y                   | Y                      | Y                          | The `ocr-service` sample application enables a service that provides the Optical Character Recognition (OCR) function. |
-| [sample_colorspace_convert](platform/sample_colorspace_convert) | Y                    | Y                   | Y                      | Y                          | The `qrb-ros-color-space-convert` sample application converts between NV12 and RGB888 formats. |
+- Download the Depth Anything V2 model:
+```bash
+sudo mkdir -p /opt/model && cd /opt/model
+sudo wget https://huggingface.co/qualcomm/Depth-Anything-V2/resolve/19ce3645e11de17eed7e869eebcc07dd352834f3/Depth-Anything-V2.bin?download=true -O Depth-Anything-V2.bin
+```
 
-## System Requirements
+- Add qcom ppa repository source:
+```bash
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
 
-- [QCLINUX](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/qir-sdk-landing-page.html?state=releasecandidate)
-- Canonical Ubuntu Image
+- Install dependencies:
+```bash
+sudo apt install -y ros-dev-tools
+sudo apt install -y ros-jazzy-qrb-ros-camera
+``` 
+
+- Download source code from the qrb-ros-sample repository:
+```bash
+mkdir -p ~/qrb_ros_sample_ws/src && cd ~/qrb_ros_sample_ws/src
+git clone -b jazzy-rel https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+```
+
+- Build the sample from source code:
+```bash
+cd ~/qrb_ros_sample_ws/src/qrb_ros_samples/ai_vision/sample_depth_estimation
+rosdep install -i --from-path ./ --rosdistro jazzy -y
+colcon build
+```
+
+- Source environment and launch demo:
+```bash
+source install/setup.bash
+ros2 launch sample_depth_estimation launch_with_image_publisher.py
+```
+- You can replace this with a custom image file or model path:
+```bash
+source install/setup.bash
+ros2 launch sample_depth_estimation launch_with_image_publisher.py image_path:=<your local image path> model_path:=<your local model path>
+```
+- You can also launch with qrb ros camera if you connect the GMSL camera:
+```bash
+source install/setup.bash
+ros2 launch sample_depth_estimation launch_with_qrb_ros_camera.py
+```
+
+- When using this launch script, it will use the default parameters, this will send the local `input_image.jpg` file with a publishing rate of 10 Hz. 
+
+```py
+    image_path_arg = DeclareLaunchArgument(
+        'image_path',
+        default_value=os.path.join(package_path, "resource", "input_image.jpg"),
+        description='Path to the input image file'
+    )
+
+    # Node for image_publisher
+    image_publisher_node = Node(
+        package='image_publisher',  
+        executable='image_publisher_node', 
+        namespace=namespace,
+        name='image_publisher_node', 
+        output='screen', 
+        parameters=[
+            {'filename': image_path},  
+            {'rate': 10.0},  # Set the publishing rate to 10 Hz
+        ]
+    )
+```
+
+- You can then check ROS topics with the topic name `/depth_map` in RViz. 
+Please refer to the [ROS 2 Jazzy documentation](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Introducing-Turtlesim/Introducing-Turtlesim.html) to install rqt.
+
+</details>
+
+## 🤝 Contributing
+
+We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).<br>
+Feel free to create an issue for bug reports, feature requests, or any discussion💡.
+
+## ❤️ Contributors
+
+Thanks to all our contributors who have helped make this project better!
+
+<table>
+  <tr>
+    <td style="text-align: center;">
+      <a href="https://github.com/DotaIsMind">
+        <img src="https://github.com/DotaIsMind.png" width="100" height="100" alt="teng"/>
+        <br />
+        <sub><b>teng</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
 
 
+## ❔ FAQs
 
-## Contributions
+<details>
+<summary>How to get the original output of the QNN inference node?</summary><br>
+Comment out the following code in depth_estimation_node.py to get the original output of the QNN inference node:
 
-Thanks for your interest in contributing to qrb ros samples! Please read our [Contributions Page](CONTRIBUTING.md) for more information on contributing features or bug fixes. We look forward to your participation!
+```python
+# Normalize to [0,255]
+normalized = cv2.normalize(output_image, None, 0, 255, cv2.NORM_MINMAX)
+colored = cv2.applyColorMap(normalized.astype(np.uint8), cv2.COLORMAP_INFERNO)
+```
+</details>
 
-## License
 
-qrb_ros_samples is licensed under the BSD 3-clause "New" or "Revised" License.
+## 📜 License
 
-Check out the [LICENSE](LICENSE) for more details.
+Project is licensed under the [BSD-3-Clause](https://spdx.org/licenses/BSD-3-Clause.html) License. See [LICENSE](../../LICENSE) for the full license text.
