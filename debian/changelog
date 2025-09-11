@@ -1,7 +1,7 @@
-ros-jazzy-sample-depth-estimation (1.0.0) noble; urgency=high
+ros-jazzy-simulation-sample-pick-and-place (1.0.1) noble; urgency=high
 
   * Initial release.
 
- -- Teng Fan <quic_tengf@quicinc.com>  Thu, 11 Sep 2025 08:55:53 -0000
+ -- root <tengf@qti.qualcomm.com>  Thu, 11 Sep 2025 09:04:16 -0000
 
 

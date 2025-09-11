@@ -17,23 +17,25 @@ export PKG_CONFIG_PATH=/opt/ros/jazzy/lib/pkgconfig
 # Explicitly enable -DNDEBUG, see:
 # 	https://github.com/ros-infrastructure/bloom/issues/327
 export DEB_CXXFLAGS_MAINT_APPEND=-DNDEBUG
-
-# Python package installation variables
-export PYBUILD_INSTALL_ARGS=--prefix "/opt/ros/jazzy" \
-	--install-lib "\$$base/lib/{interpreter}/site-packages" \
-	
+ifneq ($(filter nocheck,$(DEB_BUILD_OPTIONS)),)
+	BUILD_TESTING_ARG=-DBUILD_TESTING=OFF
+endif
 
 DEB_HOST_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 
 %:
-	dh $@ -v --buildsystem=pybuild --with python3 --builddirectory=.obj-$(DEB_HOST_GNU_TYPE)
+	dh $@ -v --buildsystem=cmake --builddirectory=.obj-$(DEB_HOST_GNU_TYPE)
 
 override_dh_auto_configure:
 	# In case we're installing to a non-standard location, look for a setup.sh
 	# in the install tree and source it.  It will set things like
 	# CMAKE_PREFIX_PATH, PKG_CONFIG_PATH, and PYTHONPATH.
 	if [ -f "/opt/ros/jazzy/setup.sh" ]; then . "/opt/ros/jazzy/setup.sh"; fi && \
-	dh_auto_configure
+	dh_auto_configure -- \
+		-DCMAKE_INSTALL_PREFIX="/opt/ros/jazzy" \
+		-DAMENT_PREFIX_PATH="/opt/ros/jazzy" \
+		-DCMAKE_PREFIX_PATH="/opt/ros/jazzy" \
+		$(BUILD_TESTING_ARG)
 
 override_dh_auto_build:
 	# In case we're installing to a non-standard location, look for a setup.sh
@@ -55,7 +57,7 @@ override_dh_shlibdeps:
 	# in the install tree and source it.  It will set things like
 	# CMAKE_PREFIX_PATH, PKG_CONFIG_PATH, and PYTHONPATH.
 	if [ -f "/opt/ros/jazzy/setup.sh" ]; then . "/opt/ros/jazzy/setup.sh"; fi && \
-	dh_shlibdeps -l$(CURDIR)/debian/ros-jazzy-sample-depth-estimation//opt/ros/jazzy/lib/
+	dh_shlibdeps -l$(CURDIR)/debian/ros-jazzy-simulation-sample-pick-and-place//opt/ros/jazzy/lib/:$(CURDIR)/debian/ros-jazzy-simulation-sample-pick-and-place//opt/ros/jazzy/opt/simulation_sample_pick_and_place/lib/
 
 override_dh_auto_install:
 	# In case we're installing to a non-standard location, look for a setup.sh

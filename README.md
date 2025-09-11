@@ -1,48 +1,51 @@
 
 
 <div >
-  <h1>AI Sample Depth Estimation</h1>
+  <h1>Simulation Sample Pick and Place</h1>
   <p align="center">
 </div>
 
-![](./resource/depth_result.gif)
+![](./resource/pick_and_place.gif)
 
 ---
 
 ## 👋 Overview
 
-- This sample allows you to input an RGB image named `input_image.jpg` or subscribe to the ROS topic `/cam0_stream1` from `qrb ros camera`. It then uses QNN to perform model inference and publishes the result as the `/depth_map` ROS topic containing per-pixel depth values.
-- The model is sourced from [Depth Anything V2](https://aihub.qualcomm.com/iot/models/depth_anything_v2?searchTerm=depth&domain=Computer+Vision), a deep convolutional neural network model for depth estimation.
+- The RML-63 Robotic Arm Pick and Place Demo is a C++-based ROS2 node that demonstrates autonomous pick-and-place operations using MoveIt2 for motion planning and Gazebo for physics simulation.
 
-![image-20250723181610392](./resource/depth_estimation_architecture.jpg)
+![image-20250723181610392](./resource/pick_and_place_architecture.jpg)
 
 | Node Name                                                    | Function                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
-| image publisher                                              | Publishes image data to a ROS topic—can be camera frames, local files, or processed outputs. |
-| sample depth estimation    | Subscribes to input images for preprocessing, then performs postprocessing on the output tensor published by the qrb ros nn interface node. |
-| [qrb ros nn interface](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results. |
+| qrb_ros_simulation | Sets up the Qualcomm robotic simulation environment. See [qrb_ros_simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation). |
+| qrb_ros_arm_pick_and_place     | Defines pick and place positions with ROS2 launch.py configuration parameter support. |
+
 
 ## 🔎 Table of contents
 
-  * [Used ROS Topics](#-used-ros-topics)
-  * [Supported targets](#-supported-targets)
-  * [Installation](#-installation)
-  * [Usage](#-usage)
-  * [Build from source](#-build-from-source)
-  * [Contributing](#-contributing)
-  * [Contributors](#%EF%B8%8F-contributors)
-  * [FAQs](#-faqs)
-  * [License](#-license)
+- [👋 Overview](#-overview)
+- [🔎 Table of contents](#-table-of-contents)
+- [⚓ Used ROS Topics](#-used-ros-topics)
+- [🎯 Supported targets](#-supported-targets)
+- [✨ Installation](#-installation)
+- [🚀 Usage](#-usage)
+- [👨‍💻 Build from source](#-build-from-source)
+- [🤝 Contributing](#-contributing)
+- [❤️ Contributors](#️-contributors)
+- [❔ FAQs](#-faqs)
+- [📜 License](#-license)
 
 ## ⚓ Used ROS Topics 
 
 | ROS Topic                       | Type                                          | Description                    |
 | ------------------------------- | --------------------------------------------- | ------------------------------ |
-| `/image_raw `                   | `<sensor_msgs.msg.Image> `                   | Published image information              |
-| `/qrb_inference_input_tensor `  | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | Preprocessed message             |
-| `/qrb_inference_output_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | Neural network interface result with model |
-| `/depth_map ` | `<sensor_msgs.msg.Image> ` | Depth map result              |
+| `/joint_states`                   | `<sensor_msgs/msg/JointState> `                   | 	Real-time joint position, velocity, and effort data for all robot joints              |
+| `/hand_controller/controller_state` | `<control_msgs.msg.ControllerState>` |	Current state and status information of the gripper controller |
+| `/hand_controller/joint_trajectory` |	`<trajectory_msgs.msg.JointTrajectory>` |	Trajectory commands sent to gripper joints for motion execution |
+| `/rm_group_controller/controller_state` |	`<control_msgs.msg.ControllerState>` |	Current state and status information of the robotic arm controller |
+| `/rm_group_controller/joint_trajectory` |	`<trajectory_msgs.msg.JointTrajectory>` |	Trajectory commands sent to arm joints for motion execution |
+| `/robot_description` |	`<std_msgs.msg.String>` |	URDF robot description in XML format for robot modeling and visualization |
+| `/robot_description_semantic` |	`<std_msgs.msg.String>` |	SRDF semantic robot description for MoveIt planning and configuration |
 
 ## 🎯 Supported targets
 
@@ -60,8 +63,18 @@
     </td>
   </tr>
   <tr>
-    <td>GMSL Camera Support</td>
-    <td>LI-VENUS-OX03F10-OAX40-GM2A-118H(YUV)</td>
+    <td>Qualcomm Dragonwing™ RB3 Gen2</td>
+    <td>
+      <a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/rb3-series/rb3-gen2">
+        <img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3-vision-kit-1" width="160">
+      </a>
+    </td>
+  </tr>
+    <tr>
+    <td>Qualcomm Dragonwing™ IQ-8275</td>
+    <td>
+      <a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq8-series">View Product Details</a>
+    </td>
   </tr>
 </table>
 
@@ -72,21 +85,16 @@
 > Refer to [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
 > For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
 
-
 ## 🚀 Usage
+
+## 👨‍💻 Build from source
 
 <details>
   <summary>Usage details</summary>
 
-## 👨‍💻 Build from source
+1. Prerequisites
 
-- Download the Depth Anything V2 model:
-```bash
-sudo mkdir -p /opt/model && cd /opt/model
-sudo wget https://huggingface.co/qualcomm/Depth-Anything-V2/resolve/19ce3645e11de17eed7e869eebcc07dd352834f3/Depth-Anything-V2.bin?download=true -O Depth-Anything-V2.bin
-```
-
-- Add qcom ppa repository source:
+- Add qcom-iot PPA repository source.
 ```bash
 sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
 sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
@@ -96,7 +104,7 @@ sudo apt update
 - Install dependencies:
 ```bash
 sudo apt install -y ros-dev-tools
-sudo apt install -y ros-jazzy-qrb-ros-camera
+sudo apt install -y ros-jazzy-moveit
 ``` 
 
 - Download source code from the qrb-ros-sample repository:
@@ -107,59 +115,54 @@ git clone -b jazzy-rel https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
 
 - Build the sample from source code:
 ```bash
-cd ~/qrb_ros_sample_ws/src/qrb_ros_samples/ai_vision/sample_depth_estimation
+cd ~/qrb_ros_sample_ws/src/qrb_ros_samples/robotics/simulation_sample_pick_and_place
 rosdep install -i --from-path ./ --rosdistro jazzy -y
 colcon build
 ```
 
-- Source environment and launch demo:
+2. Launch Gazebo on HOST Docker
+
+- Please refer to the Quick Start of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to launch `QRB Robot ARM` on the host. Use the same local network and `ROS_DOMAIN_ID` to ensure devices can communicate via ROS.
+
+- You can launch Gazebo with the following command:
 ```bash
 source install/setup.bash
-ros2 launch sample_depth_estimation launch_with_image_publisher.py
+export ROS_DOMAIN_ID=55
+ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper.launch.py world_model:=warehouse initial_x:=2.2 initial_y:=-2 initial_z:=1.025 initial_yaw:=3.14159 initial_pitch:=0.0 initial_roll:=0.0 use_sim_time:=true
 ```
-- You can replace this with a custom image file or model path:
+
+- Click the play button in Gazebo after the world environment renders, open another terminal, and use the following command to launch the controller:
 ```bash
 source install/setup.bash
-ros2 launch sample_depth_estimation launch_with_image_publisher.py image_path:=<your local image path> model_path:=<your local model path>
-```
-- You can also launch with qrb ros camera if you connect the GMSL camera:
+export ROS_DOMAIN_ID=55
+ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper_load_controller.launch.py
+``` 
+
+- Ensure that after starting Gazebo ain the host Docker, you can then run the pick and place node.
+
+3. Run the pick and place node
+
+- You can launch the MoveIt2 configuration and demo launch file to start the arm motion:
 ```bash
 source install/setup.bash
-ros2 launch sample_depth_estimation launch_with_qrb_ros_camera.py
+export ROS_DOMAIN_ID=55
+ros2 launch simulation_sample_pick_and_place simulation_sample_pick_and_place.launch.py
+```
+- If the arm motion works normally, open another terminal and use the following command to start the pick and place node:
+```bash
+source install/setup.bash
+export ROS_DOMAIN_ID=55
+ros2 run simulation_sample_pick_and_place qrb_ros_arm_pick_place
 ```
 
-- When using this launch script, it will use the default parameters, this will send the local `input_image.jpg` file with a publishing rate of 10 Hz. 
-
-```py
-    image_path_arg = DeclareLaunchArgument(
-        'image_path',
-        default_value=os.path.join(package_path, "resource", "input_image.jpg"),
-        description='Path to the input image file'
-    )
-
-    # Node for image_publisher
-    image_publisher_node = Node(
-        package='image_publisher',  
-        executable='image_publisher_node', 
-        namespace=namespace,
-        name='image_publisher_node', 
-        output='screen', 
-        parameters=[
-            {'filename': image_path},  
-            {'rate': 10.0},  # Set the publishing rate to 10 Hz
-        ]
-    )
-```
-
-- You can then check ROS topics with the topic name `/depth_map` in RViz. 
-Please refer to the [ROS 2 Jazzy documentation](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Introducing-Turtlesim/Introducing-Turtlesim.html) to install rqt.
+- You can then view the arm executing the pick and place operation in Gazebo.
 
 </details>
 
 ## 🤝 Contributing
 
 We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).<br>
-Feel free to create an issue for bug reports, feature requests, or any discussion💡.
+Feel free to create an issue for bug report, feature requests or any discussion💡.
 
 ## ❤️ Contributors
 
@@ -179,17 +182,6 @@ Thanks to all our contributors who have helped make this project better!
 
 
 ## ❔ FAQs
-
-<details>
-<summary>How to get the original output of the QNN inference node?</summary><br>
-Comment out the following code in depth_estimation_node.py to get the original output of the QNN inference node:
-
-```python
-# Normalize to [0,255]
-normalized = cv2.normalize(output_image, None, 0, 255, cv2.NORM_MINMAX)
-colored = cv2.applyColorMap(normalized.astype(np.uint8), cv2.COLORMAP_INFERNO)
-```
-</details>
 
 
 ## 📜 License
