@@ -1,63 +1,189 @@
-# QRB ROS Samples
-
-## Overview
-
-This repository is a comprehensive collection of QRB ROS (Robot Operating System) example codes. It serves as a valuable resource for developers and enthusiasts looking to explore and implement QRB functionalities within the ROS framework. Each example is designed to demonstrate specific features and use cases, providing a practical guide to enhance your understanding and application of QRB in ROS environments.
 
 
+<div >
+  <h1>Simulation Sample Pick and Place</h1>
+  <p align="center">
+</div>
 
-The `main` branch serves as the development branch and includes all samples currently under active development. It is primarily supported on Ubuntu by default.    For stable releases, please refer to the `jazzy-rel` branch.
+![](./resource/pick_and_place.gif)
 
-## List of AI Samples
+---
 
-| Sample                                                       | Peripherals required | RB3 Gen2 Vision Kit | IQ-9075 Evaluation Kit | IQ-8 Beta   Evaluation Kit | Description                                                  |
-| ------------------------------------------------------------ | -------------------- | ------------------- | ---------------------- | -------------------------- | ------------------------------------------------------------ |
-| [Face detection](ai_vision/sample_face_detection/)           | N                    | N                   | Y                      | N                          | The Face detection is a machine learning pipeline that predicts bounding boxes and key point of face in an image. For model information, please refer to [MediaPipe-Face-Detection](https://huggingface.co/qualcomm/MediaPipe-Face-Detection). |
-| [Hand detection](ai_vision/sample_hand_detection/)           | N                    | N                   | Y                      | N                          | The Hand detection is a machine learning pipeline that predicts bounding boxes and pose skeletons of hands in an image. For model information, please refer to [MediaPipe-Hand-Detection](https://huggingface.co/qualcomm/MediaPipe-Hand-Detection). |
-| [sample_resnet101](ai_vision/sample_resnet101)               | N                    | Y                   | Y                      | Y                          | The Image Classification is a machine learning model that can classify images from the Imagenet dataset. For model information, please refer to [ResNet101Quantized](https://huggingface.co/qualcomm/ResNet101Quantized). |
-| [speech recognition](ai_audio/sample_speech_recognition/)    | N                    | Y                   | Y                      | Y                          | captures the audio input and publishes the ros topic with the speech recognition result, For model information, please refer to [Whisper-Tiny-En - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/whisper_tiny_en?domain=Audio) |
-| [sample_object_detction](ai_vision/sample_object_detction/)  | Gemini 335L          | N                   | Y                      | Y                          | The `sample_object_setection` is a Python launch file utilizing QNN for model inference. It demonstrates camera data streaming, AI-based inference, and real-time visualization of object detection results. For model information, please refer to  [YOLOv8-Detection - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/yolov8_det?searchTerm=yolov8&domain=Computer+Vision) |
-| [sample_object_segmentation](ai_vision/sample_object_segmentation/) | Gemini 335L          | N                   | Y                      | Y                          | The `sample_object_segmentation` is a Python launch file utilizing QNN for model inference. It demonstrates camera data streaming, AI-based inference, and real-time visualization of object segmentation results.”. For model information, please refer to [YOLOv8-Segmentation - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/yolov8_seg?searchTerm=yolov8&domain=Computer+Vision) |
-| [sample_hrnet_pose_estimation](ai_vision/sample_hrnet_pose_estimation/) | N                    | N                   | Y                      | N                          | `sample_hrnet_pose_estimation` sample provides high-precision human pose estimation capabilities. For model information, please refer to [HRNetPose - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/hrnet_pose?searchTerm=hrnet) |
-| [sample_depth_estimation](ai_vision/sample_depth_estimation/) | N                    | N                   | Y                      | N                          | The `sample_depth_estimation` include the pre/post-processs for estimating the depth of each pixel using QNN inference. For model information, please refer to [Depth Anything V2 - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/depth_anything_v2?searchTerm=depth&domain=Computer+Vision) |
+## 👋 Overview
 
+- The RML-63 Robotic Arm Pick and Place Demo is a C++-based ROS2 node that demonstrates autonomous pick-and-place operations using MoveIt2 for motion planning and Gazebo for physics simulation.
 
-## List of Robotics Samples
+![image-20250723181610392](./resource/pick_and_place_architecture.jpg)
 
-| Sample                                                       | Peripherals required | RB3 Gen2 Vision Kit | IQ-9075 Evaluation Kit | IQ-8 Beta   Evaluation Kit | Description                                                  |
-| ------------------------------------------------------------ | -------------------- | ------------------- | ---------------------- | -------------------------- | ------------------------------------------------------------ |
-| [simulation_sample_amr_simple_motion](robotics/simulation_sample_amr_simple_motion) | N                    | Y                   | Y                      | Y                          | The `AMR simple motion sample` is a Python-based ROS node used to control the simple movements of QRB AMRs within the simulator. This sample allows you to control the movement of QRB AMRs via publishing the ROS messages to `/qrb_robot_base/cmd_vel` topic. |
-| [2D LiDAR SLAM](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/2d_lidar_slam.html?state=releasecandidate) | RPLIDAR A3M1         | Y                   | N                      | N                          | The 2D LiDAR SLAM sample is designed based on `Cartographer`, which is capable of completing indoor map construction and localization based on 2D LiDAR sensors. |
-| [follow-me](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/followme.html?state=releasecandidate) | Gemini 335L          | Y                   | N                      | N                          | The FollowMe is a lightweight application that enables robots to track targets in real-time. |
-| [simulation follow me](simulation_follow_me)                 | N                    | Y                   | N                      | N                          | The `Simulation Follow Me` sample is a AMR to detect, track, and follow a moving person in real time. It integrates sensor emulation and motion control to follow human-following behavior in simulated environments. |
-| [simulation_sample_pick_and_place](robotics/simulation_sample_pick_and_place)                 | N                    | Y                   | Y                      | Y                          | The `simulation sample pick and place` is a C++-based robotic manipulation ROS2 node that demonstrates autonomous pick-and-place operations using MoveIt2 for motion planning and Gazebo for physics simulation. |
-
-## List of Platform Samples
-
-| Sample                                                       | Peripherals required | RB3 Gen2 Vision Kit | IQ-9075 Evaluation Kit | IQ-8 Beta   Evaluation Kit | Description                                                  |
-| ------------------------------------------------------------ | -------------------- | ------------------- | ---------------------- | -------------------------- | ------------------------------------------------------------ |
-| [Orbbec-camera](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/orbbec-camera_5_2_8.html?state=releasecandidate) | Gemini 335L          | Y                   | Y                      | N                          | The Orbbec-camera sample application enables the Orbbec Gemini camera 335L to work in RGB or depth mode. This application generates the RGB and depth information by topics. |
-| [RPLIDAR-ROS2](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/rplidar-ros2_5_2_3.html?state=releasecandidate) | RPLIDAR A3M1         | Y                   | Y                      | Y                          | The RPLIDAR-ROS2 sample application enables the RPLIDAR A3M1 to work in RGB or depth mode. This application generates the RGB and depth information by topics. |
-| [Qrb-ros-imu](https://github.com/qualcomm-qrb-ros/qrb_ros_imu) | N                    | Y                   | N                      | N                          | The QRB-ROS-IMU sample application enables the IMU to work in RGB or depth mode. This application generates the RGB and depth information by topics. |
-| [Qrb-ros-system-monitor](https://github.com/qualcomm-qrb-ros/qrb_ros_system_monitor) | N                    | Y                   | Y                      | Y                          | The QRB-ROS-system-monitor sample application enables the system monitor to work in RGB or depth mode. This application generates the RGB and depth information by topics. |
-| [Qrb-ros-battery]([qualcomm-qrb-ros/qrb_ros_battery](https://github.com/qualcomm-qrb-ros/qrb_ros_battery)) | N                    | Y                   | N                      | N                          | The QRB-ROS-battery sample application is a package that publishes the battery state data from the system node. |
-| [Qrb-ros-camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | N                    | Y                   | N                      | N                          | The QRB-ROS-camera implements a camera ROS2 node to enable zero-copy performance when data is coming out of the camera-server. |
-| [sample_ocr](platform/sample_ocr)                            | N                    | Y                   | Y                      | Y                          | The `ocr-service` sample application enables a service that provides the Optical Character Recognition (OCR) function. |
-| [sample_colorspace_convert](platform/sample_colorspace_convert) | Y                    | Y                   | Y                      | Y                          | The `qrb-ros-color-space-convert` sample application converts between NV12 and RGB888 formats. |
-
-## System Requirements
-
-- [QCLINUX](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/qir-sdk-landing-page.html?state=releasecandidate)
-- Canonical Ubuntu Image
+| Node Name                                                    | Function                                                     |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| qrb_ros_simulation | Sets up the Qualcomm robotic simulation environment. See [qrb_ros_simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation). |
+| qrb_ros_arm_pick_and_place     | Defines pick and place positions with ROS2 launch.py configuration parameter support. |
 
 
+## 🔎 Table of contents
 
-## Contributions
+- [👋 Overview](#-overview)
+- [🔎 Table of contents](#-table-of-contents)
+- [⚓ Used ROS Topics](#-used-ros-topics)
+- [🎯 Supported targets](#-supported-targets)
+- [✨ Installation](#-installation)
+- [🚀 Usage](#-usage)
+- [👨‍💻 Build from source](#-build-from-source)
+- [🤝 Contributing](#-contributing)
+- [❤️ Contributors](#️-contributors)
+- [❔ FAQs](#-faqs)
+- [📜 License](#-license)
 
-Thanks for your interest in contributing to qrb ros samples! Please read our [Contributions Page](CONTRIBUTING.md) for more information on contributing features or bug fixes. We look forward to your participation!
+## ⚓ Used ROS Topics 
 
-## License
+| ROS Topic                       | Type                                          | Description                    |
+| ------------------------------- | --------------------------------------------- | ------------------------------ |
+| `/joint_states`                   | `<sensor_msgs/msg/JointState> `                   | 	Real-time joint position, velocity, and effort data for all robot joints              |
+| `/hand_controller/controller_state` | `<control_msgs.msg.ControllerState>` |	Current state and status information of the gripper controller |
+| `/hand_controller/joint_trajectory` |	`<trajectory_msgs.msg.JointTrajectory>` |	Trajectory commands sent to gripper joints for motion execution |
+| `/rm_group_controller/controller_state` |	`<control_msgs.msg.ControllerState>` |	Current state and status information of the robotic arm controller |
+| `/rm_group_controller/joint_trajectory` |	`<trajectory_msgs.msg.JointTrajectory>` |	Trajectory commands sent to arm joints for motion execution |
+| `/robot_description` |	`<std_msgs.msg.String>` |	URDF robot description in XML format for robot modeling and visualization |
+| `/robot_description_semantic` |	`<std_msgs.msg.String>` |	SRDF semantic robot description for MoveIt planning and configuration |
 
-qrb_ros_samples is licensed under the BSD 3-clause "New" or "Revised" License.
+## 🎯 Supported targets
 
-Check out the [LICENSE](LICENSE) for more details.
+<table>
+  <tr>
+    <th>Development Hardware</th>
+    <th>Hardware Overview</th>
+  </tr>
+  <tr>
+    <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
+    <td>
+      <a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075">
+        <img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>Qualcomm Dragonwing™ RB3 Gen2</td>
+    <td>
+      <a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/rb3-series/rb3-gen2">
+        <img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3-vision-kit-1" width="160">
+      </a>
+    </td>
+  </tr>
+    <tr>
+    <td>Qualcomm Dragonwing™ IQ-8275</td>
+    <td>
+      <a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq8-series">View Product Details</a>
+    </td>
+  </tr>
+</table>
+
+## ✨ Installation
+
+> [!IMPORTANT]
+> The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
+> Refer to [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
+> For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
+
+## 🚀 Usage
+
+## 👨‍💻 Build from source
+
+<details>
+  <summary>Usage details</summary>
+
+1. Prerequisites
+
+- Add qcom-iot PPA repository source.
+```bash
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
+
+- Install dependencies:
+```bash
+sudo apt install -y ros-dev-tools
+sudo apt install -y ros-jazzy-moveit
+``` 
+
+- Download source code from the qrb-ros-sample repository:
+```bash
+mkdir -p ~/qrb_ros_sample_ws/src && cd ~/qrb_ros_sample_ws/src
+git clone -b jazzy-rel https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+```
+
+- Build the sample from source code:
+```bash
+cd ~/qrb_ros_sample_ws/src/qrb_ros_samples/robotics/simulation_sample_pick_and_place
+rosdep install -i --from-path ./ --rosdistro jazzy -y
+colcon build
+```
+
+2. Launch Gazebo on HOST Docker
+
+- Please refer to the Quick Start of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to launch `QRB Robot ARM` on the host. Use the same local network and `ROS_DOMAIN_ID` to ensure devices can communicate via ROS.
+
+- You can launch Gazebo with the following command:
+```bash
+source install/setup.bash
+export ROS_DOMAIN_ID=55
+ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper.launch.py world_model:=warehouse initial_x:=2.2 initial_y:=-2 initial_z:=1.025 initial_yaw:=3.14159 initial_pitch:=0.0 initial_roll:=0.0 use_sim_time:=true
+```
+
+- Click the play button in Gazebo after the world environment renders, open another terminal, and use the following command to launch the controller:
+```bash
+source install/setup.bash
+export ROS_DOMAIN_ID=55
+ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper_load_controller.launch.py
+``` 
+
+- Ensure that after starting Gazebo ain the host Docker, you can then run the pick and place node.
+
+3. Run the pick and place node
+
+- You can launch the MoveIt2 configuration and demo launch file to start the arm motion:
+```bash
+source install/setup.bash
+export ROS_DOMAIN_ID=55
+ros2 launch simulation_sample_pick_and_place simulation_sample_pick_and_place.launch.py
+```
+- If the arm motion works normally, open another terminal and use the following command to start the pick and place node:
+```bash
+source install/setup.bash
+export ROS_DOMAIN_ID=55
+ros2 run simulation_sample_pick_and_place qrb_ros_arm_pick_place
+```
+
+- You can then view the arm executing the pick and place operation in Gazebo.
+
+</details>
+
+## 🤝 Contributing
+
+We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).<br>
+Feel free to create an issue for bug report, feature requests or any discussion💡.
+
+## ❤️ Contributors
+
+Thanks to all our contributors who have helped make this project better!
+
+<table>
+  <tr>
+    <td style="text-align: center;">
+      <a href="https://github.com/DotaIsMind">
+        <img src="https://github.com/DotaIsMind.png" width="100" height="100" alt="teng"/>
+        <br />
+        <sub><b>teng</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
+
+
+## ❔ FAQs
+
+
+## 📜 License
+
+Project is licensed under the [BSD-3-Clause](https://spdx.org/licenses/BSD-3-Clause.html) License. See [LICENSE](../../LICENSE) for the full license text.
