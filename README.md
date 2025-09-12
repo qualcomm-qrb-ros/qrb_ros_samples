@@ -1,63 +1,218 @@
-# QRB ROS Samples
+# AI Sample Face Detection
 
-## Overview
+![](./resource/face_detection_cam.gif)
 
-This repository is a comprehensive collection of QRB ROS (Robot Operating System) example codes. It serves as a valuable resource for developers and enthusiasts looking to explore and implement QRB functionalities within the ROS framework. Each example is designed to demonstrate specific features and use cases, providing a practical guide to enhance your understanding and application of QRB in ROS environments.
+## 👋 Overview
 
+The ` sample_face_detection` is a Python-based face detection ROS node that uses QNN for model inference.
+The models are sourced from Qualcomm AI-hub.It can detect face and locate facial features from face image
+It captures the `face_image.jpg` as input and publishes the result to the `/mediaface_det_image` topic.
 
+For model information, please refer to [MediaPipe-Face-Detection - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/mediapipe_face?searchTerm=Media)
 
-The `main` branch serves as the development branch and includes all samples currently under active development. It is primarily supported on Ubuntu by default.    For stable releases, please refer to the `jazzy-rel` branch.
+## Pipeline Flow For Face Detection
 
-## List of AI Samples
+![](./resource/sample_face_detection_pipeline.jpg)
 
-| Sample                                                       | Peripherals required | RB3 Gen2 Vision Kit | IQ-9075 Evaluation Kit | IQ-8 Beta   Evaluation Kit | Description                                                  |
-| ------------------------------------------------------------ | -------------------- | ------------------- | ---------------------- | -------------------------- | ------------------------------------------------------------ |
-| [Face detection](ai_vision/sample_face_detection/)           | N                    | N                   | Y                      | N                          | The Face detection is a machine learning pipeline that predicts bounding boxes and key point of face in an image. For model information, please refer to [MediaPipe-Face-Detection](https://huggingface.co/qualcomm/MediaPipe-Face-Detection). |
-| [Hand detection](ai_vision/sample_hand_detection/)           | N                    | N                   | Y                      | N                          | The Hand detection is a machine learning pipeline that predicts bounding boxes and pose skeletons of hands in an image. For model information, please refer to [MediaPipe-Hand-Detection](https://huggingface.co/qualcomm/MediaPipe-Hand-Detection). |
-| [sample_resnet101](ai_vision/sample_resnet101)               | N                    | Y                   | Y                      | Y                          | The Image Classification is a machine learning model that can classify images from the Imagenet dataset. For model information, please refer to [ResNet101Quantized](https://huggingface.co/qualcomm/ResNet101Quantized). |
-| [speech recognition](ai_audio/sample_speech_recognition/)    | N                    | Y                   | Y                      | Y                          | captures the audio input and publishes the ros topic with the speech recognition result, For model information, please refer to [Whisper-Tiny-En - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/whisper_tiny_en?domain=Audio) |
-| [sample_object_detction](ai_vision/sample_object_detction/)  | Gemini 335L          | N                   | Y                      | Y                          | The `sample_object_setection` is a Python launch file utilizing QNN for model inference. It demonstrates camera data streaming, AI-based inference, and real-time visualization of object detection results. For model information, please refer to  [YOLOv8-Detection - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/yolov8_det?searchTerm=yolov8&domain=Computer+Vision) |
-| [sample_object_segmentation](ai_vision/sample_object_segmentation/) | Gemini 335L          | N                   | Y                      | Y                          | The `sample_object_segmentation` is a Python launch file utilizing QNN for model inference. It demonstrates camera data streaming, AI-based inference, and real-time visualization of object segmentation results.”. For model information, please refer to [YOLOv8-Segmentation - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/yolov8_seg?searchTerm=yolov8&domain=Computer+Vision) |
-| [sample_hrnet_pose_estimation](ai_vision/sample_hrnet_pose_estimation/) | N                    | N                   | Y                      | N                          | `sample_hrnet_pose_estimation` sample provides high-precision human pose estimation capabilities. For model information, please refer to [HRNetPose - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/hrnet_pose?searchTerm=hrnet) |
-| [sample_depth_estimation](ai_vision/sample_depth_estimation/) | N                    | N                   | Y                      | N                          | The `sample_depth_estimation` include the pre/post-processs for estimating the depth of each pixel using QNN inference. For model information, please refer to [Depth Anything V2 - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/depth_anything_v2?searchTerm=depth&domain=Computer+Vision) |
-
-
-## List of Robotics Samples
-
-| Sample                                                       | Peripherals required | RB3 Gen2 Vision Kit | IQ-9075 Evaluation Kit | IQ-8 Beta   Evaluation Kit | Description                                                  |
-| ------------------------------------------------------------ | -------------------- | ------------------- | ---------------------- | -------------------------- | ------------------------------------------------------------ |
-| [simulation_sample_amr_simple_motion](robotics/simulation_sample_amr_simple_motion) | N                    | Y                   | Y                      | Y                          | The `AMR simple motion sample` is a Python-based ROS node used to control the simple movements of QRB AMRs within the simulator. This sample allows you to control the movement of QRB AMRs via publishing the ROS messages to `/qrb_robot_base/cmd_vel` topic. |
-| [2D LiDAR SLAM](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/2d_lidar_slam.html?state=releasecandidate) | RPLIDAR A3M1         | Y                   | N                      | N                          | The 2D LiDAR SLAM sample is designed based on `Cartographer`, which is capable of completing indoor map construction and localization based on 2D LiDAR sensors. |
-| [follow-me](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/followme.html?state=releasecandidate) | Gemini 335L          | Y                   | N                      | N                          | The FollowMe is a lightweight application that enables robots to track targets in real-time. |
-| [simulation follow me](simulation_follow_me)                 | N                    | Y                   | N                      | N                          | The `Simulation Follow Me` sample is a AMR to detect, track, and follow a moving person in real time. It integrates sensor emulation and motion control to follow human-following behavior in simulated environments. |
-| [simulation_sample_pick_and_place](robotics/simulation_sample_pick_and_place)                 | N                    | Y                   | Y                      | Y                          | The `simulation sample pick and place` is a C++-based robotic manipulation ROS2 node that demonstrates autonomous pick-and-place operations using MoveIt2 for motion planning and Gazebo for physics simulation. |
-
-## List of Platform Samples
-
-| Sample                                                       | Peripherals required | RB3 Gen2 Vision Kit | IQ-9075 Evaluation Kit | IQ-8 Beta   Evaluation Kit | Description                                                  |
-| ------------------------------------------------------------ | -------------------- | ------------------- | ---------------------- | -------------------------- | ------------------------------------------------------------ |
-| [Orbbec-camera](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/orbbec-camera_5_2_8.html?state=releasecandidate) | Gemini 335L          | Y                   | Y                      | N                          | The Orbbec-camera sample application enables the Orbbec Gemini camera 335L to work in RGB or depth mode. This application generates the RGB and depth information by topics. |
-| [RPLIDAR-ROS2](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/rplidar-ros2_5_2_3.html?state=releasecandidate) | RPLIDAR A3M1         | Y                   | Y                      | Y                          | The RPLIDAR-ROS2 sample application enables the RPLIDAR A3M1 to work in RGB or depth mode. This application generates the RGB and depth information by topics. |
-| [Qrb-ros-imu](https://github.com/qualcomm-qrb-ros/qrb_ros_imu) | N                    | Y                   | N                      | N                          | The QRB-ROS-IMU sample application enables the IMU to work in RGB or depth mode. This application generates the RGB and depth information by topics. |
-| [Qrb-ros-system-monitor](https://github.com/qualcomm-qrb-ros/qrb_ros_system_monitor) | N                    | Y                   | Y                      | Y                          | The QRB-ROS-system-monitor sample application enables the system monitor to work in RGB or depth mode. This application generates the RGB and depth information by topics. |
-| [Qrb-ros-battery]([qualcomm-qrb-ros/qrb_ros_battery](https://github.com/qualcomm-qrb-ros/qrb_ros_battery)) | N                    | Y                   | N                      | N                          | The QRB-ROS-battery sample application is a package that publishes the battery state data from the system node. |
-| [Qrb-ros-camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | N                    | Y                   | N                      | N                          | The QRB-ROS-camera implements a camera ROS2 node to enable zero-copy performance when data is coming out of the camera-server. |
-| [sample_ocr](platform/sample_ocr)                            | N                    | Y                   | Y                      | Y                          | The `ocr-service` sample application enables a service that provides the Optical Character Recognition (OCR) function. |
-| [sample_colorspace_convert](platform/sample_colorspace_convert) | Y                    | Y                   | Y                      | Y                          | The `qrb-ros-color-space-convert` sample application converts between NV12 and RGB888 formats. |
-
-## System Requirements
-
-- [QCLINUX](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/qir-sdk-landing-page.html?state=releasecandidate)
-- Canonical Ubuntu Image
+| ROS Node         | Description                                                  |
+| ---------------- | ------------------------------------------------------------ |
+| qrb_ros_face_detector | qrb_ros_face_detector is a Python-based ros jazzy packages that processes face images. This ROS node subscribes to an image topic, and publishes face image result topic after pre/post processing. ` |
+| [qrb_ros_nn_inference](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | qrb_ros_nn_inference is a ROS2 package for performing neural network model, providing AI-based perception for robotics applications. |
+| [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
+| [image_publisher_node](https://github.com/ros-perception/image_pipeline) | image_publisher is  a ros jazzy packages, can publish image ros topic with local path. |
 
 
+## 🔎 Table of contents
 
-## Contributions
+  * [Used ROS Topics](#-used-ros-topics)
+  * [Supported targets](#-supported-targets)
+  * [Usage](#-usage)
+  * [Build from source](#-build-from-source)
+  * [Contributing](#-contributing)
+  * [Contributors](#%EF%B8%8F-contributors)
+  * [FAQs](#-faqs)
+  * [License](#-license)
 
-Thanks for your interest in contributing to qrb ros samples! Please read our [Contributions Page](CONTRIBUTING.md) for more information on contributing features or bug fixes. We look forward to your participation!
+## ⚓ Used ROS Topics 
 
-## License
+| ROS Topic | Type                         | Published By     |
+| --------- | ---------------------------- | ---------------- |
+| `/mediaface_det_image`  | `< sensor_msgs.msg.Image > ` | `qrb_ros_face_detector` |
+| `/image_raw`                   | `<sensor_msgs.msg.Image> `  | `image_publisher_node, camera_node` |
+| `/face_detector_input_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_face_detector`     |
+| `/face_detector_output_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_nn_inference`     |
+| `/face_landmark_input_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_face_detector`     |
+| `/face_landmark_output_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_nn_inference`     |
 
-qrb_ros_samples is licensed under the BSD 3-clause "New" or "Revised" License.
+## 🎯 Supported targets
 
-Check out the [LICENSE](LICENSE) for more details.
+<table >
+  <tr>
+    <th>Development Hardware</th>
+     <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
+  </tr>
+  <tr>
+    <th>Hardware Overview</th>
+    <th><a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160"></a></th>
+  </tr>
+  <tr>
+    <th>GMSL Camera Support</th>
+    <td>LI-VENUS-OX03F10-OAX40-GM2A-118H(YUV)</td>
+  </tr>
+</table>
+
+## 🚀 Usage
+
+<details>
+  <summary>Usage details</summary>
+
+```bash
+# Set up the runtime environment for QClinux platform.
+export HOME=/opt
+source /usr/share/qirp-setup.sh
+export ROS_DOMAIN_ID=xx # Value range of ROS_DOMAIN_ID: [0, 232]
+
+# You can use defalut face image file
+ros2 launch sample_face_detection launch_with_image_publisher.py model_path:=/opt/model/
+# You can also replace this with a custom image file
+ros2 launch sample_face_detection launch_with_image_publisher.py image_path:=/opt/resource/xxx.jpg model_path:=/opt/model/
+or # You can launch with qrb_ros_camera lacunch file
+ros2 launch sample_face_detection launch_with_qrb_ros_camera.py  model_path:=/opt/model/
+```
+
+When using this launch script, it will use the default parameters:
+
+```py
+DeclareLaunchArgument(
+'image_path',
+default_value=os.path.join(package_path, 'face_image.jpg'),
+description='Path to the image file'
+)
+
+# Node for image_publisher
+image_publisher_node = Node(
+package='image_publisher',  
+executable='image_publisher_node', 
+namespace=namespace,
+name='image_publisher_node', 
+output='screen', 
+parameters=[
+{'filename': image_path},  
+{'rate': 10.0},  # Set the publishing rate to 10 Hz
+]
+)
+```
+
+It will send local glasses.jpg file, and outputs image at `10` Hz. 
+
+The output for these commands:
+
+```
+[INFO] [launch]: All log files can be found below /opt/.ros/log/1970-01-07-14-29-55-414204-qcs9075-iq-9075-evk-3111720
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [component_container-1]: process started with pid [3111750]
+[INFO] [component_container-2]: process started with pid [3111751]
+[INFO] [qrb_ros_face_detector-3]: process started with pid [3111752]
+[component_container-1] [INFO] [0000570595.865649109] [my_container]: Load Library: /usr/lib/libcamera_node.so
+[component_container-2] [INFO] [0000570595.868632025] [image_processing_container]: Load Library: /usr/lib/libqrb_ros_inference_node.so
+[component_container-2] [INFO] [0000570595.872836765] [image_processing_container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
+[component_container-2] [INFO] [0000570595.872910671] [image_processing_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
+[component_container-2] [QRB INFO] Loading model from binary file: /opt/model/MediaPipeFaceDetector.bin
+[component_container-1] [INFO] [0000570595.882365098] [my_container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::camera::CameraNode>
+[component_container-1] [INFO] [0000570595.882437442] [my_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::camera::CameraNode>
+[component_container-1] [INFO] [0000570595.889684525] [camera_node]: QRB Camera Node statrt
+[component_container-1] [INFO] [0000570595.889941557] [camera_node]: load camera intrinsic param
+[component_container-1] [INFO] [0000570595.895467807] [camera_node]: system time: 570593556709625 ros time: 570595895466192 time offset: 2338756567 ns
+[component_container-1] [INFO] [0000570595.896553484] [camera_node]: QRB Camera Node init success
+[component_container-1] [INFO] [QMMFCamera]: start camera.
+[component_container-2]  <W> Initializing HtpProvider
+[component_container-2] [QRB INFO] /usr/lib/libQnnHtp.so initialize successfully
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/camera_node' in container '/my_container'
+[component_container-2] /prj/qct/webtech_scratch20/mlg_user_admin/qaisw_source_repo/rel/qairt-2.35.0/release/snpe_src/avante-tools/prebuilt/dsp/hexagon-sdk-5.4.0/ipc/fastrpc/rpcmem/src/rpcmem_android.
+c:38:dummy call to rpcmem_init, rpcmem APIs will be used from libxdsprpc
+[component_container-2] [QRB INFO] Qnn device initialize successfully
+[component_container-2] [QRB INFO] Initialize Qnn graph from binary file successfully
+[component_container-2] [INFO] [0000570596.007669109] [nn_inference_node_face_detector]: Inference init successfully!
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/nn_inference_node_face_detector' in container '/image_processing_container'
+[component_container-2] [INFO] [0000570596.010963119] [image_processing_container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
+[component_container-2] [INFO] [0000570596.011018327] [image_processing_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
+[component_container-2] [QRB INFO] Loading model from binary file: /opt/model/MediaPipeFaceLandmarkDetector.bin
+[component_container-2] [QRB INFO] /usr/lib/libQnnHtp.so initialize successfully
+[component_container-2] [QRB INFO] Qnn device initialize successfully
+[component_container-2] [QRB INFO] Initialize Qnn graph from binary file successfully
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/nn_inference_node_face_landmark' in container '/image_processing_container'
+[component_container-2] [INFO] [0000570596.049267234] [nn_inference_node_face_landmark]: Inference init successfully!
+[qrb_ros_face_detector-3] [INFO] [0000570596.132309786] [mediaface_det_node]: MODEL_PATH set to: /opt/model/
+[qrb_ros_face_detector-3] [INFO] [0000570596.133496557] [mediaface_det_node]: init done~
+[qrb_ros_face_detector-3] [INFO] [0000570596.401828900] [mediaface_det_node]: Received image on image_raw topic
+[qrb_ros_face_detector-3] [INFO] [0000570596.409178744] [mediaface_det_node]: Processed for face detection, publishing TensorList
+[component_container-2] [INFO] [0000570596.424597494] [nn_inference_node_face_detector]: Got model input data, start executing inference...
+[component_container-2] [INFO] [0000570596.428739734] [nn_inference_node_face_detector]: Inference execute successfully!
+[component_container-2] [INFO] [0000570596.428851244] [nn_inference_node_face_detector]: Publish the inference result...
+[qrb_ros_face_detector-3] [INFO] [0000570596.429197390] [mediaface_det_node]: Already processing an image, skipping this one.
+[qrb_ros_face_detector-3] [INFO] [0000570596.430287390] [mediaface_det_node]: Received TensorList on face_detector_output_tensor
+
+```
+
+Then you can check the /mediaface_det_image ROS topic in rviz.
+
+</details>
+
+## 👨‍💻 Build from source
+
+<details>
+  <summary>Build from source details</summary>
+
+Download the source code and build with colcon
+
+```bash
+source /usr/share/qirp-setup.sh
+git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+cd ai_vision/sample_face_detection
+colcon build
+```
+
+Run and debug
+
+```bash
+source install/setup.bash
+# You can use defalut face image file
+ros2 launch sample_face_detection launch_with_image_publisher.py model_path:=/opt/model/
+
+# You can also replace this with a custom image file
+ros2 launch sample_face_detection launch_with_image_publisher.py image_path:=/opt/resource/xxx.jpg model_path:=/opt/model/
+
+# You can launch with qrb ros camera
+ros2 launch sample_face_detection launch_with_qrb_ros_camera.py  model_path:=/opt/model/
+```
+
+</details>
+
+## 🤝 Contributing
+
+We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Feel free to create an issue for bug report, feature requests or any discussion💡.
+
+## ❤️ Contributors
+
+Thanks to all our contributors who have helped make this project better!
+
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/chuhxie"><img src="https://avatars.githubusercontent.com/u/205736874?v=4" size="32"  width="32" height="32" alt="chuhxie"/><br /><sub><b>chuhxie</b></sub></a></td>
+  </tr>
+</table>
+
+
+## ❔ FAQs
+
+<details>
+<summary>Can detect multiple face?</summary><br>
+No,it can only support single face detection.
+</details>
+
+
+## 📜 License
+
+Project is licensed under the [BSD-3-Clause](https://spdx.org/licenses/BSD-3-Clause.html) License. See [LICENSE](./LICENSE) for the full license text.

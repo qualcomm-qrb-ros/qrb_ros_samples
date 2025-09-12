@@ -1,0 +1,7 @@
+ros-jazzy-sample-face-detection (0.1.0-0noble) noble; urgency=high
+
+  * Init sample_face_detection package.
+
+ -- Chuhao Xie <chuhxie@qti.qualcomm.com>  Fri, 05 Sep 2025 02:53:50 -0000
+
+
