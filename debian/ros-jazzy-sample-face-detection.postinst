@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# This script is executed after the package is installed.
+# It is used to set up the environment and download necessary files.
+
+echo "start post install"
+
+model_path=/opt/model
+if [ -d "$model_path" ]; then
+    echo "model path $model_path exit."
+else
+    echo "model path $model_path not exit."
+    sudo mkdir $model_path    
+fi
+if [ -f "$model_path/MediaPipeFaceDetector.bin" ]; then
+    echo "model $model_path/MediaPipeFaceDetector.bin exit."
+else
+    echo "model $model_path/MediaPipeFaceDetector.bin not exit."
+    sudo wget https://huggingface.co/qualcomm/MediaPipe-Face-Detection/resolve/0dd669a326ec24a884e51b82741997299d937705/MediaPipeFaceDetector.bin -O $model_path/MediaPipeFaceDetector.bin
+fi
+if [ -f "$model_path/MediaPipeFaceLandmarkDetector.bin" ]; then
+    echo "model $model_path/MediaPipeFaceLandmarkDetector.bin exit."
+else
+    echo "model $model_path/MediaPipeFaceLandmarkDetector.bin not exit."
+    sudo wget https://huggingface.co/qualcomm/MediaPipe-Face-Detection/resolve/0dd669a326ec24a884e51b82741997299d937705/MediaPipeFaceLandmarkDetector.bin -O $model_path/MediaPipeFaceLandmarkDetector.bin
+fi
+if [ -f "$model_path/anchors_face.npy" ]; then
+    echo "anchor $model_path/anchors_face.npy exit."
+else
+    echo "anchor $model_path/anchors_palm.npy not exit."
+    sudo wget https://raw.githubusercontent.com/zmurez/MediaPipePyTorch/65f2549ba35cd61dfd29f402f6c21882a32fabb1/anchors_face.npy -O $model_path/anchors_face.npy
+fi
+
+echo "finish post install"

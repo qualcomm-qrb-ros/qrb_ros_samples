@@ -1,0 +1,7 @@
+ros-jazzy-sample-face-detection (1.0.0) noble; urgency=high
+
+  * first initial for debian release.
+
+ -- Chuhao Xie <chuhxie@qti.qualcomm.com>  Mon, 22 Sep 2025 07:26:37 -0000
+
+
