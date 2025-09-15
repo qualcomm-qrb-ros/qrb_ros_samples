@@ -1,0 +1,12 @@
+Source: ros-jazzy-sample-apriltag
+Section: misc
+Priority: optional
+Maintainer: Peng Wang <penwang@qti.qualcomm.com>
+Build-Depends: debhelper-compat (= 13), ros-jazzy-ament-cmake-auto, ros-jazzy-ament-lint-auto <!nocheck>, ros-jazzy-ament-lint-common <!nocheck>
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-jazzy-sample-apriltag
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-jazzy-apriltag-ros, ros-jazzy-image-proc, ros-jazzy-qrb-ros-camera, ros-jazzy-qrb-ros-colorspace-convert, ros-jazzy-rclcpp-components, ros-jazzy-ros2launch
+Description: AprilTag sample package

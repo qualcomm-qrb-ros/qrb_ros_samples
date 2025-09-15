@@ -1,0 +1,5 @@
+ros-jazzy-sample-apriltag (1.0.0) noble; urgency=medium
+
+  * The initial version for Debian package
+
+ -- Peng Wang <penwang@qti.qualcomm.com>  Wed, 03 Sep 2025 08:50:09 -0000
