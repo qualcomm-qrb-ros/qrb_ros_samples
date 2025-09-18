@@ -108,12 +108,12 @@ Run the sample env on device
 
 
 ```bash
-#Prepare the model and move to default model path
+#Prepare above model and move to default model path
 mkdir /opt/model/
 mv coco8.yaml yolov8_det_qcs9075.bin /opt/model/
 
 source /opt/ros/jazzy/setup.bash
-ros2 launch sample_object_detection launch_with_qrb_ros_camera.py  model_path:=<the device model>
+ros2 launch sample_object_detection launch_with_qrb_ros_camera.py  model:=<the device model>
 ```
 
 The output for these commands:
@@ -222,4 +222,4 @@ Thanks to all our contributors who have helped make this project better!
 
 ## 📜 License
 
-Project is licensed under the [BSD-3-Clause](https://spdx.org/licenses/BSD-3-Clause.html) License. See [LICENSE](./LICENSE) for the full license text.
+Project is licensed under the [BSD-3-Clause](https://spdx.org/licenses/BSD-3-Clause.html) License.
