@@ -1,8 +1,8 @@
 Source: ros-jazzy-sample-depth-estimation
 Section: misc
 Priority: optional
-Maintainer: Teng Fan <quic_tengf@quicinc.com>
-Build-Depends: debhelper (>= 9.0.0), python3-pytest <!nocheck>, ros-jazzy-ament-cmake-python, ros-jazzy-ament-copyright <!nocheck>, ros-jazzy-ament-flake8 <!nocheck>, ros-jazzy-ament-pep257 <!nocheck>, python3-all, python3-setuptools, dh-python
+Maintainer: Teng Fan <tengf@qti.qualcomm.com>
+Build-Depends: debhelper-compat ( =13 ), python3-pytest <!nocheck>, ros-jazzy-ament-cmake-python, ros-jazzy-ament-copyright <!nocheck>, ros-jazzy-ament-flake8 <!nocheck>, ros-jazzy-ament-pep257 <!nocheck>, python3-all, python3-setuptools, dh-python
 Homepage: 
 Standards-Version: 3.9.2
 
