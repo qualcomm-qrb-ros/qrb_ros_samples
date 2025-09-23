@@ -1,7 +1,7 @@
 ros-jazzy-simulation-sample-pick-and-place (1.0.1) noble; urgency=high
 
-  * Initial release.
+  * Initial release for simulation sample pick and place.
 
- -- root <tengf@qti.qualcomm.com>  Thu, 11 Sep 2025 09:04:16 -0000
+ -- Teng Fan <tengf@qti.qualcomm.com>  Thu, 11 Sep 2025 09:04:16 -0000
 
 
