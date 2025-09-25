@@ -1,0 +1,7 @@
+ros-jazzy-sample-hrnet-pose-estimation (1.0.0) noble; urgency=high
+
+  * First inital for debian release
+
+ -- guohmiao <guohmiao@qti.qualcomm.com>  Thu, 25 Sep 2025 09:36:38 -0000
+
+
