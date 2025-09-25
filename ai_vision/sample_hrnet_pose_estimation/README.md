@@ -124,7 +124,7 @@ source /opt/ros/jazzy/setup.bash
 export ROS_DOMAIN_ID=124
 
 # Launch the sample with image publisher, You can replace 'image_path' with the path to your desired image.
-ros2 launch sample_hrnet_pose_estimation launch_with_image_publh:=/opt/ros/jazzy/share/sample_hrnet_pose_estimation/input_image.jpg
+ros2 launch sample_hrnet_pose_estimation launch_with_image_publisher.py image_path:=/opt/ros/jazzy/share/sample_hrnet_pose_estimation/input_image.jpg
 ```
 
 Open a new terminal and use rqt to view topic `/pose_estimation_results`.
