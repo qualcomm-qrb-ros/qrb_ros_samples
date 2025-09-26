@@ -2,6 +2,6 @@ ros-jazzy-sample-depth-estimation (1.0.0) noble; urgency=high
 
   * Initial release for sample depth estimation package.
 
- -- Teng Fan <tengf@qit.qualcomm.com>  Thu, 11 Sep 2025 08:55:53 -0000
+ -- Teng Fan <tengf@qti.qualcomm.com>  Thu, 11 Sep 2025 08:55:53 -0000
 
 
