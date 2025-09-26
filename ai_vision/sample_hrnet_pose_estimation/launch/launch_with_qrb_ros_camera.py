@@ -27,7 +27,7 @@ def generate_launch_description():
 
     camera_info_config_file_path = os.path.join(
         get_package_share_directory('qrb_ros_camera'),
-        'config', 'camera_info_imx577.yaml'
+        'config', 'camera_info_OX03F10_yuv.yaml'
     )
 
     camera_info_path = camera_info_config_file_path
