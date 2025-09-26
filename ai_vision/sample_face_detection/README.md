@@ -1,6 +1,9 @@
-# AI Sample Face Detection
-
-![](./resource/face_detection_cam.gif)
+<div align="center">
+  <h1>AI Samples - Face Detection</h1>
+  <img src="./resource/face_detection_cam.gif" style="zoom:80%;" />      
+  <a href="https://ubuntu.com/download/qualcomm-iot" target="_blank"><img src="https://img.shields.io/badge/Qualcomm%20Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Qualcomm Ubuntu"></a>
+  <a href="https://docs.ros.org/en/jazzy/" target="_blank"><img src="https://img.shields.io/badge/ROS%20Jazzy-1c428a?style=for-the-badge&logo=ros&logoColor=white" alt="Jazzy"></a>
+</div>
 
 ## 👋 Overview
 
@@ -26,8 +29,14 @@ For model information, please refer to [MediaPipe-Face-Detection - Qualcomm AI H
 
   * [Used ROS Topics](#-used-ros-topics)
   * [Supported targets](#-supported-targets)
+  - [Installation](#-installation)
+    - [Prerequisites](#--prerequisites)
+    - [Add Qualcomm IOT PPA repository](#add-qualcomm-iot-ppa-repository)
   * [Usage](#-usage)
   * [Build from source](#-build-from-source)
+    - [Prerequisites](#prerequisites)
+    - [Dependencies](#dependencies)
+    - [Build Steps](#build-steps)
   * [Contributing](#-contributing)
   * [Contributors](#%EF%B8%8F-contributors)
   * [FAQs](#-faqs)
@@ -61,16 +70,42 @@ For model information, please refer to [MediaPipe-Face-Detection - Qualcomm AI H
   </tr>
 </table>
 
+---
+
+## ✨ Installation
+This section details how to install the `qrb_ros_interfaces` packages. The recommended approach for most users is to install the packages from the Qualcomm PPA repository(if available in QCOM PPA).  
+
+### <a name="prereq"></a>  Prerequisites
+- [Install ROS 2 Jazzy](https://docs.ros.org/en/jazzy/index.html)
+- [Ubuntu image installation instructions for your target platform](https://ubuntu.com/download/qualcomm-iot)
+
+### Add Qualcomm IOT PPA repository
+```shell
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
+
+Download sample face detection model
+
+```bash
+mkdir -p /opt/model && cd /opt/model
+
+sudo wget wget https://huggingface.co/qualcomm/MediaPipe-Face-Detection/resolve/0dd669a326ec24a884e51b82741997299d937705/MediaPipeFaceDetector.bin -O MediaPipeFaceDetector.bin
+
+sudo wget https://huggingface.co/qualcomm/MediaPipe-Face-Detection/resolve/0dd669a326ec24a884e51b82741997299d937705/MediaPipeFaceLandmarkDetector.bin -O MediaPipeFaceLandmarkDetector.bin
+
+sudo wget https://raw.githubusercontent.com/zmurez/MediaPipePyTorch/65f2549ba35cd61dfd29f402f6c21882a32fabb1/anchors_face.npy -O anchors_face.npy
+```
+
 ## 🚀 Usage
 
 <details>
   <summary>Usage details</summary>
 
 ```bash
-# Set up the runtime environment for QClinux platform.
-export HOME=/opt
+# setup runtime environment
 source /usr/share/qirp-setup.sh
-export ROS_DOMAIN_ID=xx # Value range of ROS_DOMAIN_ID: [0, 232]
 
 # You can use defalut face image file
 ros2 launch sample_face_detection launch_with_image_publisher.py model_path:=/opt/model/
@@ -160,10 +195,28 @@ Then you can check the /mediaface_det_image ROS topic in rviz.
 
 ## 👨‍💻 Build from source
 
-<details>
-  <summary>Build from source details</summary>
+### Prerequisites
+>Refer to [Prerequisites](#prereq) section for installation instructions.
 
-Download the source code and build with colcon
+### Dependencies
+Install dependencies `ros-dev-tools`:
+```shell
+sudo apt install ros-jazzy-rclpy \
+  ros-jazzy-sensor-msgs \
+  ros-jazzy-std-msgs \
+  ros-jazzy-cv-bridge \
+  ros-jazzy-ament-index-python \
+  ros-jazzy-qrb-ros-tensor-list-msgs \
+  python3-opencv \
+  python3-numpy \
+  ros-jazzy-image-publisher \
+  ros-jazzy-qrb-ros-nn-inference \
+  ros-jazzy-qrb-ros-camera
+```
+
+### Build Steps
+
+1. Download the source code and build with colcon
 
 ```bash
 source /usr/share/qirp-setup.sh
@@ -172,7 +225,14 @@ cd ai_vision/sample_face_detection
 colcon build
 ```
 
-Run and debug
+2.Resolve dependencies
+
+```shell
+cd ~/ros2_ws
+rosdep install -i --from-path src --rosdistro jazzy -y
+```
+
+3. Build an Run
 
 ```bash
 source install/setup.bash
@@ -185,8 +245,6 @@ ros2 launch sample_face_detection launch_with_image_publisher.py image_path:=/op
 # You can launch with qrb ros camera
 ros2 launch sample_face_detection launch_with_qrb_ros_camera.py  model_path:=/opt/model/
 ```
-
-</details>
 
 ## 🤝 Contributing
 
