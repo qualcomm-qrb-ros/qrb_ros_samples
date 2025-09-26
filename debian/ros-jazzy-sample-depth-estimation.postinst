@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -e
+
+echo "Executing post-install for ros-jazzy-sample-depth-estimation..."
+
+if [ -d "/opt/model" ]; then
+    echo "model path /opt/model exit."
+else
+    echo "model path /opt/model not exit."
+    sudo mkdir /opt/model    
+fi
+
+download_file() {
+    local url=$1
+    local output_path=$2
+
+    echo "downloading ... : $url"
+    if ! wget --tries=3 --timeout=30 -q "$url" -O "$output_path"; then
+        echo "download error : $url" >&2
+        return 1
+    fi
+
+    echo "download successfully: $output_path"
+    return 0
+}
+
+# download ai model
+if ! download_file \
+    "https://huggingface.co/qualcomm/Depth-Anything-V2/resolve/19ce3645e11de17eed7e869eebcc07dd352834f3/Depth-Anything-V2.bin?download=true" \
+    "/opt/model/Depth-Anything-V2.bin"; then
+    echo "WARNING: the requested file can not be downloaded"    
+    exit 1
+fi
+
+echo "Post-install completed successfully.
