@@ -1,0 +1,48 @@
+#!/bin/bash
+set -euo pipefail
+ 
+echo "Executing post-install for ros-jazzy-sample-depth-estimation..."
+ 
+MODEL_DIR="/opt/model"
+if [ -d "$MODEL_DIR" ]; then
+    echo "Model directory $MODEL_DIR already exists."
+else
+    echo "Model directory $MODEL_DIR does not exist. Creating..."
+    mkdir -p "$MODEL_DIR"
+    echo "Created $MODEL_DIR"
+fi
+ 
+download_file() {
+    local url=$1
+    local output_path=$2
+ 
+    echo "Downloading: $url"
+ 
+    # Prefer wget, fallback to curl
+    if command -v wget >/dev/null 2>&1; then
+        if ! wget --tries=3 --timeout=30 -q "$url" -O "$output_path"; then
+            echo "ERROR: Failed to download $url" >&2
+            return 1
+        fi
+    elif command -v curl >/dev/null 2>&1; then
+        if ! curl -fsSL --retry 3 --retry-delay 5 -o "$output_path" "$url"; then
+            echo "ERROR: Failed to download $url" >&2
+            return 1
+        fi
+    else
+        echo "ERROR: neither wget nor curl is available to download files" >&2
+        return 1
+    fi
+ 
+    echo "Downloaded successfully: $output_path"
+    return 0
+}
+ 
+# Download AI model
+if ! download_file \
+    "https://huggingface.co/qualcomm/Depth-Anything-V2/resolve/19ce3645e11de17eed7e869eebcc07dd352834f3/Depth-Anything-V2.bin?download=true" \
+    "$MODEL_DIR/Depth-Anything-V2.bin"; then
+    echo "WARNING: could not download Depth-Anything-V2 model; continuing installation without the model."
+fi
+ 
+echo "Post-install finished."
