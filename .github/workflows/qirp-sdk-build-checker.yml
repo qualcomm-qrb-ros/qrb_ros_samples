@@ -4,8 +4,8 @@ on: [push, pull_request]
 
 jobs:
   qirp-sdk-build-checker:
-    uses: qualcomm-qrb-ros/.github/.github/workflows/qirp-sdk-build-checker.yml@qirp-sdk-build
+    uses: qualcomm-qrb-ros/qrb_ros_gh_actions/.github/workflows/qirp-sdk-build-checker.yml@main
     with:
-      pre_build_commands: | 
+      pre_build_commands: |
         cd ${WORKSPACE}
         find . -name "build.sh" -type f -exec bash {} \;
