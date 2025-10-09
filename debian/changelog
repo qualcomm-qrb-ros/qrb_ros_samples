@@ -1,6 +1,6 @@
 ros-jazzy-sample-resnet101 (1.0.0ubuntu1) UNRELEASED; urgency=medium
 
-  * Add postinstall file
+  * Add postinstall file 
 
  -- Fulan Liu <fulaliu@qti.qualcomm.com>  Thu, 18 Sep 2025 08:51:17 +0000
 
