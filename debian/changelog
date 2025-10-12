@@ -1,0 +1,7 @@
+ros-jazzy-simulation-remote-assistant (1.0.0) noble; urgency=high
+
+  * Initial release for simulation sample remote assistant.
+
+ -- xionfu <xionfu@qti.qualcomm.com>  Tue, 09 Sep 2025 10:18:01 -0000
+
+

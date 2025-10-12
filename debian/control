@@ -1,0 +1,12 @@
+Source: ros-jazzy-simulation-remote-assistant
+Section: misc
+Priority: optional
+Maintainer: xionfu <xionfu@qti.qualcomm.com>
+Build-Depends: debhelper-compat ( =13 ), python3-pytest <!nocheck>, ros-jazzy-ament-copyright <!nocheck>, ros-jazzy-ament-flake8 <!nocheck>, ros-jazzy-ament-pep257 <!nocheck>, python3-all, python3-setuptools, dh-python
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-jazzy-simulation-remote-assistant
+Architecture: any
+Depends: ${python3:Depends}, ${misc:Depends}, python3-yaml, ros-jazzy-ament-index-python, ros-jazzy-geometry-msgs, ros-jazzy-nav2-msgs, ros-jazzy-qrb-ros-slam-msgs, ros-jazzy-rclpy, ros-jazzy-vision-msgs
+Description: package for remote assistant simluation
