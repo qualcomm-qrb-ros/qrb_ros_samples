@@ -26,7 +26,7 @@ if ! download_file \
     "wget https://huggingface.co/qualcomm/HRNetPose/resolve/6011b6e69a84dad8f53fb555b11035a5e26c8755/HRNetPose.bin?download=true" \
     "/opt/model/HRNetPose.bin"; then
     echo "WARNING: the requested file can not be downloaded"    
-    exit 1
+    return 1
 fi
 
 echo "Finish post install"
