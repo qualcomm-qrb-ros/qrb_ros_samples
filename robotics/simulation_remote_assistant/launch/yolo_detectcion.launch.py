@@ -8,9 +8,9 @@ from launch_ros.descriptions import ComposableNode
 from launch_ros.actions import ComposableNodeContainer
 
 def generate_launch_description():
-    default_label_file = "/opt/model/coco8.yaml"
-    default_model_path = "/opt/model/yolov8_det_qcs9075.bin"
-    default_backend_option = "libQnnHtp.so"
+    default_label_file = ""
+    default_model_path = ""
+    default_backend_option = ""
     #default_model_path = "/opt/model/yolov8_det_qcs6490.tflite"
     #default_backend_option = "gpu"
     default_nms_iou_thres = "0.5"
