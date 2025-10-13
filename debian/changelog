@@ -1,3 +1,10 @@
+ros-jazzy-simulation-remote-assistant (1.0.1) noble; urgency=high
+
+  * Fixed a bug that caused failure when attempting to use the TFLite
+    model.
+
+ -- xionfu <xionfu@qti.qualcomm.com>  Mon, 13 Oct 2025 14:54:34 +0000
+
 ros-jazzy-simulation-remote-assistant (1.0.0) noble; urgency=high
 
   * Initial release for simulation sample remote assistant.
