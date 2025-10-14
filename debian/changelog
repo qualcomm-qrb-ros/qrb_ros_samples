@@ -1,3 +1,9 @@
+ros-jazzy-sample-hand-detection (1.1.0) noble; urgency=medium
+
+  * Hand detection package adds qrb_ros_camera support
+
+ -- Dapeng Yuan <dapeyuan@qti.qualcomm.com>  Tue, 14 Oct 2025 14:10:17 +0800
+
 ros-jazzy-sample-hand-detection (0.1.0ubuntu2) noble; urgency=medium
 
   * Repackaged due to update postinstall script

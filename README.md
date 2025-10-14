@@ -1,114 +1,179 @@
-# AI Samples hand landmark detection
-
-## Overview
-
-`sample_hand_detection` is a Python-based hand recognition ROS node that uses QNN for model inference. 
-
-The model is sourced from MediaPipe Hand Landmark Detector. The MediaPipe Hand Landmark Detector is a machine learning pipeline that predicts bounding boxes and pose skeletons of hands in an image.
-
-This sample allows you to input an image named `input_image.jpg`, then it will publishes the result as ROS topic `handlandmark_result`
-
-For more information, please refer to https://github.com/qualcomm-qrb-ros/qrb_ros_samples/tree/main/ai_vision/sample_hand_detection
-
-![](./resource/result.png)
-
-## Pipeline flow for hand landmark detection
-
-![](./resource/pipeline.png)
-
-## Supported Platforms
-
-| Hardware               | Software                                 |
-| ---------------------- | ---------------------------------------- |
-| IQ-9075 Evaluation Kit | LE.QCROBOTICS.1.0,Canonical Ubuntu Image |
-
-## ROS Nodes Used in hand landmark detection
-
-| ROS Node                | Description                                                  |
-| ----------------------- | ------------------------------------------------------------ |
-| `qrb_ros_hand_detector`    | qrb_ros_hand_detector is a python-based ros jazzy packages realize classify images,  uses the QNN tool for model inference. This ROS node subscribes image topic, and publishs classify result topic after pre-post process. |
-| `image_publisher_node` | image_publisher is  a ros jazzy packages, can publish image ros topic with local path. source link: [ros-perception/image_pipeline: An image processing pipeline for ROS.](https://github.com/ros-perception/image_pipeline) |
-
-## ROS Topics Used in hand landmark detection
-
-| ROS Topic                      | Type                         | Published By            |
-| ------------------------------ | ---------------------------- | ----------------------- |
-| `handlandmark_result ` | `<sensor_msgs.msg.Image> ` | `qrb_ros_hand_detector`     |
-| `image_raw`                   | `<sensor_msgs.msg.Image> `  | `image_publisher_node` |
+<div align="center">
+  <h1>AI Samples - Hand Landmark Detection</h1>
+  <img src="./resource/result.gif" style="zoom:80%;" />      
+  <a href="https://ubuntu.com/download/qualcomm-iot" target="_blank"><img src="https://img.shields.io/badge/Qualcomm%20Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Qualcomm Ubuntu"></a>
+  <a href="https://docs.ros.org/en/jazzy/" target="_blank"><img src="https://img.shields.io/badge/ROS%20Jazzy-1c428a?style=for-the-badge&logo=ros&logoColor=white" alt="Jazzy"></a>
+</div>
 
 
-## Use cases on QCLINUX
+## 👋 Overview
 
-### Prerequisites
+The `sample_hand_detection` is a Python launch file utilizing **QNN** for model inference. It demonstrates image input, AI-based inference, and real-time visualization of **hand landmark detection** results.
 
-- Please refer to [Settings](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/download-the-prebuilt-robotics-image_3_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) to complete the device and host setup.
+The model is sourced from [**MediaPipe Hand Landmark Detector**](https://aihub.qualcomm.com/iot/models/mediapipe_hand?searchTerm=hand), which predicts bounding boxes and pose skeletons of hands in an image.
 
-### On Host
+<div align="center">
+  <img src="./resource/arch.png" alt="architecture">
+</div>
 
-**Step 1: Build sample project**
+| Node Name                                                    | Function                                                     |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
+| [qrb ros nn interface](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results. |
+| `qrb_ros_hand_detector`                                      | Subscribes to image topic, performs pre/post-processing, and publishes detection results. |
+| `palm_preprocessor`                                      | The palm_preprocessor module is responsible for preparing input image data for palm detection. It performs image resizing, normalization, and format conversion to match the input requirements of the palm detection model. |
+| `palm_postprocessor`                                      | The palm_postprocessor module interprets the raw output from the palm detection model. It extracts bounding boxes and confidence scores, applies filtering and optional non-maximum suppression (NMS), and maps the results back to the original image coordinates. |
+| `landmark_preprocessor`                                      | The landmark_preprocessor module processes cropped hand regions based on palm detection results. It resizes and normalizes the hand image, and may apply geometric transformations to align the hand orientation. This prepares the input for the landmark detection model to ensure accurate keypoint estimation. |
+| `landmark_preprocessor`                                      | The landmark_postprocessor module decodes the output of the landmark detection model, extracting hand keypoints. It maps these landmarks back to the original image space. |
 
-On the host machine, move to the artifacts directory and decompress the package using the `tar` command.
+## 🔎 Table of contents
+
+  * [Used ROS Topics](#-used-ros-topics)
+  * [Supported targets](#-supported-targets)
+  * [Installation](#-installation)
+  * [Usage](#-usage)
+  * [Build from source](#-build-from-source)
+  * [Contributing](#-contributing)
+  * [Contributors](#%EF%B8%8F-contributors)
+  * [FAQs](#-faqs)
+  * [License](#-license)
+
+## ⚓ Used ROS Topics
+
+| ROS Topic                          | Type                                          | Published By            |
+| --------------------------------- | --------------------------------------------- | ----------------------- |
+| `/handlandmark_result`            | `<sensor_msgs.msg.Image>`                    | `qrb_ros_hand_detector` |
+| `/palm_detector_input_tensor`     | `<qrb_ros_tensor_list_msgs/msg/TensorList>`  | `qrb_ros_hand_detector` |
+| `/palm_detector_output_tensor`    | `<qrb_ros_tensor_list_msgs/msg/TensorList>`  | `qrb_ros_nn_inference`  |
+| `/landmark_detector_input_tensor` | `<qrb_ros_tensor_list_msgs/msg/TensorList>`  | `qrb_ros_hand_detector` |
+| `/landmark_detector_output_tensor`| `<qrb_ros_tensor_list_msgs/msg/TensorList>`  | `qrb_ros_nn_inference`  |
+| `/image_raw`                      | `<sensor_msgs.msg.Image>`                    | `qrb_ros_camera` |
+
+---
+
+## 🎯 Supported targets
+
+<table >
+  <tr>
+    <th>Development Hardware</th>
+     <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
+     <td>Qualcomm Dragonwing™ IQ-8275 EVK</td>
+  </tr>
+  <tr>
+    <th>Hardware Overview</th>
+    <th><a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160"></a></th>
+    <th>coming soon...</th>
+  </tr>
+  <tr>
+    <th>GMSL Camera Support</th>
+    <td>LI-VENUS-OX03F10-OAX40-GM2A-118H(YUV)</td>
+    <td>LI-VENUS-OX03F10-OAX40-GM2A-118H(YUV)</td>
+  </tr>
+</table>
+
+---
+
+## ✨ Installation
+
+> [!IMPORTANT]
+> **PREREQUISITES**: The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
+> Reference [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
+> For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
+
+Add Qualcomm IOT PPA for Ubuntu:
 
 ```bash
-# set up qirp sdk environment
-tar -zxf qirp-sdk_<qirp_version>.tar.gz
-cd <qirp_decompressed_path>/qirp-sdk
-source setup.sh
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-noble-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
 
-# build sample
-cd <qirp_decompressed_path>/qirp-sdk/qirp-samples/ai_vision/sample_hand_detection
+Install Debian package:
+
+```bash
+sudo apt install qirp-sdk
+```
+
+
+## 🚀 Usage
+
+<details>
+  <summary>Details</summary>
+
+Run the sample on device
+
+```bash
+# setup runtime environment
+source /usr/share/qirp-setup.sh
+
+# Launch the sample hand detection node with an image publisher, You can replace 'image_path' with the path to your desired image.
+ros2 launch sample_hand_detection launch_with_image_publisher.py image_path:=/opt/resource/input_image.jpg model_path:=/opt/model/
+
+# Launch the sample hand detection node with qrb_ros_camera ros node.
+ros2 launch sample_hand_detection launch_with_qrb_ros_camera.py model_path:=/opt/model/
+```
+</details>
+
+## 👨‍💻 Build from source
+
+<details>
+  <summary>Details</summary>
+
+Install dependencies
+```
+sudo apt install ros-jazzy-rclpy \
+  ros-jazzy-sensor-msgs \
+  ros-jazzy-std-msgs \
+  ros-jazzy-cv-bridge \
+  ros-jazzy-ament-index-python \
+  ros-jazzy-qrb-ros-tensor-list-msgs \
+  python3-opencv \
+  python3-numpy \
+  ros-jazzy-image-publisher \
+  ros-jazzy-qrb-ros-nn-inference \
+  ros-jazzy-qrb-ros-camera
+```
+
+Download the source code and build
+```bash
+source /usr/share/qirp-setup.sh
+git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+cd qrb_ros_samples/ai_vision/sample_hand_detection
 colcon build
 ```
 
-**Step 2: Package and push sample to device**
-
+Run
 ```bash
-# package and push hand detection models
-cd <qirp_decompressed_path>/qirp-sdk/qirp-samples/ai_vision/sample_hand_detection
-tar -czvf model_hand_detection.tar.gz model resource/input_image.jpg
-scp model_hand_detection.tar.gz root@[ip-addr]:/opt/
-
-# package and push build result of sample
-cd <qirp_decompressed_path>/qirp-sdk/qirp-samples/ai_vision/sample_hand_detection/install/sample_hand_detection
-tar -czvf sample_hand_detection.tar.gz lib share
-scp sample_hand_detection.tar.gz root@[ip-addr]:/opt/
+source install/setup.bash
+ros2 launch sample_hand_detection launch_with_qrb_ros_camera.py model_path:=/opt/model/
 ```
+</details>
 
-### On Device
+## 🤝 Contributing
 
-To Login to the device, please use the command `ssh root@[ip-addr]`
+We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).<br>
+Feel free to create an issue for bug report, feature requests or any discussion💡.
 
-**Step 1: Install sample package and model package**
+## ❤️ Contributors
 
-```bash
-# Remount the /usr directory with read-write permissions
-(ssh) mount -o remount rw /usr
+Thanks to all our contributors who have helped make this project better!
 
-# Install sample package and model package
-(ssh) tar --no-same-owner -zxf /opt/sample_hand_detection.tar.gz -C /usr/
-(ssh) tar --no-same-owner -zxf /opt/model_hand_detection.tar.gz -C /opt/
-```
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/DapengYuan-David"><img src="https://avatars.githubusercontent.com/u/129727781?v=4" width="100" height="100" alt="DapengYuan-David"/><br /><sub><b>DapengYuan-David</b></sub></a></td>
+  </tr>
+</table>
 
-**Step 2: Setup runtime environment**
 
-```bash
-# Set HOME variable
-(ssh) export HOME=/opt
 
-# set SELinux to permissive mode
-(ssh) setenforce 0
+## ❔ FAQs
 
-# setup runtime environment
-(ssh) source /usr/bin/ros_setup.sh && source /usr/share/qirp-setup.sh -m
-```
+<details>
+<summary>NA</summary><br>
+</details>
 
-**Step 3: Run sample**
-```bash
-# Launch the sample hand detection node with an image publisher, You can replace 'image_path' with the path to your desired image.
-ros2 launch sample_hand_detection launch_with_image_publisher.py image_path:=/opt/resource/input_image.jpg model_path:=/opt/model/
-```
 
-If success, the log `[INFO] [0316491333.431424664] [qrb_ros_hand_detector]: Publishing image` will be shown.
 
-Then, you can open `rviz2` on HOST and subscribe `handlandmark_result` to get the result.
+## 📜 License
 
+Project is licensed under the [BSD-3-Clause](https://spdx.org/licenses/BSD-3-Clause.html) License. See [LICENSE](./LICENSE) for the full license text.

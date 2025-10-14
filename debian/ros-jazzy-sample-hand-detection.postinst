@@ -39,11 +39,11 @@ download_file() {
     fi
 }
 
-# Download MediaPipeHandDetector.tflite
-download_file "https://huggingface.co/qualcomm/MediaPipe-Hand-Detection/resolve/0d0b12ccd12b96457185ff9cfab75eb7c7ab3ad6/MediaPipeHandDetector.tflite?download=true" "$model_path/MediaPipeHandDetector.tflite"
+# Download MediaPipeHandDetector.bin
+download_file "https://huggingface.co/qualcomm/MediaPipe-Hand-Detection/resolve/7c266a43cf0328c5e00c96007a339ae41ddffa65/MediaPipeHandDetector.bin?download=true" "$model_path/MediaPipeHandDetector.bin"
 
-# Download MediaPipeHandLandmarkDetector.tflite
-download_file "https://huggingface.co/qualcomm/MediaPipe-Hand-Detection/resolve/0d0b12ccd12b96457185ff9cfab75eb7c7ab3ad6/MediaPipeHandLandmarkDetector.tflite?download=true" "$model_path/MediaPipeHandLandmarkDetector.tflite"
+# Download MediaPipeHandLandmarkDetector.bin
+download_file "https://huggingface.co/qualcomm/MediaPipe-Hand-Detection/resolve/7c266a43cf0328c5e00c96007a339ae41ddffa65/MediaPipeHandLandmarkDetector.bin?download=true" "$model_path/MediaPipeHandLandmarkDetector.bin"
 
 # Download anchors_palm.npy
 download_file "https://raw.githubusercontent.com/zmurez/MediaPipePyTorch/65f2549ba35cd61dfd29f402f6c21882a32fabb1/anchors_palm.npy" "$model_path/anchors_palm.npy"
