@@ -118,13 +118,13 @@ mv coco8.yaml yolov8_seg.tflite /opt/model/
 
 source /opt/ros/jazzy/setup.bash
 
-ros2 launch sample_sample_segmentation launch_with_qrb_ros_camera.py  model:=<the device model>
+ros2 launch sample_object_segmentation launch_with_qrb_ros_camera.py  model:=<the device model>
 ```
 
 The output for these commands:
 
 ```
-root@qcs8300-ride-sx:/root# ros2 launch sample_sample_segmentation launch_with_qrb_ros_camera.py
+root@qcs8300-ride-sx:/root# ros2 launch sample_object_segmentation launch_with_qrb_ros_camera.py
 [INFO] [launch]: All log files can be found below /opt/.ros/log/1970-01-01-00-57-22-354131-qcs8300-ride-sx-57950
 [INFO] [launch]: Default logging verbosity is set to INFO
 [INFO] [component_container-1]: process started with pid [58040]
