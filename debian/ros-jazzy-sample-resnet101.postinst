@@ -1,42 +1,55 @@
 #!/bin/bash
+set -euo pipefail
 
-echo "execute post install for ros-jazzy-sample-resnet101 ..."
-if [ -d "/opt/model" ]; then
-    echo "model path /opt/model exit."
+echo "Executing post-install for ros-jazzy-sample-resnet101..."
+
+MODEL_DIR="/opt/model"
+if [ -d "$MODEL_DIR" ]; then
+    echo "Model directory $MODEL_DIR already exists."
 else
-    echo "model path /opt/model not exit."
-    sudo mkdir /opt/model    
+    echo "Model directory $MODEL_DIR does not exist. Creating..."
+    mkdir -p "$MODEL_DIR"
+    echo "Created $MODEL_DIR"
 fi
 
 download_file() {
     local url=$1
     local output_path=$2
 
-    echo "downloading ... : $url"
-    if ! wget --tries=3 --timeout=30 -q "$url" -O "$output_path"; then
-        echo "download error : $url" >&2
+    echo "Downloading: $url"
+
+    # Prefer wget, fallback to curl
+    if command -v wget >/dev/null 2>&1; then
+        if ! wget --tries=3 --timeout=30 -q "$url" -O "$output_path"; then
+            echo "ERROR: Failed to download $url" >&2
+            return 1
+        fi
+    elif command -v curl >/dev/null 2>&1; then
+        if ! curl -fsSL --retry 3 --retry-delay 5 -o "$output_path" "$url"; then
+            echo "ERROR: Failed to download $url" >&2
+            return 1
+        fi
+    else
+        echo "ERROR: neither wget nor curl is available to download files" >&2
         return 1
     fi
 
-    echo "download successfully: $output_path"
+    echo "Downloaded successfully: $output_path"
     return 0
 }
 
-# download ai model
+# Download AI model
 if ! download_file \
     "https://huggingface.co/qualcomm/ResNet101/resolve/121564046ebb2353d4a0aa67bf89c11e0c8e80d9/ResNet101_w8a8.bin?download=true" \
-    "/opt/model/ResNet101_w8a8.bin"; then
-    echo "WARNING: the requested file can not be downloaded"    
-    return 0
+    "$MODEL_DIR/ResNet101_w8a8.bin"; then
+    echo "WARNING: could not download ResNet101 model; continuing installation without the model."
 fi
 
-# download ai model lable
+# Download AI model labels
 if ! download_file \
     "https://raw.githubusercontent.com/quic/ai-hub-models/refs/heads/main/qai_hub_models/labels/imagenet_labels.txt" \
-    "/opt/model/imagenet_labels.txt"; then
-    echo "WARNING: the requested file can not be downloaded"
-    return 0
+    "$MODEL_DIR/imagenet_labels.txt"; then
+    echo "WARNING: could not download imagenet_labels.txt; continuing installation without labels."
 fi
 
-echo "Finish post install"
-
+echo "Post-install finished."
