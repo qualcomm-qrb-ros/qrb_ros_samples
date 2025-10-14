@@ -1,4 +1,4 @@
-ros-jazzy-sample-resnet101 (1.0.0ubuntu1) UNRELEASED; urgency=medium
+ros-jazzy-sample-resnet101 (1.0.0ubuntu2) noble; urgency=high
 
   * Add postinstall file 
 

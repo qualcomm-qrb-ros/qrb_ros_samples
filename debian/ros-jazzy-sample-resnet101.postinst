@@ -27,7 +27,7 @@ if ! download_file \
     "https://huggingface.co/qualcomm/ResNet101/resolve/121564046ebb2353d4a0aa67bf89c11e0c8e80d9/ResNet101_w8a8.bin?download=true" \
     "/opt/model/ResNet101_w8a8.bin"; then
     echo "WARNING: the requested file can not be downloaded"    
-    exit 0
+    return 0
 fi
 
 # download ai model lable
@@ -35,7 +35,7 @@ if ! download_file \
     "https://raw.githubusercontent.com/quic/ai-hub-models/refs/heads/main/qai_hub_models/labels/imagenet_labels.txt" \
     "/opt/model/imagenet_labels.txt"; then
     echo "WARNING: the requested file can not be downloaded"
-    exit 0
+    return 0
 fi
 
 echo "Finish post install"
