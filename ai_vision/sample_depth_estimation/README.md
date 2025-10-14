@@ -115,9 +115,9 @@ git clone -b jazzy-rel https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
 cd ~/qrb_ros_sample_ws/src/qrb_ros_samples/ai_vision/sample_depth_estimation
 
 rosdep install --from-paths . --ignore-src --rosdistro jazzy -y --skip-keys "qrb_ros_camera qrb_ros_nn_inference"
+source /opt/ros/jazzy/setup.bash
 colcon build
 source install/setup.bash
-source /opt/ros/jazzy/setup.bash
 ```
 
 - Run sample depth estimation

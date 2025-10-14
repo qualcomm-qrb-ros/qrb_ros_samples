@@ -96,6 +96,7 @@
 
 - Install ros dependency:
 ```bash
+sudo apt update
 sudo apt-get install -y qcom-adreno-dev
 sudo apt install -y ros-jazzy-moveit
 sudo apt install -y ros-dev-tools
@@ -134,9 +135,9 @@ git clone -b jazzy-rel https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
 ```bash
 cd ~/qrb_ros_sample_ws/src/qrb_ros_samples/robotics/simulation_sample_pick_and_place
 rosdep install -i --from-path ./ --rosdistro jazzy -y
+source /opt/ros/jazzy/setup.bash
 colcon build
 source install/setup.bash
-source /opt/ros/jazzy/setup.bash
 ```
 
 4. Run the pick and place node
