@@ -166,7 +166,6 @@ Then you can check the /mediaface_det_image ROS topic in rviz.
 Download the source code and build with colcon
 
 ```bash
-source /usr/share/qirp-setup.sh
 git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
 cd ai_vision/sample_face_detection
 colcon build
@@ -175,6 +174,7 @@ colcon build
 Run and debug
 
 ```bash
+source /opt/ros/jazzy/setup.bash
 source install/setup.bash
 # You can use defalut face image file
 ros2 launch sample_face_detection launch_with_image_publisher.py model_path:=/opt/model/
