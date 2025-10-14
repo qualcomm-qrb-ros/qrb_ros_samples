@@ -219,7 +219,6 @@ sudo apt install ros-jazzy-rclpy \
 1. Download the source code and build with colcon
 
 ```bash
-source /usr/share/qirp-setup.sh
 git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
 cd ai_vision/sample_face_detection
 colcon build
@@ -235,6 +234,7 @@ rosdep install -i --from-path src --rosdistro jazzy -y
 3. Build an Run
 
 ```bash
+source /opt/ros/jazzy/setup.bash
 source install/setup.bash
 # You can use defalut face image file
 ros2 launch sample_face_detection launch_with_image_publisher.py model_path:=/opt/model/
