@@ -1,10 +1,10 @@
 #!/bin/bash
 
 if [ -d "/opt/model" ]; then
-    echo "model path /opt/model exit."
+    echo "The model path /opt/model exists."
 else
-    echo "model path /opt/model not exit."
-    sudo mkdir /opt/model    
+    echo "The model path /opt/model not exists."
+    mkdir /opt/model
 fi
 
 download_file() {
@@ -23,7 +23,7 @@ download_file() {
 
 # download ai model
 if ! download_file \
-    "wget https://huggingface.co/qualcomm/HRNetPose/resolve/6011b6e69a84dad8f53fb555b11035a5e26c8755/HRNetPose.bin?download=true" \
+    "https://huggingface.co/qualcomm/HRNetPose/resolve/6011b6e69a84dad8f53fb555b11035a5e26c8755/HRNetPose.bin?download=true" \
     "/opt/model/HRNetPose.bin"; then
     echo "WARNING: the requested file can not be downloaded"    
     return 1

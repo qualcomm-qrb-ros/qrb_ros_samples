@@ -109,7 +109,6 @@ sudo apt install ros-jazzy-sample-hrnet-pose-estimation
   <summary>Usage details</summary>
 Run the sample on device
 
-At present, the sample cannot be installed through apt install. Please refer to the [Build from source](#-build-from-source) section for compilation before use.At present, the sample cannot be installed through apt install. Please refer to the build from source section for compilation before use.
 
 ```bash
 # setup runtime environment
@@ -118,6 +117,10 @@ export ROS_DOMAIN_ID=124
 
 # Launch the sample with image publisher, You can replace 'image_path' with the path to your desired image.
 ros2 launch sample_hrnet_pose_estimation launch_with_image_publisher.py image_path:=/opt/ros/jazzy/share/sample_hrnet_pose_estimation/input_image.jpg
+
+# Launch the sample with qrb ros camera
+ros2 launch sample_hrnet_pose_estimation launch_with_qrb_ros_camera.py
+
 ```
 
 Open a new terminal and use rqt to view topic `/pose_estimation_results`.
@@ -166,6 +169,7 @@ wget https://huggingface.co/qualcomm/HRNetPose/resolve/6011b6e69a84dad8f53fb555b
 ```bash
 cd ~/qrb_ros_sample_ws/src/qrb_ros_samples/ai_vision/sample_hrnet_pose_estimation
 rosdep install -i --from-path ./ --rosdistro jazzy -y
+source /opt/ros/jazzy/setup.bash
 colcon build
 source install/setup.bash
 ```
