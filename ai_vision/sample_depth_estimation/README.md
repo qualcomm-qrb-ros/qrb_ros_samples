@@ -12,7 +12,7 @@
 
 ## 👋 Overview
 
-- This sample allows you to input an RGB image named `input_image.jpg` or subscribe to the ROS topic `/cam0_stream1` from `qrb ros camera`. It then uses QNN to perform model inference and publishes the result as the `/depth_map` ROS topic containing per-pixel depth values.
+- This sample allows you to input an RGB image named `input_image.jpg` or subscribe to the ROS topic `/cam0_stream1` from the QRB ROS Camera (`qrb_ros_camera`). It then uses QNN to perform model inference and publishes the result on the `/depth_map` ROS topic containing per-pixel depth values.
 - The model is sourced from [Depth Anything V2](https://aihub.qualcomm.com/iot/models/depth_anything_v2?searchTerm=depth&domain=Computer+Vision), a deep convolutional neural network model for depth estimation.
 
 ![image-20250723181610392](./resource/depth_estimation_architecture.jpg)
@@ -75,9 +75,49 @@
 
 
 ## 🚀 Usage
+<details>
+  <summary>Install via Debian package</summary>
+
+## 👨‍💻 Prerequisites
+
+- Add qcom ppa repository source:
+```bash
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
+
+- Install the depth estimation Debian package: 
+```bash
+
+sudo apt install -y ros-jazzy-sample-depth-estimation
+```
+
+- Run sample depth estimation:
+```bash
+source /opt/ros/jazzy/setup.bash
+ros2 launch sample_depth_estimation launch_with_image_publisher.py
+```
+
+- You can replace this with a custom image file or model path:
+```bash
+ros2 launch sample_depth_estimation launch_with_image_publisher.py image_path:=<your local image path> model_path:=<your local model path>
+```
+
+- You can also launch with `qrb_ros_camera` if you connect a GMSL camera:
+```bash
+ros2 launch sample_depth_estimation launch_with_qrb_ros_camera.py
+```
+
+## 👨‍💻 Visualization
+
+- You can then check the ROS topic `/sample_container/depth_map` in rqt. 
+Please refer to the [ROS 2 Jazzy documentation](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Introducing-Turtlesim/Introducing-Turtlesim.html) to install rqt.
+
+</details>
 
 <details>
-  <summary>Usage details</summary>
+  <summary>Build from source usage details</summary>
 
 ## 👨‍💻 Prerequisites
 
@@ -94,7 +134,7 @@ sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
 sudo apt update
 ```
 
-- Install qrb ros packages:
+- Install QRB ROS packages:
 ```bash
 sudo apt install -y ros-jazzy-qrb-ros-camera ros-jazzy-qrb-ros-nn-inference ros-jazzy-qrb-ros-tensor-list-msgs
 sudo apt install -y ros-dev-tools
@@ -120,8 +160,9 @@ colcon build
 source install/setup.bash
 ```
 
-- Run sample depth estimation
+- Run sample depth estimation:
 ```bash
+source /opt/ros/jazzy/setup.bash
 ros2 launch sample_depth_estimation launch_with_image_publisher.py
 ```
 
@@ -130,12 +171,12 @@ ros2 launch sample_depth_estimation launch_with_image_publisher.py
 ros2 launch sample_depth_estimation launch_with_image_publisher.py image_path:=<your local image path> model_path:=<your local model path>
 ```
 
-- You can also launch with qrb ros camera if you connect the GMSL camera:
+- You can also launch with `qrb_ros_camera` if you connect a GMSL camera:
 ```bash
 ros2 launch sample_depth_estimation launch_with_qrb_ros_camera.py
 ```
 
-- When using this launch script, it will use the default parameters, this will send the local `input_image.jpg` file with a publishing rate of 10 Hz. 
+- When using this launch script, it uses the default parameters; it will send the local `input_image.jpg` file at a publishing rate of 10 Hz. 
 
 ```python
 image_path_arg = DeclareLaunchArgument(
@@ -158,17 +199,12 @@ image_publisher_node = Node(
 )
 ```
 
-## 👨‍💻 Visualization
-
-- You can then check ROS topics with the topic name `/sample_container/depth_map` in rqt. 
-Please refer to the [ROS 2 Jazzy documentation](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Introducing-Turtlesim/Introducing-Turtlesim.html) to install rqt.
-
 </details>
 
 ## 🤝 Contributing
 
 We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).<br>
-Feel free to create an issue for bug reports, feature requests, or any discussion💡.
+Feel free to create an issue for bug reports, feature requests, or any discussion 💡.
 
 ## ❤️ Contributors
 
@@ -190,8 +226,8 @@ Thanks to all our contributors who have helped make this project better!
 ## ❔ FAQs
 
 <details>
-<summary>How to get the original output of the QNN inference node?</summary><br>
-Comment out the following code in depth_estimation_node.py to get the original output of the QNN inference node:
+<summary>How can I get the raw output of the QNN inference node?</summary><br>
+Comment out the following code in `depth_estimation_node.py` to get the raw output of the QNN inference node:
 
 ```python
 # Normalize to [0,255]
