@@ -109,16 +109,6 @@ sudo apt update
 Install Debian package:
 
 ```bash
-#Install the dependent debian packages
-sudo apt install ros-jazzy-qrb-ros-slam-msgs
-sudo apt install ros-jazzy-qcom-cartographer
-sudo apt install ros-jazzy-qcom-cartographer-ros
-sudo apt install ros-jazzy-qrb-ros-nn-inference
-sudo apt install ros-jazzy-qrb-ros-cv-tensor-common-process
-sudo apt install ros-jazzy-qrb-ros-yolo-process
-sudo apt install ros-jazzy-nav2-bringup
-
-#Install the simulation-remote-assistant debian package
 sudo apt install ros-jazzy-simulation-remote-assistant
 ```
 
