@@ -84,18 +84,9 @@ This section details how to install the `qrb_ros_interfaces` packages. The recom
 sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
 sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
 sudo apt update
-```
 
-Download sample face detection model
-
-```bash
-mkdir -p /opt/model && cd /opt/model
-
-sudo wget wget https://huggingface.co/qualcomm/MediaPipe-Face-Detection/resolve/0dd669a326ec24a884e51b82741997299d937705/MediaPipeFaceDetector.bin -O MediaPipeFaceDetector.bin
-
-sudo wget https://huggingface.co/qualcomm/MediaPipe-Face-Detection/resolve/0dd669a326ec24a884e51b82741997299d937705/MediaPipeFaceLandmarkDetector.bin -O MediaPipeFaceLandmarkDetector.bin
-
-sudo wget https://raw.githubusercontent.com/zmurez/MediaPipePyTorch/65f2549ba35cd61dfd29f402f6c21882a32fabb1/anchors_face.npy -O anchors_face.npy
+# install sample-face-detection package
+sudo apt install ros-jazzy-sample-face-detection
 ```
 
 ## 🚀 Usage
@@ -104,8 +95,8 @@ sudo wget https://raw.githubusercontent.com/zmurez/MediaPipePyTorch/65f2549ba35c
   <summary>Usage details</summary>
 
 ```bash
-# setup runtime environment
-source /usr/share/qirp-setup.sh
+# setup ros runtime environment
+source /opt/ros/jazzy/setup.bash
 
 # You can use defalut face image file
 ros2 launch sample_face_detection launch_with_image_publisher.py model_path:=/opt/model/
