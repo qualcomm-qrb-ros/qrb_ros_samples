@@ -83,7 +83,7 @@ The model is sourced from [**MediaPipe Hand Landmark Detector**](https://aihub.q
 Add Qualcomm IOT PPA for Ubuntu:
 
 ```bash
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-noble-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
 sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
 sudo apt update
 ```
@@ -107,7 +107,7 @@ Run the sample on device
 source /usr/share/qirp-setup.sh
 
 # Launch the sample hand detection node with an image publisher, You can replace 'image_path' with the path to your desired image.
-ros2 launch sample_hand_detection launch_with_image_publisher.py image_path:=/opt/resource/input_image.jpg model_path:=/opt/model/
+ros2 launch sample_hand_detection launch_with_image_publisher.py image_path:=<path/for/your/image.jpg> model_path:=/opt/model/
 
 # Launch the sample hand detection node with qrb_ros_camera ros node.
 ros2 launch sample_hand_detection launch_with_qrb_ros_camera.py model_path:=/opt/model/
