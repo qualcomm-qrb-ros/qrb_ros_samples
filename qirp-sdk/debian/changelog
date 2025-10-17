@@ -1,3 +1,42 @@
+qirp-sdk (2.4.0) noble; urgency=medium
+
+  * Add new ROS Jazzy packages for QIRP SDK to enhance simulation,
+    vision, robotics, and system capabilities.
+
+  Added packages:
+    - ros-jazzy-simulation-remote-assistant
+    - ros-jazzy-sample-face-detection
+    - ros-jazzy-sample-depth-estimation
+    - ros-jazzy-sample-hrnet-pose-estimation
+    - ros-jazzy-sample-object-segmentation
+    - ros-jazzy-sample-resnet101
+    - ros-jazzy-sample-hand-detection
+    - ros-jazzy-qrb-follow-path-manager
+    - ros-jazzy-qrb-amr-manager
+    - ros-jazzy-simulation-sample-pick-and-place
+    - ros-jazzy-simulation-sample-amr-simple-motion
+    - ros-jazzy-qrb-ros-imu
+    - ros-jazzy-qrb-ros-benchmark
+    - ros-jazzy-qrb-ros-camera
+    - ros-jazzy-qrb-ros-audio-service
+    - ros-jazzy-qcom-cartographer-ros
+    - ros-jazzy-qrb-ros-colorspace-convert
+    - ros-jazzy-qrb-ros-audio-common
+    - ros-jazzy-qrb-colorspace-convert-lib
+    - ros-jazzy-qrb-yolo-process
+    - ros-jazzy-qrb-ros-cv-tensor-common-process
+    - ros-jazzy-qrb-camera
+    - ros-jazzy-qrb-ros-video-test
+    - ros-jazzy-qcom-cartographer
+    - ros-jazzy-qrb-ros-slam-msgs
+    - ros-jazzy-qrb-ros-amr
+    - ros-jazzy-qrb-ros-follow-path
+    - ros-jazzy-qrb-ros-navigation-msgs
+    - ros-jazzy-ros2-benchmark-interfaces
+    - ros-jazzy-ros2-benchmark
+
+ -- Fulan Liu <fulaliu@qti.qualcomm.com>  Wed, 15 Oct 2025 18:05:19 +0800
+
 qirp-sdk (2.3.3) noble; urgency=medium
 
   * qirp package keeps the latest dependency
