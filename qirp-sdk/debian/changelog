@@ -1,3 +1,14 @@
+qirp-sdk (2.4.1) noble; urgency=medium
+
+  * Add new ROS Jazzy packages in QIRP SDK.
+
+  Added packages:
+    - ros-jazzy-sample-object-detection
+    - ros-jazzy-qrb-ros-audio-common,
+    - ros-jazzy-qrb-ros-amr-msgs,
+
+ -- Fulan Liu <fulaliu@qti.qualcomm.com>  Wed, 15 Oct 2025 18:05:19 +0800
+
 qirp-sdk (2.4.0) noble; urgency=medium
 
   * Add new ROS Jazzy packages for QIRP SDK to enhance simulation,
