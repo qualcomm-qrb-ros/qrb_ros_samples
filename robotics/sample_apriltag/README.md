@@ -28,14 +28,20 @@ The `sample_apriltag` is the ROS package to provide AprilTag pipeline samples fo
 
 ## 🔎 Table of contents
 
-  * [Used ROS Topics](#-used-ros-topics)
-  * [Supported targets](#-supported-targets)
-  * [Installation](#-installation)
-  * [Usage](#-usage)
-  * [Build from source](#-build-from-source)
-  * [Contributing](#-contributing)
-  * [Contributors](#%EF%B8%8F-contributors)
-  * [License](#-license)
+- [👋 Overview](#-overview)
+- [🔎 Table of contents](#-table-of-contents)
+- [⚓ Used ROS Topics](#-used-ros-topics)
+- [🎯 Supported targets](#-supported-targets)
+- [✨ Installation](#-installation)
+- [🚀 Usage](#-usage)
+  - [Start the AprilTag pipeline sample](#start-the-apriltag-pipeline-sample)
+  - [How to change camera id](#how-to-change-camera-id)
+  - [How to change tag and configuration](#how-to-change-tag-and-configuration)
+- [👨‍💻 Build from source](#-build-from-source)
+  - [Dependencies](#dependencies)
+- [🤝 Contributing](#-contributing)
+- [❤️ Contributors](#️-contributors)
+- [📜 License](#-license)
 
 ## ⚓ Used ROS Topics
 
@@ -86,6 +92,9 @@ sudo apt install ros-jazzy-sample-apriltag
 ```
 
 ## 🚀 Usage
+
+> [!Notice]
+> The AprilTag pipeline is compatible exclusively with the Ubuntu server image.
 
 ### Start the AprilTag pipeline sample
 
