@@ -112,7 +112,6 @@ set(INSTALL_DIRS
     config
     scripts
     meshes
-    resource
     src
     urdf
 )

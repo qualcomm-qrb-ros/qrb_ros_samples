@@ -76,7 +76,7 @@ The `sample_resnet101` is a Python-based ROS node that performs image classifica
 Add Qualcomm IOT PPA for Ubuntu:
 
 ```bash
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-noble-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
 sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
 sudo apt update
 ```
@@ -96,7 +96,7 @@ sudo apt install ros-jazzy-sample-resnet101
 source /opt/ros/jazzy/setup.bash
 ros2 launch sample_resnet101 launch_with_image_publisher.py
 or # You can also replace this with a custom image file
-ros2 launch sample_resnet101 launch_with_image_publisher.py image_path:=/usr/share/sample_resnet101_quantized/cup.jpg
+ros2 launch sample_resnet101 launch_with_image_publisher.py image_path:=<your image path>
 or # You can launch with qrb ros camera
 ros2 launch sample_resnet101 launch_with_qrb_ros_camera.py
 ```

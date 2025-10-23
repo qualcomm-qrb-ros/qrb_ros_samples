@@ -2,7 +2,6 @@
 
 <div >
   <h1>Simulation Sample Pick and Place</h1>
-  <p align="center">
 </div>
 
 ![](./resource/pick_and_place.gif)
@@ -11,14 +10,14 @@
 
 ## 👋 Overview
 
-- The RML-63 Robotic Arm Pick and Place Demo is a C++-based robotic manipulation ROS2 node that demonstrates autonomous pick-and-place operations using MoveIt2 for motion planning and Gazebo for physics simulation.
+- The RML-63 Robotic Arm pick-and-place demo is a C++-based ROS 2 node that demonstrates autonomous pick-and-place operations using MoveIt 2 for motion planning and Gazebo for physics simulation.
 
 ![image-20250723181610392](./resource/pick_and_place_architecture.jpg)
 
 | Node Name                                                    | Function                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| qrb_ros_simulation | Set up the Qualcomm robotic simulation environment, refer [qrb_ros_simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation). |
-| qrb_ros_arm_pick_and_place     | Predefined pick and place positions. ROS2 launch.py support for configuration parameters. |
+| qrb_ros_simulation | Sets up the Qualcomm robotic simulation environment. See [qrb_ros_simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation). |
+| qrb_ros_arm_pick_place     | Defines pick-and-place positions with ROS 2 `launch.py` configuration parameter support. |
 
 
 ## 🔎 Table of contents
@@ -39,7 +38,7 @@
 
 | ROS Topic                       | Type                                          | Description                    |
 | ------------------------------- | --------------------------------------------- | ------------------------------ |
-| `/joint_states`                   | `<sensor_msgs/msg/JointState> `                   | 	Real-time joint position, velocity, and effort data for all robot joints controlinfo              |
+| `/joint_states`                   | `<sensor_msgs/msg/JointState> `                   | 	Real-time joint position, velocity, and effort data for all robot joints              |
 | `/hand_controller/controller_state` | `<control_msgs.msg.ControllerState>` |	Current state and status information of the gripper controller |
 | `/hand_controller/joint_trajectory` |	`<trajectory_msgs.msg.JointTrajectory>` |	Trajectory commands sent to gripper joints for motion execution |
 | `/rm_group_controller/controller_state` |	`<control_msgs.msg.ControllerState>` |	Current state and status information of the robotic arm controller |
@@ -81,56 +80,146 @@
 ## ✨ Installation
 
 > [!IMPORTANT]
-
-> **PREREQUISITES**: 
-For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/quick_start.html?vproduct=1601111740013072&version=1.5&facet=Qualcomm%20Intelligent%20Robotics%20SDK#setup-demo-qs) documents.
-
-
+> The following steps need to be run on **Qualcomm Ubuntu** with **ROS Jazzy**.<br>
+> Refer to [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to set up the environment. <br>
+> For Qualcomm Linux, please check the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documentation.
 
 ## 🚀 Usage
 
 <details>
-  <summary>Usage details</summary>
+  <summary>Install via Debian package</summary>
 
-- Launch Gazebo and Rviz on HOST docker
+1. Prerequisites
 
-Please refer to the Quick Start of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to launch `QRB Robot ARM` on host. Use the same local network and same `ROS_DOMAIN_ID` to ensure that the device can communicate with each other via ROS communication.
-
-You can also launch Gazebo with the following command:
+- Add qcom ppa repository source:
 ```bash
-ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper.launch.py world_model:=warehouse initial_x:=2.2 initial_y:=-2 initial_z:=1.025 initial_yaw:=3.14159 initial_pitch:=0.0 initial_roll:=0.0
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
 ```
-Click play button in Gazebo after rendered the world environment, and then use the following command to launch controller.
+
+- Install the pick-and-place Debian package: 
 ```bash
+sudo apt install -y ros-jazzy-simulation-sample-pick-and-place ros-jazzy-moveit qcom-adreno-dev
+```
+
+2. Launch Gazebo on the host Docker container
+
+- Please refer to the Quick Start of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to launch `QRB Robot ARM` on the host. Use the same local network and `ROS_DOMAIN_ID` to ensure devices can communicate via ROS.
+
+- You can launch Gazebo with the following command:
+```bash
+source install/setup.bash
+export ROS_DOMAIN_ID=55
+ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper.launch.py world_model:=warehouse initial_x:=2.2 initial_y:=-2 initial_z:=1.025 initial_yaw:=3.14159 initial_pitch:=0.0 initial_roll:=0.0 use_sim_time:=true
+```
+
+- Click the `Play` button in Gazebo after the world environment renders, open another terminal, and use the following command to launch the controller:
+```bash
+source install/setup.bash
+export ROS_DOMAIN_ID=55
 ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper_load_controller.launch.py
 ``` 
-Make sure that after you started Gazebo and Rviz in the host Docker, you can select arm predefined state `ready` and `home` in Rviz to start the arm motion.
 
-- On device
+- After starting Gazebo in the host Docker container, you can run the pick-and-place node.
 
-Then you can launche the MoveIt! configuration and launch the demo launch file to start the arm motion.
+3. Run the pick-and-place node
+
+- You can launch the MoveIt 2 configuration and demo launch file to start the arm motion:
 ```bash
-source /usr/share/qirp-setup.sh
+source /opt/ros/jazzy/setup.bash
+export ROS_DOMAIN_ID=55
 ros2 launch simulation_sample_pick_and_place simulation_sample_pick_and_place.launch.py
 ```
-If arm motion works normally, open another terminal, you can use the following command to start the pick and place node.
+
+- If the ROS node launches successfully, you'll see a log starting with `[move_group-1] You can start planning now!`. Open another terminal and use the following command to start the pick-and-place node:
 ```bash
-source /usr/share/qirp-setup.sh
+source /opt/ros/jazzy/setup.bash
+export ROS_DOMAIN_ID=55
 ros2 run simulation_sample_pick_and_place qrb_ros_arm_pick_place
 ```
 
-Then you can view the arm execute pick and place operation in Gazebo and Rviz.
+- You can then view the arm executing the pick-and-place operation in Gazebo.
 
 </details>
 
+<details>
+  <summary>Build from source usage details</summary>
+
 ## 👨‍💻 Build from source
 
-Coming soon ...
+1. Prerequisites
+
+- Install ROS dependencies:
+```bash
+sudo apt update
+sudo apt-get install -y qcom-adreno-dev
+sudo apt install -y ros-jazzy-moveit
+sudo apt install -y ros-dev-tools
+sudo rosdep init
+rosdep update
+``` 
+
+2. Launch Gazebo on the host Docker container
+
+- Please refer to the Quick Start of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to launch `QRB Robot ARM` on the host. Use the same local network and `ROS_DOMAIN_ID` to ensure devices can communicate via ROS.
+
+- You can launch Gazebo with the following command:
+```bash
+source install/setup.bash
+export ROS_DOMAIN_ID=55
+ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper.launch.py world_model:=warehouse initial_x:=2.2 initial_y:=-2 initial_z:=1.025 initial_yaw:=3.14159 initial_pitch:=0.0 initial_roll:=0.0 use_sim_time:=true
+```
+
+- Click the `Play` button in Gazebo after the world environment renders, open another terminal, and use the following command to launch the controller:
+```bash
+source install/setup.bash
+export ROS_DOMAIN_ID=55
+ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper_load_controller.launch.py
+``` 
+
+- After starting Gazebo in the host Docker container, you can run the pick-and-place node.
+
+3. Download source code from the qrb-ros-sample repository:
+
+```bash
+mkdir -p ~/qrb_ros_sample_ws/src && cd ~/qrb_ros_sample_ws/src
+git clone -b jazzy-rel https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+```
+
+- Build the sample from source code:
+```bash
+cd ~/qrb_ros_sample_ws/src/qrb_ros_samples/robotics/simulation_sample_pick_and_place
+rosdep install -i --from-path ./ --rosdistro jazzy -y
+source /opt/ros/jazzy/setup.bash
+colcon build
+
+```
+
+4. Run the pick-and-place node
+
+- You can launch the MoveIt 2 configuration and demo launch file to start the arm motion:
+```bash
+source install/setup.bash
+export ROS_DOMAIN_ID=55
+ros2 launch simulation_sample_pick_and_place simulation_sample_pick_and_place.launch.py
+```
+
+- If the ROS node launches successfully, you'll see a log starting with `[move_group-1] You can start planning now!`. Open another terminal and use the following command to start the pick-and-place node:
+```bash
+source install/setup.bash
+export ROS_DOMAIN_ID=55
+ros2 run simulation_sample_pick_and_place qrb_ros_arm_pick_place
+```
+
+- You can then view the arm executing the pick-and-place operation in Gazebo.
+
+</details>
 
 ## 🤝 Contributing
 
 We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).<br>
-Feel free to create an issue for bug report, feature requests or any discussion💡.
+Feel free to create an issue for bug reports, feature requests, or any discussion 💡.
 
 ## ❤️ Contributors
 
@@ -150,7 +239,11 @@ Thanks to all our contributors who have helped make this project better!
 
 
 ## ❔ FAQs
-
+How do I move the Coke can to the origin pose?
+You can execute the following command to move the Coke can to the origin pose:
+```bash
+gz service -s /world/warehouse/set_pose --reqtype gz.msgs.Pose --reptype gz.msgs.Boolean --timeout 1000 --req 'name: "coke1", position: { x: 3, y: -2.0, z: 1.02 }, orientation: { x: 0.0, y: 0.0, z: 0.0, w: 1.0 }'
+```
 
 ## 📜 License
 

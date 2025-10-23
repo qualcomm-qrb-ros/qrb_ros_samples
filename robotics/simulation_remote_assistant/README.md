@@ -94,7 +94,23 @@ The `simulation_remote_assistant` sample application is the ROS package that uti
 ## ✨ Installation
 
 > [!IMPORTANT]
+> **PREREQUISITES**: The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
+> Reference [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
 > For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
+
+Add Qualcomm IOT PPA for Ubuntu:
+
+```bash
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-noble-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
+
+Install Debian package:
+
+```bash
+sudo apt install ros-jazzy-simulation-remote-assistant
+```
 
 
 ## 🚀 Usage
@@ -108,6 +124,7 @@ Reference the [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_r
 
 ```bash
 #Prepare the model and move to default model path
+sudo chmod -R 777 /opt/
 mkdir /opt/model/
 mv coco8.yaml yolov8_det_qcs9075.bin yolov8_det_qcs6490.tflite /opt/model/
 ```
@@ -116,6 +133,11 @@ mv coco8.yaml yolov8_det_qcs9075.bin yolov8_det_qcs6490.tflite /opt/model/
 Reference the [qrb_ros_simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation/tree/main) README to prepare the simulation environment
 
 ```bash
+#Env set up
+source /opt/ros/jazzy/setup.bash
+export ROS_DOMAIN_ID=78
+
+#Launch the simulation office world
 ros2 launch qrb_ros_sim_gazebo gazebo_robot_base_mini.launch.py \
     world_model:=office \
     initial_x:=1.0 \
@@ -125,15 +147,20 @@ ros2 launch qrb_ros_sim_gazebo gazebo_robot_base_mini.launch.py \
 ### Step3: Run the remote assistant sample on device
 
 ```bash
+#Env set up
+source /opt/ros/jazzy/setup.bash
+export ROS_DOMAIN_ID=78
+
 #Launch the map_nav_setup.launch.py scripts
 ros2 launch simulation_remote_assistant map_nav_setup.launch.py
 
 #Launch the yolo object detection script
 
-#Default use yolov8_det_qcs9075.bin model and htp backend
+#Qualcomm Dragonwing™ IQ-9075 EVK 
 ros2 launch simulation_remote_assistant yolo_detectcion.launch.py model:=/opt/model/yolov8_det_qcs9075.bin backend_option:=libQnnHtp.so
-#Or
-ros2 launch simulation_remote_assistant yolo_detectcion.launch.py model:=/opt/model/yolov8_det_qcs6490.tflite backend_option:=gpu
+
+#Qualcomm Robotics RB3 Gen2 Vision Kit
+ros2 launch simulation_remote_assistant  yolo_detectcion.launch.py model:=/opt/model/yolov8_det_qcs6490.tflite label_file:=/opt/model/coco8.yaml
 
 #Run the task manager to parse the location and object
 ros2 run simulation_remote_assistant task_manager_node
@@ -148,7 +175,33 @@ go to office to check person
 <details>
   <summary>Build from source details</summary>
 
-Coming soon...
+- Install `ros-dev-tools` .
+```bash
+sudo apt install ros-dev-tools
+```
+
+- Install dependency Debian packages from qcom ppa.
+```bash
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
+
+- Download source code from qrb-ros-sample repository.
+```bash
+mkdir -p ~/qrb_ros_sample_ws/src && cd ~/qrb_ros_sample_ws/src
+git clone -b jazzy-rel https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+```
+
+- Build sample from source code.
+```bash
+cd ~/qrb_ros_sample_ws/src/qrb_ros_samples/robotics/simulation_remote_assistant
+rosdep install -i --from-path ./ --rosdistro jazzy -y
+colcon build
+source install/setup.bash
+```
+
+- Refer to the "Usage" section to run the demo.
 
 </details>
 

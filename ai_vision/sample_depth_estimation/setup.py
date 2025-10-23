@@ -17,7 +17,7 @@ setup(
         ('share/ament_index/resource_index/packages',
                  ['resource/' + package_name]),
         (os.path.join('share', package_name), ['package.xml']),
-        (os.path.join('share', package_name, 'resource'), glob(os.path.join('resource', '*.jpg'))),
+        (os.path.join('share', package_name, 'resource'), glob(os.path.join('resource', 'input_image.jpg'))),
         (os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*.py'))),
         (os.path.join('lib', package_name, package_name), glob(os.path.join(package_name, '*.py'))),
     ],
