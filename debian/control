@@ -8,5 +8,5 @@ Standards-Version: 3.9.2
 
 Package: ros-jazzy-simulation-remote-assistant
 Architecture: any
-Depends: ${python3:Depends}, ${misc:Depends}, python3-yaml, ros-jazzy-ament-index-python, ros-jazzy-geometry-msgs, ros-jazzy-nav2-msgs, ros-jazzy-qrb-ros-slam-msgs, ros-jazzy-rclpy, ros-jazzy-vision-msgs, ros-jazzy-qrb-ros-slam-msgs, ros-jazzy-qcom-cartographer, ros-jazzy-qcom-cartographer-ros, ros-jazzy-qrb-ros-nn-inference, ros-jazzy-qrb-ros-cv-tensor-common-process, ros-jazzy-qrb-ros-yolo-process, ros-jazzy-nav2-bringup
+Depends: ${python3:Depends}, ${misc:Depends}, python3-yaml, ros-jazzy-ament-index-python, ros-jazzy-geometry-msgs, ros-jazzy-nav2-msgs, ros-jazzy-qrb-ros-slam-msgs, ros-jazzy-rclpy, ros-jazzy-vision-msgs, ros-jazzy-qrb-ros-slam-msgs, ros-jazzy-qcom-cartographer, ros-jazzy-qcom-cartographer-ros, ros-jazzy-qrb-ros-nn-inference, ros-jazzy-qrb-ros-cv-tensor-common-process, ros-jazzy-qrb-ros-yolo-process, ros-jazzy-nav2-bringup, ros-jazzy-nav2-route
 Description: package for remote assistant simluation

@@ -1,3 +1,9 @@
+ros-jazzy-simulation-remote-assistant (1.0.3) noble; urgency=high
+
+  * Add run time dependencies
+
+ -- xionfu <xionfu@qti.qualcomm.com>  Fri, 24 Oct 2025 07:23:51 +0000
+
 ros-jazzy-simulation-remote-assistant (1.0.2) noble; urgency=high
 
   * Add run time dependencies
