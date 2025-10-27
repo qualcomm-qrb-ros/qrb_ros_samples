@@ -1,0 +1,7 @@
+ros-jazzy-follow-me (1.0.0) noble; urgency=high
+
+  * First init for debian release
+
+ -- zhezhu <zhezhu@qti.qualcomm.com>  Mon, 20 Oct 2025 03:23:55 -0000
+
+
