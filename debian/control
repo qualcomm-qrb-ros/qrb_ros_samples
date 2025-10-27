@@ -1,0 +1,12 @@
+Source: ros-jazzy-follow-me
+Section: misc
+Priority: optional
+Maintainer: zhezhu <zhezhu@qti.qualcomm.com>
+Build-Depends: debhelper-compat( =13 ), ros-jazzy-ament-cmake, ros-jazzy-cv-bridge, ros-jazzy-geometry-msgs, ros-jazzy-image-transport, ros-jazzy-nav-msgs, ros-jazzy-rclcpp, ros-jazzy-rclcpp-components, ros-jazzy-sensor-msgs, ros-jazzy-std-msgs, ros-jazzy-tf2, ros-jazzy-tf2-ros,libopencv-dev
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-jazzy-follow-me
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},ros-jazzy-cv-bridge, ros-jazzy-geometry-msgs, ros-jazzy-image-transport, ros-jazzy-nav-msgs, ros-jazzy-rclcpp, ros-jazzy-rclcpp-components, ros-jazzy-sensor-msgs, ros-jazzy-std-msgs, ros-jazzy-tf2, ros-jazzy-tf2-ros 
+Description: QCOM AMR follow_me application ROS2 package
