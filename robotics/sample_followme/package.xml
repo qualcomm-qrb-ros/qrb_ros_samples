@@ -19,7 +19,7 @@
   <build_depend>image_transport</build_depend>
   <build_depend>cv_bridge</build_depend>
   <build_depend>ncnn</build_depend>
-  <build_depend>ncnn_dev</build_depend>
+  <build_depend>ncnn-dev</build_depend>
   <!-- <build_depend>rcl_logging_noop</build_depend> -->
 
   
