@@ -22,7 +22,6 @@ The `Simulation Follow Me` sample is a AMR to detect, track, and follow a moving
   * [Supported targets](#-supported-targets)
   * [Installation](#-installation)
   * [Usage](#-usage)
-  * [Build from source](#-build-from-source)
   * [Contributing](#-contributing)
   * [Contributors](#%EF%B8%8F-contributors)
   * [FAQs](#-faqs)
@@ -64,25 +63,17 @@ The `Simulation Follow Me` sample is a AMR to detect, track, and follow a moving
 
 <details>
   <summary>Usage details</summary>
-### Simulation Env Setup
-
-- Please refer to the `Quick Start` of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to launch `QRB Robot Base AMR` on host. Ensure that the device and the host are on the same local network and can communicate with each other via ROS communication.
 
 ### On Device
 
-To Login to the device, please use the command `ssh root@[ip-addr]`
-
-Prepare Device environment refer to [Qualcomm Intelligent Robotics (QIR) SDK User Guide](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/followme.html?state=releasecandidate)
-
-```
-# run follow me on device.
-source /usr/share/qirp-setup.sh
-follow_me
-```
+- Please refer to the [follow me]([https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/main/robotics/sample_followme/README.md) to launch follow me function on device
 
 ### On Host
 
-Sync and run sample project in Gazebo
+- Please refer to the `Quick Start` of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to launch `QRB Robot Base AMR` on host. Ensure that the device and the host are on the same local network and can communicate with each other via ROS communication.
+
+- Sync and run sample project in Gazebo
+
 
 ```
 #run samples in Gazebo
