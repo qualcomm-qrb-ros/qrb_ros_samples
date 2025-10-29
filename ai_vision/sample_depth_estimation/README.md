@@ -6,7 +6,7 @@
   </p>
 </div>
 
-![](./resource/depth_result.gif)
+![](https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/ai_vision/sample_depth_estimation/resource/depth_result.gif)
 
 ---
 

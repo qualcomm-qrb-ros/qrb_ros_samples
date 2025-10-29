@@ -1,7 +1,7 @@
 <div align="center">
   <h1>Apriltag Sample</h1>
   <p align="center">
-    <img src='./resource/apriltag.gif'></img>
+    <img src='https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/robotics/sample_apriltag/resource/apriltag.gif'></img>
   </p>
   <p>ROS package for enabling AprilTag pipeline on Qualcomm robotics platforms</p>
 

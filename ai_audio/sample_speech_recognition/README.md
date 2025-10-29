@@ -3,7 +3,7 @@
   <p align="center">
 </div>
 
-![](./resource/output.gif)
+![](https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/ai_audio/sample_speech_recognition/resource/output.gif)
 
 ---
 

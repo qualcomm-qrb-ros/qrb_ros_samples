@@ -4,7 +4,7 @@
   <h1>Simulation Sample Pick and Place</h1>
 </div>
 
-![](./resource/pick_and_place.gif)
+![](https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/robotics/simulation_sample_pick_and_place/resource/pick_and_place.gif)
 
 ---
 
@@ -119,7 +119,7 @@ ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper.launch.py world_model:=ware
 source install/setup.bash
 export ROS_DOMAIN_ID=55
 ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper_load_controller.launch.py
-``` 
+```
 
 - After starting Gazebo in the host Docker container, you can run the pick-and-place node.
 
@@ -158,7 +158,7 @@ sudo apt install -y ros-jazzy-moveit
 sudo apt install -y ros-dev-tools
 sudo rosdep init
 rosdep update
-``` 
+```
 
 2. Launch Gazebo on the host Docker container
 
@@ -176,7 +176,7 @@ ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper.launch.py world_model:=ware
 source install/setup.bash
 export ROS_DOMAIN_ID=55
 ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper_load_controller.launch.py
-``` 
+```
 
 - After starting Gazebo in the host Docker container, you can run the pick-and-place node.
 

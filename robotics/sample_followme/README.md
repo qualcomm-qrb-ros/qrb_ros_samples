@@ -1,6 +1,6 @@
 # Follow Me
 
-<img src="./resources/follow_me_gif.gif" style="zoom:80%;" />
+<img src="https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/robotics/sample_followme/resources/follow_me_gif.gif" style="zoom:80%;" />
 
 ## 👋 Overview
 

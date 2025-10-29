@@ -1,13 +1,13 @@
 <div align="center">
   <h1>Simulation 2D Lidar SLAM</h1>
   <p align="center">
-    <img src="./resource/simulation-2d-lidar-slam-result.gif" alt="Qualcomm QRB ROS" title="Qualcomm QRB ROS" />
+    <img src="https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/robotics/simulation_2d_lidar_slam/resource/simulation-2d-lidar-slam-result.gif" alt="Qualcomm QRB ROS" title="Qualcomm QRB ROS" />
   </p>
   <p>Simulation 2D Lidar SLAM sample demonstrates how to run 2D lidar SLAM in a simulated environment, enabling simultaneous localization and mapping</p>
-  
+
   <a href="https://ubuntu.com/download/qualcomm-iot" target="_blank"><img src="https://img.shields.io/badge/Qualcomm%20Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Qualcomm Ubuntu"></a>
   <a href="https://docs.ros.org/en/jazzy/" target="_blank"><img src="https://img.shields.io/badge/ROS%20Jazzy-1c428a?style=for-the-badge&logo=ros&logoColor=white" alt="Jazzy"></a>
-  
+
 </div>
 
 ---

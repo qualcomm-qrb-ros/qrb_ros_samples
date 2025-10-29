@@ -4,7 +4,7 @@
   <h1>AI Samples Object Detection	</h1>
   <p align="center">
 </div>
-<img src="./resource/yolo-detect.gif" style="zoom:80%;" />
+<img src="https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/ai_vision/sample_hrnet_pose_estimation/resource/result_image.gif" style="zoom:80%;" />
 
 ---
 

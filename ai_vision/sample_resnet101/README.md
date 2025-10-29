@@ -5,7 +5,7 @@
   <p align="center">
 </div>
 
-![](./resource/output.gif)
+![](https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/ai_vision/sample_resnet101/resource/output.gif)
 
 ---
 

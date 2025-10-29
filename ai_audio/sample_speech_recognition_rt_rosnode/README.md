@@ -2,13 +2,13 @@
   <h1>QRB ROS Speech Recognition ROS Node</h1>
   <p align="center">
    <img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3gen2-dev-kits-hero-7" alt="Qualcomm QRB ROS" title="Qualcomm QRB ROS" />
-      
+
   </p>
   <p>QRB ROS Speech Recognition ROS Node on Qualcomm Robotics Platforms</p>
-  
+
   <a href="https://ubuntu.com/download/qualcomm-iot" target="_blank"><img src="https://img.shields.io/badge/Qualcomm%20Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Qualcomm Ubuntu"></a>
   <a href="https://docs.ros.org/en/jazzy/" target="_blank"><img src="https://img.shields.io/badge/ROS%20Jazzy-1c428a?style=for-the-badge&logo=ros&logoColor=white" alt="Jazzy"></a>
-  
+
 </div>
 
 ---
@@ -39,7 +39,7 @@ The QRB ROS Speech Recognition Node is a real-time speech-to-text solution desig
 - Two launch files provided: one for USB mic, one for audio file input.
 
 ## Usercase for Speech Recognition ROS Node
-<img src="./test/asr_rt_rosnode.gif" width="800"/>
+![](https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/ai_audio/sample_speech_recognition_rt_rosnode/test/asr_rt_rosnode.gif)
 
 ## Pipeline flow for Speech Recognition ROS Node
 

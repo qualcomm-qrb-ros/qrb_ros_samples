@@ -1,6 +1,6 @@
 # Simulation Follow Me
 
-<img src="./resource/simulation-followme.gif" style="zoom:80%;" />
+<img src="https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/robotics/simulation_follow_me/resource/simulation-followme.gif" style="zoom:80%;" />
 
 ## 👋 Overview
 

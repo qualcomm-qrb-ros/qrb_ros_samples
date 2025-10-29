@@ -4,7 +4,7 @@
 </div>
 
 
-![](./resource/result_image.gif)
+![](https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/ai_vision/sample_hrnet_pose_estimation/resource/result_image.gif)
 
 ---
 

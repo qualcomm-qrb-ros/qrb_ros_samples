@@ -1,9 +1,10 @@
 <div align="center">
   <h1>AI Samples - Face Detection</h1>
-  <img src="./resource/facedet_cam_output.gif" style="zoom:80%;" />      
+  <img src="https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/ai_vision/sample_face_detection/resource/facedet_cam_output.gif" style="zoom:80%;" />      
   <a href="https://ubuntu.com/download/qualcomm-iot" target="_blank"><img src="https://img.shields.io/badge/Qualcomm%20Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Qualcomm Ubuntu"></a>
   <a href="https://docs.ros.org/en/jazzy/" target="_blank"><img src="https://img.shields.io/badge/ROS%20Jazzy-1c428a?style=for-the-badge&logo=ros&logoColor=white" alt="Jazzy"></a>
 </div>
+
 
 ## 👋 Overview
 

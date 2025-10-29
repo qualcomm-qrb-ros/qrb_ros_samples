@@ -4,7 +4,7 @@
   <h1>AI Samples Object Segmentation</h1>
   <p align="center">
 </div>
-<img src="./resource/yolo-segment.gif" style="zoom:80%;" />
+<img src="https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/ai_vision/sample_object_segmentation/resource/yolo-segment.gif" style="zoom:80%;" />
 
 ---
 
