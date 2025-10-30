@@ -1,6 +1,6 @@
 <div align="center">
   <h1>AI Samples - Face Detection</h1>
-  <img src="./resource/face_detection_cam.gif" style="zoom:80%;" />      
+  <img src="./resource/facedet_cam_output.gif" style="zoom:80%;" />      
   <a href="https://ubuntu.com/download/qualcomm-iot" target="_blank"><img src="https://img.shields.io/badge/Qualcomm%20Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Qualcomm Ubuntu"></a>
   <a href="https://docs.ros.org/en/jazzy/" target="_blank"><img src="https://img.shields.io/badge/ROS%20Jazzy-1c428a?style=for-the-badge&logo=ros&logoColor=white" alt="Jazzy"></a>
 </div>
@@ -19,7 +19,7 @@ For model information, please refer to [MediaPipe-Face-Detection - Qualcomm AI H
 
 | ROS Node         | Description                                                  |
 | ---------------- | ------------------------------------------------------------ |
-| qrb_ros_face_detector | qrb_ros_face_detector is a Python-based ros jazzy packages that processes face images. This ROS node subscribes to an image topic, and publishes face image result topic after pre/post processing. ` |
+| qrb_ros_face_detector | qrb_ros_face_detector is a Python-based ros jazzy packages that processes face images. This ROS node subscribes to an image topic, and publishes face image result topic after pre/post processing. |
 | [qrb_ros_nn_inference](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | qrb_ros_nn_inference is a ROS2 package for performing neural network model, providing AI-based perception for robotics applications. |
 | [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
 | [image_publisher_node](https://github.com/ros-perception/image_pipeline) | image_publisher is  a ros jazzy packages, can publish image ros topic with local path. |
