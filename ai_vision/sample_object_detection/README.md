@@ -160,7 +160,7 @@ root@qcs8300-ride-sx:/root# ros2 launch sample_object_detection launch_with_qrb_
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/yolo_preprocess_node' in container '/yolo_node_container'
 ```
 
-Then you can check ROS topics with the name`/yolo_detect_overlay` in  rvize
+Then you can check ROS topics with the name`/yolo_detect_overlay` in  rviz2
 
 </details>
 

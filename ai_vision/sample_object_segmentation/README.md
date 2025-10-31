@@ -166,7 +166,7 @@ root@qcs8300-ride-sx:/root# ros2 launch sample_object_segmentation launch_with_q
 
 ```
 
-Then you can check ROS topics with the name`/yolo_segment_overlay` in  rvize
+Then you can check ROS topics with the name`/yolo_segment_overlay` in  rviz2
 
 </details>
 
