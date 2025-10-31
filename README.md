@@ -87,6 +87,9 @@ sudo apt install qcom-adreno1 weston weston-autostart ros-jazzy-sample-apriltag
 
 ## 🚀 Usage
 
+> [!NOTE]
+> The AprilTag pipeline is compatible exclusively with the Ubuntu server image.
+
 ### Start the AprilTag pipeline sample
 
 ```bash
