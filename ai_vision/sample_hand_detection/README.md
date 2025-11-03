@@ -112,6 +112,10 @@ ros2 launch sample_hand_detection launch_with_image_publisher.py image_path:=<pa
 # Launch the sample hand detection node with qrb_ros_camera ros node.
 ros2 launch sample_hand_detection launch_with_qrb_ros_camera.py model_path:=/opt/model/
 ```
+
+**Note**  
+> This sample demonstrates how to build a pipeline using our ROS nodes. Due to the large data transmission of AI model inputs and outputs within ROS, prolonged operation may lead to reduced frame rates. If this happens, please relaunch the ROS nodes to restore normal performance.
+
 </details>
 
 ## 👨‍💻 Build from source
