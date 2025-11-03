@@ -75,7 +75,7 @@ def generate_launch_description():
         launch_arguments={
             'color_width': '640',
             'color_height': '480',
-            'color_fps': '30',
+            'color_fps': '5',
             'color_qos': 'default'
         }.items()
     )
