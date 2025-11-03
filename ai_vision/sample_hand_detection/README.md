@@ -83,7 +83,7 @@ The model is sourced from [**MediaPipe Hand Landmark Detector**](https://aihub.q
 Add Qualcomm IOT PPA for Ubuntu:
 
 ```bash
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-noble-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
 sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
 sudo apt update
 ```
@@ -103,15 +103,22 @@ sudo apt install qirp-sdk
 Run the sample on device
 
 ```bash
+# Create necessary directories for running the sample application.
+sudo mkdir -p /opt/ros/jazzy/share/sample_hand_detection/output_MediaPipeHandDetector/
+sudo chmod 777 /opt/ros/jazzy/share/sample_hand_detection/output_MediaPipeHandDetector/
+sudo mkdir -p /opt/ros/jazzy/share/sample_hand_detection/output_MediaPipeHandLandmarkDetector
+sudo chmod 777 /opt/ros/jazzy/share/sample_hand_detection/output_MediaPipeHandLandmarkDetector
+sudo chmod 777 -R /opt/ros/jazzy/share/sample_hand_detection/
+
 # setup runtime environment
 source /usr/share/qirp-setup.sh
+export ROS_DOMAIN_ID=123
 
-# Launch the sample hand detection node with an image publisher, You can replace 'image_path' with the path to your desired image.
-ros2 launch sample_hand_detection launch_with_image_publisher.py image_path:=/opt/resource/input_image.jpg model_path:=/opt/model/
-
-# Launch the sample hand detection node with qrb_ros_camera ros node.
-ros2 launch sample_hand_detection launch_with_qrb_ros_camera.py model_path:=/opt/model/
+# Launch the sample hand detection node with an image publisher
+ros2 launch sample_hand_detection launch_with_image_publisher.py
 ```
+
+Then you can use `rqt` to check the `handlandmark_result`.
 </details>
 
 ## 👨‍💻 Build from source
@@ -121,17 +128,7 @@ ros2 launch sample_hand_detection launch_with_qrb_ros_camera.py model_path:=/opt
 
 Install dependencies
 ```
-sudo apt install ros-jazzy-rclpy \
-  ros-jazzy-sensor-msgs \
-  ros-jazzy-std-msgs \
-  ros-jazzy-cv-bridge \
-  ros-jazzy-ament-index-python \
-  ros-jazzy-qrb-ros-tensor-list-msgs \
-  python3-opencv \
-  python3-numpy \
-  ros-jazzy-image-publisher \
-  ros-jazzy-qrb-ros-nn-inference \
-  ros-jazzy-qrb-ros-camera
+sudo apt install qirp-sdk
 ```
 
 Download the source code and build
@@ -145,8 +142,15 @@ colcon build
 Run
 ```bash
 source install/setup.bash
+
+# Launch the sample hand detection node with an image publisher, You can replace 'image_path' with the path to your desired image.
+ros2 launch sample_hand_detection launch_with_image_publisher.py image_path:=/opt/resource/input_image.jpg model_path:=/opt/model/
+
+# Launch the sample hand detection node with qrb_ros_camera ros node.
 ros2 launch sample_hand_detection launch_with_qrb_ros_camera.py model_path:=/opt/model/
 ```
+
+Then you can use `rqt` to check the `handlandmark_result`.
 </details>
 
 ## 🤝 Contributing

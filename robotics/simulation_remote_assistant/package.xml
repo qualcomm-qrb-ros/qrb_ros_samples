@@ -2,14 +2,14 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>simulation_remote_assistant</name>
-  <version>1.0.0</version>
+  <version>1.0.2</version>
   <description>package for remote assistant simluation</description>
   <maintainer email="xionfu@qti.qualcomm.com">xionfu</maintainer>
   <license>BSD-3-Clause-Clear</license>
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
-  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>nav2_msgs</exec_depend>
   <exec_depend>qrb_ros_slam_msgs</exec_depend>   
   <exec_depend>vision_msgs</exec_depend>
   <exec_depend>python3-yaml</exec_depend>
