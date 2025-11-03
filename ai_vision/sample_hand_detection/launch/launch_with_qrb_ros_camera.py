@@ -38,7 +38,7 @@ def generate_launch_description():
         'stream1': {
             'height': 480,
             'width': 640,
-            'fps': 30,
+            'fps': 5,
         },
         'camera_info_path': camera_info_config_file_path,
     }
