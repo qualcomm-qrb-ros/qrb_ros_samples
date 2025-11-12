@@ -1,51 +1,170 @@
-# QRB ROS Samples
+<div align="center">
+  <h1>Simulation Sample AMR Simple Motion</h1>
+  <p align="center">
+    <img src="./resource/simulation-amr-simple-motion-result.gif" alt="Qualcomm QRB ROS" title="Qualcomm QRB ROS" />
+  </p>
+  <p>ROS Packages for simple movements control of QRB AMRs within a simulated environment</p>
+  
+  <a href="https://ubuntu.com/download/qualcomm-iot" target="_blank"><img src="https://img.shields.io/badge/Qualcomm%20Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Qualcomm Ubuntu"></a>
+  <a href="https://docs.ros.org/en/jazzy/" target="_blank"><img src="https://img.shields.io/badge/ROS%20Jazzy-1c428a?style=for-the-badge&logo=ros&logoColor=white" alt="Jazzy"></a>
+  
+</div>
 
-## Overview
+---
 
-This repository is a comprehensive collection of QRB ROS (Robot Operating System) example codes. It serves as a valuable resource for developers and enthusiasts looking to explore and implement QRB functionalities within the ROS framework. Each example is designed to demonstrate specific features and use cases, providing a practical guide to enhance your understanding and application of QRB in ROS environments.
+## 👋 Overview
 
+The [Simulation Sample AMR Simple Motion](https://github.com/qualcomm-qrb-ros/qrb_ros_samples/tree/main/robotics/simulation_sample_amr_simple_motion) is a ROS package designed to control the simple movements of QRB Autonomous Mobile Robots(AMRs) within a simulated environment. 
 
+<div align="center">
+  <img src="./resource/simulation-amr-simple-motion-pipeline.png" alt="pipeline">
+</div>
 
-The `main` branch serves as the development branch and includes all samples currently under active development. It is primarily supported on Ubuntu by default.    For stable releases, please refer to the `jazzy-rel` branch.
+<br>
 
-## List of AI Samples
+## 🔎 Table of contents
+  * [APIs](#-apis)
+     * [ROS interfaces](#ROS-interfaces)
+  * [Supported targets](#-supported-targets)
+  * [Installation](#-installation)
+  * [Usage](#-usage)
+     * [Prerequisites](#-prerequisites)
+     * [Start the ROS2 node](#-start-the-ROS2-node-on-device)
+  * [Build from source](#-build-from-source)
+  * [Contributing](#-contributing)
+  * [Contributors](#%EF%B8%8F-contributors)
+  * [License](#-license)
 
-| Sample                                                       | Peripherals required | RB3 Gen2 Vision Kit | IQ-9075 Evaluation Kit | IQ-8 Beta   Evaluation Kit | Description                                                  |
-| ------------------------------------------------------------ | -------------------- | ------------------- | ---------------------- | -------------------------- | ------------------------------------------------------------ |
-| [Face detection](ai_vision/sample_face_detection/)           | N                    | N                   | Y                      | N                          | The Face detection is a machine learning pipeline that predicts bounding boxes and key point of face in an image. For model information, please refer to [MediaPipe-Face-Detection](https://huggingface.co/qualcomm/MediaPipe-Face-Detection). |
-| [Hand detection](ai_vision/sample_hand_detection/)           | N                    | N                   | Y                      | N                          | The Hand detection is a machine learning pipeline that predicts bounding boxes and pose skeletons of hands in an image. For model information, please refer to [MediaPipe-Hand-Detection](https://huggingface.co/qualcomm/MediaPipe-Hand-Detection). |
-| [sample_resnet101](ai_vision/sample_resnet101)               | N                    | Y                   | Y                      | Y                          | The Image Classification is a machine learning model that can classify images from the Imagenet dataset. For model information, please refer to [ResNet101Quantized](https://huggingface.co/qualcomm/ResNet101Quantized). |
-| [speech recognition](ai_audio/sample_speech_recognition/)    | N                    | Y                   | Y                      | Y                          | captures the audio input and publishes the ros topic with the speech recognition result, For model information, please refer to [Whisper-Tiny-En - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/whisper_tiny_en?domain=Audio) |
-| [speech recognition rt rosnode](ai_audio/sample_speech_recognition_rt_rosnode/)    | USB microphone required | Y                   | N                      | N                          | The Speech Recognition Node is a real-time speech-to-text solution via usb mic. It enables developers to integrate voice recognition capabilities into their robotic applications using ROS 2. For model information, please refer to [Whisper-Tiny-En - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/whisper_tiny_en?domain=Audio) |
-| [sample_object_detction](ai_vision/sample_object_detction/)  | Gemini 335L          | N                   | Y                      | Y                          | The `sample_object_setection` is a Python launch file utilizing QNN for model inference. It demonstrates camera data streaming, AI-based inference, and real-time visualization of object detection results. For model information, please refer to  [YOLOv8-Detection - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/yolov8_det?searchTerm=yolov8&domain=Computer+Vision) |
-| [sample_object_segmentation](ai_vision/sample_object_segmentation/) | Gemini 335L          | N                   | Y                      | Y                          | The `sample_object_segmentation` is a Python launch file utilizing QNN for model inference. It demonstrates camera data streaming, AI-based inference, and real-time visualization of object segmentation results.”. For model information, please refer to [YOLOv8-Segmentation - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/yolov8_seg?searchTerm=yolov8&domain=Computer+Vision) |
-| [sample_hrnet_pose_estimation](ai_vision/sample_hrnet_pose_estimation/) | N                    | N                   | Y                      | N                          | `sample_hrnet_pose_estimation` sample provides high-precision human pose estimation capabilities. For model information, please refer to [HRNetPose - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/hrnet_pose?searchTerm=hrnet) |
-| [sample_depth_estimation](ai_vision/sample_depth_estimation/) | N                    | N                   | Y                      | N                          | The `sample_depth_estimation` include the pre/post-processs for estimating the depth of each pixel using QNN inference. For model information, please refer to [Depth Anything V2 - Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/depth_anything_v2?searchTerm=depth&domain=Computer+Vision) |
+## ⚓ APIs
 
+### ROS interfaces
 
-## List of Robotics Samples
+<table>
+  <tr>
+    <th>Interface</th>
+    <th>Name</th>
+    <th>Type</th>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>Publisher</td>
+    <td>/qrb_robot_base/cmd_vel</td>
+    <td>geometry_msgs/msg/Twist</td>
+    <td>AMR movement control message</td>
+  </tr>
+</table>
 
-| Sample                                                       | Peripherals required | Develop Ready for Ubuntu | RB3 Gen2 Vision Kit | IQ-9075 Evaluation Kit | IQ-8 Beta   Evaluation Kit | Description                                                  |
-| ------------------------------------------------------------ | -------------------- | ------------------------ | ------------------- | ---------------------- | -------------------------- | ------------------------------------------------------------ |
-| [simulation_sample_amr_simple_motion](robotics/simulation_sample_amr_simple_motion) | N                    | Y                        | Y                   | Y                      | Y                          | The `AMR simple motion sample` is a Python-based ROS node used to control the simple movements of QRB AMRs within the simulator. This sample allows you to control the movement of QRB AMRs via publishing the ROS messages to `/qrb_robot_base/cmd_vel` topic. |
-| [simulation follow me](robotics/simulation_follow_me)                 | N                    | N                        | Y                   | Y                      | Y                          | The `Simulation Follow Me` sample is a AMR to detect, track, and follow a moving person in real time. It integrates sensor emulation and motion control to follow human-following behavior in simulated environments. |
-| [simulation_sample_pick_and_place](robotics/simulation_sample_pick_and_place) | N                    | Y                        | Y                   | Y                      | Y                          | The `simulation sample pick and place` is a C++-based robotic manipulation ROS2 node that demonstrates autonomous pick-and-place operations using MoveIt2 for motion planning and Gazebo for physics simulation. |
-| [simulation_remote_assistant](robotics/simulation_remote_assistant) | N                    | N                        | Y                   | Y                      | Y                          | The `simulation_remote_assistant` sample application is the ROS package that utilizes an AMR as a remote assistant within a virtual office environment. Users can interact with the robot by inputting natural language commands, such as "Go to the office to check the person." The robot will then autonomously navigate to the specified location and perform object detection tasks as instructed. |
-| [simulation_2d_lidar_slam](robotics/simulation_2d_lidar_slam)       | N                    | N                        | Y                   | Y                      | Y                          | The `Simulation 2D Lidar SLAM` sample demonstrates how to run 2D lidar SLAM on Qualcomm robotics platform in a simulated environment, enabling simultaneous localization and mapping.  |
-| [sample apriltag](robotics/sample_apriltag) | N                    | Y                        | Y                   | Y                      | Y                          | The `sample_apriltag` is the ROS package to provide AprilTag pipeline samples for Qualcomm robotics platforms. |
+## 🎯 Supported targets
 
-## System Requirements
+<table >
+  <tr>
+    <th>Development Hardware</th>
+    <td>Qualcomm Dragonwing™ RB3 Gen2</td>
+    <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
+    <td>Qualcomm Dragonwing™ IQ-8275 EVK</td>
+  </tr>
+  <tr>
+    <th>Hardware Overview</th>
+    <th><a href="https://www.qualcomm.com/developer/hardware/rb3-gen-2-development-kit"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3-gen2-carousel?fmt=webp-alpha&qlt=85" width="180"/></a></th>
+    <th><a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160"></a></th>
+    <th>Coming soon...</th>
+  </tr>
+</table>
 
-- Canonical Ubuntu Image
+---
 
+## ✨ Installation
 
+> [!IMPORTANT]
+> **PREREQUISITES**: The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
+> Reference [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
+> For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
 
-## Contributions
+Add Qualcomm IOT PPA for Ubuntu:
 
-Thanks for your interest in contributing to qrb ros samples ! Please read our [Contributions Page](CONTRIBUTING.md) for more information on contributing features or bug fixes. We look forward to your participation!
+```bash
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
 
-## License
+Install Debian package:
 
-qrb_ros_samples is licensed under the BSD 3-clause "New" or "Revised" License.
+```bash
+sudo apt install ros-jazzy-simulation-sample-amr-simple-motion
+```
 
-Check out the [LICENSE](LICENSE) for more details.
+## 🚀 Usage
+
+### 🔹 Prerequisites
+
+#### Simulation environment setup on host
+
+Please refer to the `Quick Start` of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to set up the simulation development environment and `build` the `QRB ROS Simulation` project on your host machine. Ensure that the device and the host are on the same local network and can communicate with each other via ROS2.
+
+#### Launch the `QRB Robot Base AMR` on host
+
+```bash
+ros2 launch qrb_ros_sim_gazebo gazebo_robot_base.launch.py namespace:=qrb_robot_base enable_laser:=false
+```
+
+### 🔹 Start the ROS2 node on device
+
+```bash
+source /opt/ros/jazzy/setup.bash
+ros2 run simulation_sample_amr_simple_motion simple_motion
+```
+
+The output for these commands:
+
+```bash
+=== AMR Simple Motion Control Usage: ===
+i - Forward movement
+, - Backward movement
+j - Counter-clockwise rotation
+l - Clockwise rotation
+k - Stop
+q - Quit program
+=========================================
+
+Input command >
+```
+
+---
+
+## 👨‍💻 Build from source
+
+Download the source code and build with `colcon`
+```bash
+source /opt/ros/jazzy/setup.bash
+git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+colcon build --packages-select simulation_sample_amr_simple_motion
+```
+
+Run and debug
+
+```bash
+source install/setup.bash
+ros2 run simulation_sample_amr_simple_motion simple_motion
+```
+
+## 🤝 Contributing
+
+We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).<br>
+Feel free to create an issue for bug report, feature requests or any discussion💡.
+
+## ❤️ Contributors
+
+Thanks to all our contributors who have helped make this project better!
+
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/quic-weijshen"><img src="https://avatars.githubusercontent.com/u/191950784?s=96&v=4" width="100" height="100" alt="quic-weijshen"/><br /><sub><b>quic-weijshen</b></sub></a></td>
+    <td align="center"><a href="https://github.com/fulaliu"><img src="https://avatars.githubusercontent.com/u/129727781?v=4" width="100" height="100" alt="fulaliu"/><br /><sub><b>fulaliu</b></sub></a></td>
+    <td align="center"><a href="https://github.com/jiaxshi"><img src="https://avatars.githubusercontent.com/u/147487233?v=4" width="100" height="100" alt="jiaxshi"/><br /><sub><b>jiaxshi</b></sub></a></td>
+  </tr>
+</table>
+
+## 📜 License
+
+Project is licensed under the [BSD-3-Clause](https://spdx.org/licenses/BSD-3-Clause.html) License. See [LICENSE](./LICENSE) for the full license text.
