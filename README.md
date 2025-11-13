@@ -5,7 +5,7 @@
   <p align="center">
 </div>
 
-![](./resource/output.gif)
+![](https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/ai_vision/sample_resnet101/resource/output.gif)
 
 ---
 
@@ -129,31 +129,35 @@ It will send local glasses.jpg file, and outputs image at `10` Hz.
 The output for these commands:
 
 ```
-[INFO] [launch]: All log files can be found below /opt/.ros/log/1970-01-06-06-29-52-108238-qcs9075-iq-9075-evk-632119
+ubuntu@ubuntu:~/fulan/sample_resnet101$ ros2 launch sample_resnet101 launch_with_image_publisher.py
+[INFO] [launch]: All log files can be found below /home/ubuntu/.ros/log/2025-11-13-06-59-30-271923-ubuntu-19419
 [INFO] [launch]: Default logging verbosity is set to INFO
-[INFO] [image_publisher_node-1]: process started with pid [632154]
-[INFO] [qrb_ros_resnet101-2]: process started with pid [632155]
-[INFO] [component_container-3]: process started with pid [632156]
-[INFO] [qrb_ros_resnet101_posprocess-4]: process started with pid [632157]
-[image_publisher_node-1] [INFO] [0000455392.470308424] [image_publisher_node]: Reset filename as '/usr/share/sample_resnet101/glasses.jpg'
-[image_publisher_node-1] [INFO] [0000455392.470388059] [image_publisher_node]: File name for publishing image is: /usr/share/sample_resnet101/glasses.jpg
-[image_publisher_node-1] [INFO] [0000455392.472134934] [image_publisher_node]: Flip horizontal image is: false
-[image_publisher_node-1] [INFO] [0000455392.472192642] [image_publisher_node]: Flip flip_vertical image is: false
-[image_publisher_node-1] [INFO] [0000455392.472981236] [image_publisher_node]: no camera_info_url exist
-[component_container-3] [INFO] [0000455392.608793059] [container]: Load Library: /usr/lib/libqrb_ros_inference_node.so
-[component_container-3] [INFO] [0000455392.614030976] [container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
-[component_container-3] [INFO] [0000455392.614125194] [container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
+[INFO] [image_publisher_node-1]: process started with pid [19443]
+[INFO] [qrb_ros_resnet101-2]: process started with pid [19444]
+[INFO] [component_container-3]: process started with pid [19445]
+[INFO] [qrb_ros_resnet101_posprocess-4]: process started with pid [19446]
+[image_publisher_node-1] /opt/ros/jazzy/lib/image_publisher/image_publisher_node: /lib/aarch64-linux-gnu/libOpenCL.so.1: no version information available (required by /lib/aarch64-linux-gnu/libavutil.so.58)
+[image_publisher_node-1] /opt/ros/jazzy/lib/image_publisher/image_publisher_node: /lib/aarch64-linux-gnu/libOpenCL.so.1: no version information available (required by /lib/aarch64-linux-gnu/libavutil.so.58)
+[component_container-3] [INFO] [1763017170.922404357] [container]: Load Library: /opt/ros/jazzy/lib/libqrb_ros_inference_node.so
+[component_container-3] [INFO] [1763017170.925104647] [container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
+[component_container-3] [INFO] [1763017170.925156575] [container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
 [component_container-3] [QRB INFO] Loading model from binary file: /opt/model/ResNet101_w8a8.bin
+[component_container-3]  <W> Initializing HtpProvider
 [component_container-3] [QRB INFO] /usr/lib/libQnnHtp.so initialize successfully
-[component_container-3] /prj/qct/webtech_scratch20/mlg_user_admin/qaisw_source_repo/rel/qairt-2.34.0/release/snpe_src/avante-tools/prebuilt/dsp/hexagon-sdk-5.4.0/ipc/fastrpc/rpcmem/src/rpcmem_android.c:38:dummy call to rpcmem_init, rpcmem APIs will be used from libxdsprpc
+[image_publisher_node-1] [INFO] [1763017171.015774965] [image_publisher_node]: Reset filename as '/home/ubuntu/fulan/sample_resnet101/install/sample_resnet101/share/sample_resnet101/glasses.jpg'
+[image_publisher_node-1] [INFO] [1763017171.016006842] [image_publisher_node]: File name for publishing image is: /home/ubuntu/fulan/sample_resnet101/install/sample_resnet101/share/sample_resnet101/glasses.jpg
+[image_publisher_node-1] [INFO] [1763017171.049932058] [image_publisher_node]: Flip horizontal image is: false
+[image_publisher_node-1] [INFO] [1763017171.050000809] [image_publisher_node]: Flip flip_vertical image is: false
+[image_publisher_node-1] [INFO] [1763017171.051078842] [image_publisher_node]: no camera_info_url exist
+[component_container-3] /prj/qct/webtech_scratch20/mlg_user_admin/qaisw_source_repo/rel/qairt-2.39.0/release/snpe_src/avante-tools/prebuilt/dsp/hexagon-sdk-5.5.5/ipc/fastrpc/rpcmem/src/rpcmem_android.c:38:dummy call to rpcmem_init, rpcmem APIs will be used from libxdsprpc
 [component_container-3] [QRB INFO] Qnn device initialize successfully
+[component_container-3]  <W> Logs will be sent to the system's default channel
+[component_container-3]  <W> m_CFBCallbackInfoObj is not initialized, return emptyList
+[component_container-3]  <W> Logs will be sent to the system's default channel
 [component_container-3] [QRB INFO] Initialize Qnn graph from binary file successfully
-[component_container-3] [INFO] [0000455392.796449621] [nn_inference_node]: Inference init successfully!
+[component_container-3] [INFO] [1763017171.102869931] [nn_inference_node]: Inference init successfully!
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/nn_inference_node' in container '/container'
-[qrb_ros_resnet101_posprocess-4] [INFO] [0000455393.048110246] [resnet101_postprocess_node]: Initial ROS Node resnet101
-[qrb_ros_resnet101_posprocess-4] [INFO] [0000455393.049362434] [resnet101_postprocess_node]: model path: /opt/model/
-[qrb_ros_resnet101-2] [INFO] [0000455393.063010350] [resnet101_node]: Initial ROS Node resnet101
-[component_container-3] [INFO] [0000455393.078229621] [nn_inference_node]: Got model input data, start executing inference...
+
 
 ```
 
@@ -162,7 +166,6 @@ Then you can check ROS topics with the name`/resnet101_output` in other shell te
 ```bash
 ros2 topic echo /resnet101_output
 data: 'sunglass
-
   '
 ```
 

@@ -1,3 +1,9 @@
+ros-jazzy-sample-resnet101 (1.0.0.1) noble; urgency=high
+
+  * Bug fix for sample resnet101,add tensor check before publish ros message
+
+-- Fulan Liu <fulaliu@qti.qualcomm.com>  Tue, 14 Oct 2025 18:30:00 +0000
+
 ros-jazzy-sample-resnet101 (1.0.0ubuntu3) noble; urgency=high
 
   * Modify postinstall file
