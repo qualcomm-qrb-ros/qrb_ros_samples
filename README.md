@@ -34,7 +34,7 @@ Beyond the core demonstration, this repository will evolve to include:
 
 ***
 
-## Why This Matters
+## A Few Words
 
 Edge AI combined with agentic frameworks unlocks new possibilities for **autonomous decision-making**, **context-aware processing**, and **scalable intelligence** at the device level. This repository aims to make these concepts tangible and actionable for developers and researchers.
 
@@ -74,4 +74,5 @@ qrb_ros_samples is licensed under the BSD 3-clause "New" or "Revised" License.
 checkout https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/main/LICENSE for more details
 
 ***
+
 
