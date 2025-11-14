@@ -58,15 +58,6 @@ Edge AI combined with agentic frameworks unlocks new possibilities for **autonom
 
 ***
 
-## Roadmap
-
-*   ✅ Initial agentic framework demo
-*   🔜 Add cookbooks for advanced workflows
-*   🔜 Expand tooling for RAG, MCP, and A2A
-*   🔜 Integration with Qualcomm SDKs
-
-***
-
 ## License
 
 qrb_ros_samples is licensed under the BSD 3-clause "New" or "Revised" License.
@@ -74,5 +65,6 @@ qrb_ros_samples is licensed under the BSD 3-clause "New" or "Revised" License.
 checkout https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/main/LICENSE for more details
 
 ***
+
 
 
