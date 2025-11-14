@@ -93,6 +93,7 @@ sudo apt install ros-jazzy-sample-object-detection
 
 <details>
   <summary>Usage details</summary>
+
 **On Host**
 
 Need to reference the [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) README to build and download the yolo model.

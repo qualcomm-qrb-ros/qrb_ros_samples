@@ -97,6 +97,7 @@ sudo apt install ros-jazzy-sample-object-segmentation
 
 <details>
   <summary>Usage details</summary>
+
 **On Host**
 
 Reference the [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) README to build and download the yolo model
