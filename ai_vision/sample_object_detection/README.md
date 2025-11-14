@@ -4,7 +4,7 @@
   <h1>AI Samples Object Detection	</h1>
   <p align="center">
 </div>
-<img src="./resource/yolo-detect.gif" style="zoom:80%;" />
+<img src="https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/ai_vision/sample_object_detection/resource/yolo-detect.gif" style="zoom:80%;" />
 
 ---
 
@@ -94,15 +94,29 @@ sudo apt install ros-jazzy-sample-object-detection
 <details>
   <summary>Usage details</summary>
 
-Download the yolo object object model
+**On Host**
 
-Reference the [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) README to build and download the yolo model
+Need to reference the [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) README to build and download the yolo model.
 
 ```
-#when download yolo model , please using qnn_context_binary and device like bellow for IQ-8275 
- 
+#when download yolo model , please using qnn_context_binary and device like bellow 
+
+#for IQ-8275 
 python3 -m qai_hub_models.models.yolov8_det.export --target-runtime qnn_context_binary  --device "QCS8275 (Proxy)"
+
+#for IQ-9075
+python3 -m qai_hub_models.models.yolov8_det.export --target-runtime qnn_context_binary  --device "QCS9075 (Proxy)"
 ```
+
+Find label file like bellow commands
+
+```
+$sudo find / -name coco8.yaml
+/home/ubuntu/venv_qaihub/lib/python3.12/site-packages/ultralytics/cfg/datasets/coco8.yaml
+/home/ubuntu/.qaihm/models/yolov8_det/v1/ultralytics_ultralytics_git/ultralytics/cfg/datasets/coco8.yaml
+```
+
+**On Device**
 
 Run the sample env on device
 
@@ -110,7 +124,8 @@ Run the sample env on device
 ```bash
 #Prepare above model and move to default model path
 mkdir /opt/model/
-mv coco8.yaml yolov8_det_qcs9075.bin /opt/model/
+mv yolov8_det_qcs9075.bin /opt/model/
+mv coco.ymal /opt/
 
 source /opt/ros/jazzy/setup.bash
 ros2 launch sample_object_detection launch_with_qrb_ros_camera.py  model:=<the device model>
@@ -119,45 +134,50 @@ ros2 launch sample_object_detection launch_with_qrb_ros_camera.py  model:=<the d
 The output for these commands:
 
 ```
-root@qcs8300-ride-sx:/root# ros2 launch sample_object_detection launch_with_qrb_ros_camera.py
-[INFO] [launch]: All log files can be found below /opt/.ros/log/1970-01-01-00-57-22-354131-qcs8300-ride-sx-57950
+ubuntu@ubuntu:/opt$ ros2 launch sample_object_detection launch_with_qrb_ros_camera.py model:=/opt/model/yolov8_detection_qcs9075.bin
+[INFO] [launch]: All log files can be found below /home/ubuntu/.ros/log/2025-11-13-07-30-46-131169-ubuntu-19986
 [INFO] [launch]: Default logging verbosity is set to INFO
-[INFO] [component_container-1]: process started with pid [58040]
-[component_container-1] [INFO] [0000003442.901772236] [yolo_node_container]: Load Library: /usr/lib/libqrb_ros_yolo_process_component.so
-[component_container-1] [INFO] [0000003442.955868330] [yolo_node_container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::yolo_process::YoloDetOverlayNode>
-[component_container-1] [INFO] [0000003442.955984632] [yolo_node_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::yolo_process::YoloDetOverlayNode>
-[component_container-1] [INFO] [0000003442.978678955] [yolo_detection_overlay_node]: init done~
+[INFO] [component_container-1]: process started with pid [20010]
+[component_container-1] [INFO] [1763019046.687293050] [yolo_node_container]: Load Library: /opt/ros/jazzy/lib/libcamera_node.so
+[component_container-1] [INFO] [1763019046.695127962] [yolo_node_container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::camera::CameraNode>
+[component_container-1] [INFO] [1763019046.695232232] [yolo_node_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::camera::CameraNode>
+[component_container-1] [INFO] [1763019046.707216474] [camera_node]: QRB Camera Node start
+[component_container-1] [INFO] [1763019046.707439128] [camera_node]: load camera intrinsic param
+[component_container-1] [INFO] [1763019046.713966815] [camera_node]: system time: 193581173175834 ros time: 1763019046713962492 time offset: 1762825465540786658 ns
+[component_container-1] [INFO] [1763019046.714530663] [camera_node]: QRB Camera Node init success
+[component_container-1] [INFO] [QMMFCamera]: start camera.
+[component_container-1] [INFO] [CameraManager]: start camera success!!
+[component_container-1] [INFO] [CameraManager]: create qmmf listener!!
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/camera_node' in container '/yolo_node_container'
+[component_container-1] [INFO] [1763019046.751282754] [yolo_node_container]: Load Library: /opt/ros/jazzy/lib/libqrb_ros_yolo_process_component.so
+[component_container-1] [INFO] [1763019046.825401773] [yolo_node_container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::yolo_process::YoloDetOverlayNode>
+[component_container-1] [INFO] [1763019046.825495418] [yolo_node_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::yolo_process::YoloDetOverlayNode>
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/yolo_detection_overlay_node' in container '/yolo_node_container'
-[component_container-1] [INFO] [0000003442.993816298] [yolo_node_container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::yolo_process::YoloDetOverlayNode>
-[component_container-1] [INFO] [0000003442.993910569] [yolo_node_container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::yolo_process::YoloDetPostProcessNode>
-[component_container-1] [INFO] [0000003442.993928850] [yolo_node_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::yolo_process::YoloDetPostProcessNode>
-[component_container-1] [INFO] [0000003443.004949215] [yolo_detection_postprocess_node]: label file path: /opt/coco8.yaml
-[component_container-1] [INFO] [0000003443.005031298] [yolo_detection_postprocess_node]: iou_thres: 0.500000
-[component_container-1] [INFO] [0000003443.005055725] [yolo_detection_postprocess_node]: score_thres: 0.700000
+[component_container-1] [INFO] [1763019046.834829012] [yolo_detection_overlay_node]: init done~
+[component_container-1] [INFO] [1763019046.837075914] [yolo_node_container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::yolo_process::YoloDetOverlayNode>
+[component_container-1] [INFO] [1763019046.837117581] [yolo_node_container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::yolo_process::YoloDetPostProcessNode>
+[component_container-1] [INFO] [1763019046.837125289] [yolo_node_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::yolo_process::YoloDetPostProcessNode>
+[component_container-1] [INFO] [1763019046.843862245] [yolo_detection_postprocess_node]: label file path: /opt/coco8.yaml
+[component_container-1] [INFO] [1763019046.843920109] [yolo_detection_postprocess_node]: iou_thres: 0.500000
+[component_container-1] [INFO] [1763019046.843934171] [yolo_detection_postprocess_node]: score_thres: 0.700000
 [component_container-1] YAML Exception: bad file: /opt/coco8.yaml
-[component_container-1] [INFO] [0000003443.008653955] [yolo_detection_postprocess_node]: init done~
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/yolo_detection_postprocess_node' in container '/yolo_node_container'
-[component_container-1] [INFO] [0000003443.024663017] [yolo_node_container]: Load Library: /usr/lib/libqrb_ros_inference_node.so
-[component_container-1] [INFO] [0000003443.031113798] [yolo_node_container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
-[component_container-1] [INFO] [0000003443.031221975] [yolo_node_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
-[component_container-1] [QRB INFO] Loading model from binary file: /opt/model/yolov8_det_qcs9075.bin
+[component_container-1] [INFO] [1763019046.846069721] [yolo_detection_postprocess_node]: init done~
+[component_container-1] [INFO] [1763019046.848421569] [yolo_node_container]: Load Library: /opt/ros/jazzy/lib/libqrb_ros_inference_node.so
+[component_container-1] [INFO] [1763019046.850711908] [yolo_node_container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
+[component_container-1] [INFO] [1763019046.850772168] [yolo_node_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::nn_inference::QrbRosInferenceNode>
+[component_container-1] [QRB INFO] Loading model from binary file: /opt/model/yolov8_detection_qcs9075.bin
 [component_container-1]  <W> Initializing HtpProvider
 [component_container-1] [QRB INFO] /usr/lib/libQnnHtp.so initialize successfully
-[component_container-1] /prj/qct/webtech_scratch20/mlg_user_admin/qaisw_source_repo/rel/qairt-2.35.0/release/snpe_src/avante-tools/prebuilt/dsp/hexagon-sdk-5.4.0/ipc/fastrpc/rpcmem/src/rpcmem_android.c:38:dummy call to rpcmem_init, rpcmem APIs will be used from libxdsprpc
+[component_container-1] /prj/qct/webtech_scratch20/mlg_user_admin/qaisw_source_repo/rel/qairt-2.39.0/release/snpe_src/avante-tools/prebuilt/dsp/hexagon-sdk-5.5.5/ipc/fastrpc/rpcmem/src/rpcmem_android.c:38:dummy call to rpcmem_init, rpcmem APIs will be used from libxdsprpc
 [component_container-1] [QRB INFO] Qnn device initialize successfully
-[component_container-1]  <W> No usable logger handle was found
 [component_container-1]  <W> Logs will be sent to the system's default channel
-[component_container-1]  <W> No usable logger handle was found
-[component_container-1]  <W> No usable logger handle was found
+[component_container-1]  <W> m_CFBCallbackInfoObj is not initialized, return emptyList
 [component_container-1]  <W> Logs will be sent to the system's default channel
 [component_container-1] [QRB INFO] Initialize Qnn graph from binary file successfully
-[component_container-1] [INFO] [0000003443.381394996] [nn_inference_node]: Inference init successfully!
+[component_container-1] [INFO] [1763019047.007839067] [nn_inference_node]: Inference init successfully!
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/nn_inference_node' in container '/yolo_node_container'
-[component_container-1] [INFO] [0000003443.399924527] [yolo_node_container]: Load Library: /usr/lib/libqrb_ros_cv_tensor_common_process_component.so
-[component_container-1] [INFO] [0000003443.413261611] [yolo_node_container]: Found class: rclcpp_components::NodeFactoryTemplate<qrb_ros::cv_tensor_common_process::CvTensorCommonProcessNode>
-[component_container-1] [INFO] [0000003443.413547809] [yolo_node_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<qrb_ros::cv_tensor_common_process::CvTensorCommonProcessNode>
-[component_container-1] [INFO] [0000003443.466812861] [yolo_preprocess_node]: params list -> resoltuion: 640x640, tensor format: nhwc, dtype: float32, normalize: 1
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/yolo_preprocess_node' in container '/yolo_node_container'
+
 ```
 
 Then you can check ROS topics with the name`/yolo_detect_overlay` in  rviz2
