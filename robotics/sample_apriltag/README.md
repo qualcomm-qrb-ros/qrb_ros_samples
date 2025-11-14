@@ -93,7 +93,6 @@ sudo apt install ros-jazzy-sample-apriltag
 ### Start the AprilTag pipeline sample
 
 ```bash
-sudo systemctl stop gdm.service
 export XDG_RUNTIME_DIR=/run/user/1000
 export WAYLAND_DISPLAY=wayland-1
 sudo systemctl start weston-autostart.service
