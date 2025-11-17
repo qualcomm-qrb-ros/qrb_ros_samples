@@ -1,0 +1,9 @@
+pocketflow>=0.0.1
+aiohttp>=3.8.0  # For HTTP requests
+requests>=2.25.1  # For HTTP requests
+asyncio
+nicegui
+fastmcp
+fastapi
+redis
+tavily-python
