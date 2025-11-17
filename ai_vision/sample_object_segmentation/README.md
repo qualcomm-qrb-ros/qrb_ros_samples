@@ -98,6 +98,7 @@ sudo apt install ros-jazzy-sample-object-segmentation
 <details>
   <summary>Usage details</summary>
 
+
 **On Host**
 
 Reference the [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) README to build and download the yolo model
@@ -134,7 +135,7 @@ mv coco.ymal /opt/
 
 source /opt/ros/jazzy/setup.bash
 
-ros2 launch sample_object_segmentation launch_with_qrb_ros_camera.py  model:=<the device model>
+ros2 launch sample_object_segmentation launch_with_qrb_ros_camera.py model:=/opt/model/yolov8_seg.tflite
 ```
 
 The output for these commands:

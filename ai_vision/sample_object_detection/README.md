@@ -94,6 +94,7 @@ sudo apt install ros-jazzy-sample-object-detection
 <details>
   <summary>Usage details</summary>
 
+
 **On Host**
 
 Need to reference the [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) README to build and download the yolo model.
@@ -128,7 +129,7 @@ mv yolov8_det_qcs9075.bin /opt/model/
 mv coco.ymal /opt/
 
 source /opt/ros/jazzy/setup.bash
-ros2 launch sample_object_detection launch_with_qrb_ros_camera.py  model:=<the device model>
+ros2 launch sample_object_detection launch_with_qrb_ros_camera.py model:=/opt/model/yolov8_det_qcs9075.bin
 ```
 
 The output for these commands:
