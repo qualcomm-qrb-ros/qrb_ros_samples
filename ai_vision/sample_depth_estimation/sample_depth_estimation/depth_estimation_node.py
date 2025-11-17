@@ -191,11 +191,17 @@ class DepthEstimationNode(Node):
     
 
 def main(args=None):
-    rclpy.init(args=args)
-    depth_estimator_node = DepthEstimationNode()
-    rclpy.spin(depth_estimator_node)
-    depth_estimator_node.destroy_node()
-    rclpy.shutdown()
+    try:
+        rclpy.init(args=args)
+        depth_estimator_node = DepthEstimationNode()
+        rclpy.spin(depth_estimator_node)
+    except KeyboardInterrupt:
+        print("Depth Estimation node stopped by user.")
+    except Exception as e:
+        print(e)
+    finally:
+        depth_estimator_node.destroy_node()
+        rclpy.try_shutdown()
 
 
 if __name__ == '__main__':
