@@ -91,9 +91,10 @@ sudo apt update
 Install Debian package:
 
 ```bash
-sudo apt install qirp-sdk
+sudo apt install ros-jazzy-sample-hand-detection
 ```
 
+ros-jazzy-sample-hand-detection has already been added as a dependency of the qirp-sdk package. You can also install it by running `sudo apt install qirp-sdk`.
 
 ## 🚀 Usage
 
