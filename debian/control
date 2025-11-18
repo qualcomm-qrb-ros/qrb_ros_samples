@@ -2,7 +2,7 @@ Source: ros-jazzy-follow-me
 Section: misc
 Priority: optional
 Maintainer: zhezhu <zhezhu@qti.qualcomm.com>
-Build-Depends: debhelper-compat( =13 ), ros-jazzy-ament-cmake, ros-jazzy-cv-bridge, ros-jazzy-geometry-msgs, ros-jazzy-image-transport, ros-jazzy-nav-msgs, ros-jazzy-rclcpp, ros-jazzy-rclcpp-components, ros-jazzy-sensor-msgs, ros-jazzy-std-msgs, ros-jazzy-tf2, ros-jazzy-tf2-ros,libopencv-dev
+Build-Depends: debhelper-compat( =13 ), ros-jazzy-ament-cmake, ros-jazzy-cv-bridge, ros-jazzy-geometry-msgs, ros-jazzy-image-transport, ros-jazzy-nav-msgs, ros-jazzy-rclcpp, ros-jazzy-rclcpp-components, ros-jazzy-sensor-msgs, ros-jazzy-std-msgs, ros-jazzy-tf2, ros-jazzy-tf2-ros, libopencv-dev, ncnn-dev
 Homepage: 
 Standards-Version: 3.9.2
 
