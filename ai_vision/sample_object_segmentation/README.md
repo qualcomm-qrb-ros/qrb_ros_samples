@@ -219,7 +219,7 @@ Download the source code and build with colcon
 ```bash
 source /opt/ros/jazzy/setup.bash
 git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
-cd ai_vision/sample_sample_segmentation
+cd qrb_ros_samples/ai_vision/sample_sample_segmentation
 colcon build
 ```
 
