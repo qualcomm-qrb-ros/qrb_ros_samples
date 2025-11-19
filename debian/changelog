@@ -1,8 +1,8 @@
-ros-jazzy-sample-hand-detection (1.1.1) noble; urgency=medium
+ros-jazzy-sample-hand-detection (1.1.0.1) noble; urgency=medium
 
   * Improve shutdown handling in hand_landmark
 
- -- Dapeng Yuan <dapeyuan@qti.qualcomm.com>  Tue, 12 Nov 2025 15:56:17 +0800
+ -- Dapeng Yuan <dapeyuan@qti.qualcomm.com>  Tue, 19 Nov 2025 10:55:23 +0800
 
 ros-jazzy-sample-hand-detection (1.1.0) noble; urgency=medium
 
