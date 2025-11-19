@@ -30,20 +30,7 @@ You can see in Windows docker GUI it is running
 pip install -r requirements.txt
 ```
 
-2. Let's get your QGENIE API key ready:
-
-```bash
-pip install qgenie-sdk[all] -i https://devpi.qualcomm.com/qcom/dev/+simple --trusted-host devpi.qualcomm.com
-```
-
-```python
-from qgenie import ChatMessage, QGenieClient
-client = QGenieClient()
-models_response = client.get_available_models()
-print(models_response)
-```
-
-3. Let's get your Tavily API key ready:
+2. Let's get your Tavily API key ready:
 
 ```bash
 visit https://app.tavily.com/sign-in
@@ -60,7 +47,7 @@ python nice.py
 4. Run agent with webui :
 
 ```bash
-python robot_webui_search.py
+python qrb_webui_search.py
 ```
 
 ## How It Works?
@@ -80,5 +67,5 @@ Here's what each part does:
 3. **AnswerQuestion**: The writer that crafts the final answer
 
 Here's what's in each file:
-- [`robot_webui_search.py`](./robot_webui_search.py): The starting point - runs the whole show!
+- [`qrb_webui_search.py`](./qrb_webui_search.py): The starting point - runs the whole show!
 - [`nice.py`](./nice.py): The minimal webUI you needed to see agent outputs
