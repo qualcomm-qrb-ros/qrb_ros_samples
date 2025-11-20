@@ -137,16 +137,19 @@ ros2 topic echo /pose_estimation_points
 <details>
   <summary>Build from source details</summary>
 
-- Install `ros-dev-tools` .
-```bash
-sudo apt install ros-dev-tools
-```
-
 - Install dependency Debian packages from qcom ppa.
 ```bash
 sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
 sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
 sudo apt update
+```
+
+- Install QRB ROS packages:
+```bash
+sudo apt install -y ros-jazzy-qrb-ros-camera ros-jazzy-qrb-ros-nn-inference ros-jazzy-qrb-ros-tensor-list-msgs
+sudo apt install -y ros-dev-tools
+sudo rosdep init
+rosdep update
 ```
 
 - Download source code from qrb-ros-sample repository.
@@ -165,7 +168,7 @@ wget https://huggingface.co/qualcomm/HRNetPose/resolve/6011b6e69a84dad8f53fb555b
 - Build sample from source code.
 ```bash
 cd ~/qrb_ros_sample_ws/src/qrb_ros_samples/ai_vision/sample_hrnet_pose_estimation
-rosdep install -i --from-path ./ --rosdistro jazzy -y
+rosdep install --from-paths . --ignore-src --rosdistro jazzy -y --skip-keys "qrb_ros_tensor_list_msgs qrb_ros_nn_inference qrb_ros_camera"
 source /opt/ros/jazzy/setup.bash
 colcon build
 source install/setup.bash
