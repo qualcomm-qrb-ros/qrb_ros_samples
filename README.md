@@ -4,7 +4,7 @@
 </div>
 
 
-![](./resource/result_image.gif)
+![](https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/ai_vision/sample_hrnet_pose_estimation/resource/result_image.gif)
 
 ---
 
@@ -97,18 +97,17 @@ sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
 sudo apt update
 ```
 
-<!-- Install Debian package:
+Install Debian package:
 
 ```bash
 sudo apt install ros-jazzy-sample-hrnet-pose-estimation
-``` -->
+```
 
 ## 🚀 Usage
 
 <details>
   <summary>Usage details</summary>
 Run the sample on device
-
 
 ```bash
 # setup runtime environment
@@ -117,10 +116,8 @@ export ROS_DOMAIN_ID=124
 
 # Launch the sample with image publisher, You can replace 'image_path' with the path to your desired image.
 ros2 launch sample_hrnet_pose_estimation launch_with_image_publisher.py image_path:=/opt/ros/jazzy/share/sample_hrnet_pose_estimation/input_image.jpg
-
-# Launch the sample with qrb ros camera
+# Launch the sample with qrb ros camera.
 ros2 launch sample_hrnet_pose_estimation launch_with_qrb_ros_camera.py
-
 ```
 
 Open a new terminal and use rqt to view topic `/pose_estimation_results`.
@@ -140,11 +137,6 @@ ros2 topic echo /pose_estimation_points
 <details>
   <summary>Build from source details</summary>
 
-- Install `ros-dev-tools` .
-```bash
-sudo apt install ros-dev-tools
-```
-
 - Install dependency Debian packages from qcom ppa.
 ```bash
 sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
@@ -152,10 +144,18 @@ sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
 sudo apt update
 ```
 
+- Install QRB ROS packages:
+```bash
+sudo apt install -y ros-jazzy-qrb-ros-camera ros-jazzy-qrb-ros-nn-inference ros-jazzy-qrb-ros-tensor-list-msgs
+sudo apt install -y ros-dev-tools
+sudo rosdep init
+rosdep update
+```
+
 - Download source code from qrb-ros-sample repository.
 ```bash
 mkdir -p ~/qrb_ros_sample_ws/src && cd ~/qrb_ros_sample_ws/src
-git clone -b jazzy-rel https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
 ```
 
 - Download model.
@@ -168,7 +168,7 @@ wget https://huggingface.co/qualcomm/HRNetPose/resolve/6011b6e69a84dad8f53fb555b
 - Build sample from source code.
 ```bash
 cd ~/qrb_ros_sample_ws/src/qrb_ros_samples/ai_vision/sample_hrnet_pose_estimation
-rosdep install -i --from-path ./ --rosdistro jazzy -y
+rosdep install --from-paths . --ignore-src --rosdistro jazzy -y --skip-keys "qrb_ros_tensor_list_msgs qrb_ros_nn_inference qrb_ros_camera"
 source /opt/ros/jazzy/setup.bash
 colcon build
 source install/setup.bash
