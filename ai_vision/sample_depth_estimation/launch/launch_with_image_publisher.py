@@ -1,30 +1,19 @@
 # Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
 # SPDX-License-Identifier: BSD-3-Clause-Clear
 
-import os
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node, ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 from launch.actions import LogInfo
+from launch.substitutions import PathJoinSubstitution
+from ament_index_python.packages import get_package_share_directory
+
 
 def generate_launch_description():
-    package_name = 'sample_depth_estimation' 
-    package_path = get_package_share_directory(package_name)
-
+    namespace = "sample_container"
     # Declare the launch arguments for image_path and model_path
-    image_path_arg = DeclareLaunchArgument(
-        'image_path',
-        default_value=os.path.join(package_path, "resource", "input_image.jpg"),
-        description='Path to the input image file'
-    )
-      
-    image_path = LaunchConfiguration('image_path')
-    LogInfo(msg=['IMAGE_PATH: ', image_path])
-
     model_path_arg = DeclareLaunchArgument(
        'model_path',
         default_value="/opt/model/Depth-Anything-V2.bin",
@@ -33,25 +22,34 @@ def generate_launch_description():
     model_path= LaunchConfiguration('model_path')
     LogInfo(msg=['MODEL_PATH: ', model_path])
 
-    namespace = "sample_container"
-    # Node for image_publisher
-    image_publish_node = Node(        
-        package='image_publisher', 
-        executable='image_publisher_node', 
-        name='image_publisher_node', 
-        output='screen', 
-        parameters=[
-            {'filename': image_path}, 
-            {'rate': 10.0},  # Set the publishing rate to 10 Hz
-        ],
-    )
-
-    # Node for depth estimation
+    # Node for depth_estimation
     depth_estimation_node = Node(
         package='sample_depth_estimation',
         executable='depth_estimation_node', 
         name='depth_estimation_node', 
         namespace=namespace, 
+    )
+
+    # Node for qrb ros camera node
+    camera_info_config_file_path =PathJoinSubstitution([
+        get_package_share_directory('qrb_ros_camera'),
+        'config', 'camera_info_imx577.yaml'])
+    camera_node = ComposableNode(
+        package='qrb_ros_camera',
+        namespace=namespace,
+        plugin='qrb_ros::camera::CameraNode',
+        name='camera_node',
+        parameters=[{
+            'camera_id': 0,
+            'stream_size': 1,
+            'stream_name': ["stream1"],
+            'stream1':{
+                'height':480,
+                'width':640,
+                'fps':30,
+            },
+            'camera_info_path': camera_info_config_file_path,
+        }]
     )
 
     # Node fir qnn inference
@@ -73,15 +71,16 @@ def generate_launch_description():
         package = "rclcpp_components",
         executable='component_container',
         output = "screen",
-        composable_node_descriptions = [nn_inference_node]
+        composable_node_descriptions = [
+            nn_inference_node, 
+            camera_node,
+        ]
     )
 
     return LaunchDescription(
         [
-            image_path_arg,
             model_path_arg,
-            image_publish_node, 
-            container,
+            container, 
             depth_estimation_node
         ]
     )
