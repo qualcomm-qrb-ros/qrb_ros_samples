@@ -63,7 +63,8 @@ def generate_launch_description():
         parameters = [
         {
             "backend_option": "/usr/lib/libQnnHtp.so",
-            "model_path": model_path
+            "model_path": model_path,
+            "log_level": "warn"
         }]
     )
 
@@ -73,7 +74,10 @@ def generate_launch_description():
         package = "rclcpp_components",
         executable='component_container',
         output = "screen",
-        composable_node_descriptions = [nn_inference_node]
+        composable_node_descriptions = [nn_inference_node],
+        # Add sigterm timeout to allow graceful shutdown
+        sigterm_timeout='3',
+        sigkill_timeout='5'
     )
 
     return LaunchDescription(
