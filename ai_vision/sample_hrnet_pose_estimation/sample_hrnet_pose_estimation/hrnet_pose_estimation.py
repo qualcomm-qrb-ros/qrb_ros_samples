@@ -108,8 +108,12 @@ class hrnet_pose_estimation(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = hrnet_pose_estimation()
-    rclpy.spin(node)
-    rclpy.shutdown()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
 
 if __name__ == '__main__':
     main()
