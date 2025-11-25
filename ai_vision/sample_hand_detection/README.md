@@ -139,6 +139,14 @@ sudo apt install ros-jazzy-rclpy \
   ros-jazzy-qrb-ros-camera
 ```
 
+Download AI models
+```bash
+sudo mkdir -p /opt/model && cd /opt/model
+sudo wget https://huggingface.co/qualcomm/MediaPipe-Hand-Detection/resolve/7c266a43cf0328c5e00c96007a339ae41ddffa65/MediaPipeHandDetector.bin
+sudo wget https://huggingface.co/qualcomm/MediaPipe-Hand-Detection/resolve/7c266a43cf0328c5e00c96007a339ae41ddffa65/MediaPipeHandLandmarkDetector.bin
+sudo wget https://raw.githubusercontent.com/zmurez/MediaPipePyTorch/65f2549ba35cd61dfd29f402f6c21882a32fabb1/anchors_palm.npy
+```
+
 Download the source code and build
 ```bash
 source /usr/share/qirp-setup.sh
