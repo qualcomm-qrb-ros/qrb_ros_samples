@@ -105,7 +105,7 @@ Run the sample on device
 
 ```bash
 # setup runtime environment
-source /usr/share/qirp-setup.sh
+source /opt/ros/jazzy/setup.bash
 
 # Launch the sample hand detection node with an image publisher, You can replace 'image_path' with the path to your desired image.
 ros2 launch sample_hand_detection launch_with_image_publisher.py image_path:=<path/for/your/image.jpg> model_path:=/opt/model/
@@ -149,7 +149,7 @@ sudo wget https://raw.githubusercontent.com/zmurez/MediaPipePyTorch/65f2549ba35c
 
 Download the source code and build
 ```bash
-source /usr/share/qirp-setup.sh
+source /opt/ros/jazzy/setup.bash
 git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
 cd qrb_ros_samples/ai_vision/sample_hand_detection
 colcon build
