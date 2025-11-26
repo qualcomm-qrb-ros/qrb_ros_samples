@@ -216,7 +216,7 @@ class MediaFaceDetNode(Node):
         # NOTE: do NOT ignore inference outputs because of paused_until.
         # Log when we received the TensorList back from inference
         try:
-            self.get_logger().info(f"[recv] face_result_callback called at {now:.6f}, waiting_for_face_output={self.waiting_for_palm_output}, current_request_id={self.current_request_id}")
+            self.get_logger().info(f"[recv] face_result_callback called at {now:.6f}, waiting_for_face_output={self.waiting_for_face_output}, current_request_id={self.current_request_id}")
         except Exception:
             return  # If logging fails, context is invalid, exit early
 
