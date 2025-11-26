@@ -29,9 +29,6 @@ For model information, please refer to [MediaPipe-Face-Detection - Qualcomm AI H
 
   * [Used ROS Topics](#-used-ros-topics)
   * [Supported targets](#-supported-targets)
-  - [Installation](#-installation)
-    - [Prerequisites](#--prerequisites)
-    - [Add Qualcomm IOT PPA repository](#add-qualcomm-iot-ppa-repository)
 - [👋 Overview](#-overview)
 - [Pipeline Flow For Face Detection](#pipeline-flow-for-face-detection)
 - [🔎 Table of contents](#-table-of-contents)
@@ -218,14 +215,10 @@ sudo apt install ros-jazzy-rclpy \
 1. Download model
 
 ```bash
-cd /opt/model/
-wget https://raw.githubusercontent.com/zmurez/MediaPipePyTorch/65f2549ba35cd61dfd29f402f6c21882a32fabb1/anchors_face.npy -O anchors_face.npy
-wget https://huggingface.co/qualcomm/MediaPipe-Face-Detection/resolve/0dd669a326ec24a884e51b82741997299d937705/MediaPipeFaceDetector.bin -O MediaPipeFaceDetector.bin
-wget https://huggingface.co/qualcomm/MediaPipe-Face-Detection/resolve/0dd669a326ec24a884e51b82741997299d937705/MediaPipeFaceLandmarkDetector.bin -O MediaPipeFaceLandmarkDetector.bin
-
-git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
-cd ai_vision/sample_face_detection
-colcon build
+sudo mkdir -p /opt/model && cd /opt/model
+sudo wget https://raw.githubusercontent.com/zmurez/MediaPipePyTorch/65f2549ba35cd61dfd29f402f6c21882a32fabb1/anchors_face.npy -O anchors_face.npy
+sudo wget https://huggingface.co/qualcomm/MediaPipe-Face-Detection/resolve/0dd669a326ec24a884e51b82741997299d937705/MediaPipeFaceDetector.bin -O MediaPipeFaceDetector.bin
+sudo wget https://huggingface.co/qualcomm/MediaPipe-Face-Detection/resolve/0dd669a326ec24a884e51b82741997299d937705/MediaPipeFaceLandmarkDetector.bin -O MediaPipeFaceLandmarkDetector.bin
 ```
 
 2. Download source code and build
@@ -254,7 +247,7 @@ ros2 launch sample_face_detection launch_with_image_publisher.py model_path:=/op
 ros2 launch sample_face_detection launch_with_image_publisher.py image_path:=/opt/resource/xxx.jpg model_path:=/opt/model/
 
 # You can launch with qrb ros camera
-ros2 launch sample_face_detection launch_with_qrb_ros_camera.py  model_path:=/opt/model/
+ros2 launch sample_face_detection launch_with_qrb_ros_camera.py model_path:=/opt/model/
 ```
 
 ## 🤝 Contributing
