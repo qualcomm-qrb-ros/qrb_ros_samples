@@ -1,4 +1,4 @@
-ros-jazzy-sample-face-detection (1.0.1.1) noble; urgency=high
+ros-jazzy-sample-face-detection (1.0.0.1) noble; urgency=high
 
   * fix frequency stable issues and optimize shutdown machanism
 
