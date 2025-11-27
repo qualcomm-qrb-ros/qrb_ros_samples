@@ -86,7 +86,7 @@ sudo apt update
 Install Debian package:
 
 ```bash
-sudo apt install ros-jazzy-sample-object-detection
+sudo apt install ros-jazzy-sample-object-detection ros-jazzy-qrb-ros-cv-tensor-common-process
 ```
 
 ## 🚀 Usage
@@ -190,20 +190,7 @@ Then you can check ROS topics with the name`/yolo_detect_overlay` in  rviz2
 <details>
   <summary>Build from source details</summary>
 Install dependencies
-
-```
-sudo apt install ros-jazzy-rclpy \
-  ros-jazzy-sensor-msgs \
-  ros-jazzy-std-msgs \
-  ros-jazzy-cv-bridge \
-  ros-jazzy-ament-index-python \
-  ros-jazzy-qrb-ros-tensor-list-msgs \
-  python3-opencv \
-  python3-numpy \
-  ros-jazzy-image-publisher \
-  ros-jazzy-qrb-ros-nn-inference \
-  ros-jazzy-qrb-ros-camera \
-```
+> [!IMPORTANT] Complete **Installation** and **Usage** step first!
 
 Download the source code and build with colcon
 
