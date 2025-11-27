@@ -1,0 +1,4 @@
+x:=/home/ubuntu/qirp-sdk/whisper//input/x.raw index:=/home/ubuntu/qirp-sdk/whisper/./input/index.raw k_cache_cross:=/home/ubuntu/qirp-sdk/whisper/./input/k_cache_cross.raw v_cache_cross:=/home/ubuntu/qirp-sdk/whisper/./input/v_cache_cross.raw k_cache_self:=/home/ubuntu/qirp-sdk/whisper/./input/k_cache_self.raw v_cache_self:=/home/ubuntu/qirp-sdk/whisper/./input/v_cache_self.raw
+
+# Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause-Clear

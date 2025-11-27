@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+SPDX-License-Identifier: BSD-3-Clause-Clear -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rml_63">
+  <xacro:arg name="topic_ns" default=""/>
+  <!-- Import description urdf file -->
+  <xacro:include filename="$(find simulation_sample_pick_and_place)/urdf/rml_63_gripper_arm/rml_63.urdf" />
+  <xacro:include filename="$(find simulation_sample_pick_and_place)/urdf/rml_63_gripper_arm/gripper.urdf" />
+
+  <xacro:rml_63 ns=""/>
+  <xacro:rml_gripper ns=""/>
+
+  <link name="world"/>
+  <joint name="arm_virtual_joint" type="fixed">
+    <parent link="world"/>
+    <child link="arm_base_link"/>
+  </joint>
+
+  <!-- ros2_control -->
+  <xacro:include filename="$(find simulation_sample_pick_and_place)/config/rml_63_gripper_ros2_control.xacro" />
+  <xacro:rml_63_gripper_ros2_control ns="" topic_ns="$(arg topic_ns)"
+      initial_positions_yaml_path="$(find simulation_sample_pick_and_place)/config/initial_positions.yaml"
+      ros2_controllers_yaml_path="$(find simulation_sample_pick_and_place)/config/ros2_controllers.yaml"/>
+</robot>
+
