@@ -14,7 +14,7 @@ pubsub.subscribe('input_task')
 # https://github.com/tavily-ai/tavily-python?tab=readme-ov-file#getting-and-printing-the-full-search-api-response
 from tavily import TavilyClient
 
-tavily_client = TavilyClient(api_key="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")
+tavily_client = TavilyClient(api_key=<your_key>)
 
 def search_web(query_str):
     response = tavily_client.search(query_str)

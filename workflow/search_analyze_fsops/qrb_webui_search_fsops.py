@@ -8,7 +8,7 @@
 # https://github.com/tavily-ai/tavily-python?tab=readme-ov-file#getting-and-printing-the-full-search-api-response
 from tavily import TavilyClient
 
-tavily_client = TavilyClient(api_key="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")
+tavily_client = TavilyClient(api_key=<your_key>)
 
 
 # Reference : https://github.com/The-Pocket/PocketFlow/blob/main/cookbook/pocketflow-agent/nodes.py
