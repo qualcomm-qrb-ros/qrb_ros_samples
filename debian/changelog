@@ -1,4 +1,10 @@
-ros-jazzy-sample-depth-estimation (1.0.0) noble; urgency=high
+ros-jazzy-sample-depth-estimation (1.0.0.1) noble; urgency=high
+
+  * Fixed the keyboard interrupt exception error log.
+
+ -- Teng Fan <tengf@qti.qualcomm.com>  Tue, 16 Dec 2025 09:21:18 -0000
+
+ ros-jazzy-sample-depth-estimation (1.0.0) noble; urgency=high
 
   * Initial release for sample depth estimation package.
 
