@@ -1,16 +1,21 @@
 # Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
 # SPDX-License-Identifier: BSD-3-Clause-Clear
 
-import os
 import rclpy
 import cv2
 import math
 import numpy as np
+import time
+import threading
+import signal
+import sys
 
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
+from rclpy.executors import MultiThreadedExecutor
 from qrb_ros_tensor_list_msgs.msg import Tensor, TensorList
+from rclpy.signals import SignalHandlerOptions
 
 
 class DepthEstimationNode(Node):
@@ -42,6 +47,11 @@ class DepthEstimationNode(Node):
         self.target_size = [518, 518]
         self.msg_count = 0
 
+        # KeyboardInterrupt exception handle
+        self.stopping = False
+        self.inference_in_progress = False
+        self.inference_lock = threading.Lock()
+
     def nv12_to_bgr(self, nv12_image, width, height):
         """
         Convert NV12 image to BGR format.
@@ -50,9 +60,15 @@ class DepthEstimationNode(Node):
         bgr = cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR_NV12)
         return bgr
 
-    def image_callback(self, msg):
+    def image_callback(self, msg):       
+        # Check if we're shutting down
+        if self.stopping:
+            return
+        
+        # Prevent concurrent inference requests
         if self.msg_count != 0:
             return
+        
         if msg.encoding == 'nv12':
             nv12_data = np.frombuffer(msg.data, dtype=np.uint8)
             image = self.nv12_to_bgr(nv12_data, msg.width, msg.height)
@@ -65,7 +81,6 @@ class DepthEstimationNode(Node):
         if image.shape[-1] != 3:
            raise ValueError("Need input 3 channels image")
         try:
-            
             input, self.origin_wh, self.scale, self.padding = self.preprocess(image)
             msg = TensorList()
             tensor = Tensor()
@@ -74,15 +89,31 @@ class DepthEstimationNode(Node):
             tensor.shape = [1, 518, 518, 3]
             tensor.data = input.tobytes()
             msg.tensor_list.append(tensor)
-                
-            self.qnn_infer_publisher.publish(msg)
-            self.msg_count += 1
-            self.get_logger().info('Published qnn input tensor')
+
+            # Mark inference as in progress before publishing
+            with self.inference_lock:
+                if not self.stopping:
+                    self.inference_in_progress = True
+                    try: 
+                        self.qnn_infer_publisher.publish(msg)
+                        self.msg_count += 1
+                        self.get_logger().info('Published qnn input tensor')
+                    except Exception:
+                        # Context may be invalid during shutdown, ignore logging errors
+                        self.inference_in_progress = False
+                        pass
         except Exception as e:
-          self.get_logger().error(f'Error preprocessing image: {e}')
+            self.get_logger().error(f'Error preprocessing image: {e}')
         
     def infer_callback(self, msg):
         try:
+            # Mark inference as completed
+            with self.inference_lock:
+                self.inference_in_progress = False
+            
+            if self.stopping:
+                return
+                
             for result_tensor in msg.tensor_list:  # iterate tensor_list
                 output_data = np.array(result_tensor.data)
                 depth_map = output_data.view(np.float32)
@@ -92,7 +123,10 @@ class DepthEstimationNode(Node):
                 self.get_logger().info('Published depth map')
                 self.msg_count = 0
         except Exception as e:
-            self.get_logger().error(f'Error processing image: {e}')
+            with self.inference_lock:
+                self.inference_in_progress = False
+            if not self.stopping:
+                self.get_logger().error(f'Error processing image: {e}')
 
     def preprocess(self, image):
         """
@@ -191,12 +225,89 @@ class DepthEstimationNode(Node):
     
 
 def main(args=None):
-    rclpy.init(args=args)
-    depth_estimator_node = DepthEstimationNode()
-    rclpy.spin(depth_estimator_node)
-    depth_estimator_node.destroy_node()
-    rclpy.shutdown()
+    # Initialize with signal handler options for ROS2 Jazzy
+    rclpy.init(args=args, signal_handler_options=SignalHandlerOptions.NO)
+    
+    node = None
+    executor = None
+    shutdown_requested = threading.Event()
+    
+    def signal_handler(signum, frame):
+        """Custom signal handler for graceful shutdown"""
+        print(f"\nReceived signal {signum}, initiating graceful shutdown...")
+        shutdown_requested.set()
+    
+    # Register custom signal handlers
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    
+    try:
+        node = DepthEstimationNode()
+        executor = MultiThreadedExecutor(num_threads=4)
+        executor.add_node(node)
+        
+        # Spin in a way that allows checking for shutdown
+        while rclpy.ok() and not shutdown_requested.is_set():
+            executor.spin_once(timeout_sec=0.1)
+            
+    except Exception as e:
+        print(f"Exception during execution: {e}")
+    finally:
+        print("Starting cleanup sequence...")
+        
+        if node:
+            # Signal that we're stopping - this prevents new inference requests
+            node.stopping = True
+            
+            # Wait for any in-flight inference to complete
+            max_wait_time = 3.0  # Maximum wait time in seconds
+            wait_interval = 0.1  # Check interval in seconds
+            elapsed = 0.0
+            
+            print("Waiting for in-flight inference to complete...")
+            
+            while elapsed < max_wait_time:
+                with node.inference_lock:
+                    if not node.inference_in_progress:
+                        break
+                time.sleep(wait_interval)
+                elapsed += wait_interval
+            
+            if elapsed >= max_wait_time:
+                print("Warning: Inference did not complete within timeout")
+            else:
+                print("In-flight inference completed successfully")
+            
+            # Critical: Give QNN node time to finish processing
+            # This prevents QNN errors during shutdown
+            print("Allowing QNN node to complete cleanup...")
+            time.sleep(1.5)
+        
+        # Shutdown executor first to stop message processing
+        if executor:
+            try:
+                print("Shutting down executor...")
+                executor.shutdown(timeout_sec=2.0)
+            except Exception:
+                pass  # Suppress errors during shutdown
+        
+        # Destroy the node
+        if node:
+            try:
+                node.destroy_node()
+            except Exception:
+                pass  # Suppress errors during shutdown
+        
+        # Finally shutdown rclpy
+        if rclpy.ok():
+            try:
+                rclpy.shutdown()
+            except Exception:
+                pass  # Suppress errors during shutdown
+        
+        print("Shutdown complete")
+        sys.exit(0)
 
 
 if __name__ == '__main__':
-    main() 
+    main()
