@@ -1,16 +1,7 @@
 pocketflow>=0.0.1
-aiohttp>=3.8.0  # For HTTP requests
-requests>=2.25.1  # For HTTP requests
+aiohttp>=3.8.0
+requests>=2.25.1
 numpy
 pillow
-torch
-torchvision
-clip
 huggingface_hub
-onnxruntime
-
-# use anaconda for your env setup
-# https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-
-# Let's use quant CLIP onnx model for local inference 
-# wget https://huggingface.co/sayantan47/clip-vit-b32-onnx/resolve/main/onnx/model_q4.onnx
+onnxruntime-gpu
