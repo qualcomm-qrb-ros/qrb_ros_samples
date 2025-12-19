@@ -84,7 +84,7 @@ TOOL_LIBRARY = [
     # Finance Tools
     {
         "name": "get_stock_price",
-        "description": "Get the current stock price and market data for a given ticker symbol",
+        "description": "Get the stock price for a given ticker symbol at a specified timestamp (UTC+8) .",
         "input_schema": {
             "type": "object",
             "properties": {
@@ -92,12 +92,12 @@ TOOL_LIBRARY = [
                     "type": "string",
                     "description": "Stock ticker symbol (e.g., AAPL, GOOGL)",
                 },
-                "include_history": {
-                    "type": "boolean",
-                    "description": "Include historical data",
+                "timestamp": {
+                    "type": "string",
+                    "description": "to locate the ticket price with exact timestamp from NASDAQ database",
                 },
             },
-            "required": ["ticker"],
+            "required": ["ticker", "timestamp"],
         },
     },
     {
@@ -289,7 +289,8 @@ TOOL_SEARCH_DEFINITION = {
 print("✓ Tool search definition created")
 
 
-
+# in Line #75 of https://github.com/anthropics/claude-cookbooks/blob/main/tool_use/tool_search_with_embeddings.ipynb
+# there is no input schema for tool search, adding it for my local experiment
 def handle_tool_search(query: str, top_k: int = 5) -> list[dict[str, any]]:
     """
     Handle a tool_search invocation and return tool references.
@@ -301,9 +302,10 @@ def handle_tool_search(query: str, top_k: int = 5) -> list[dict[str, any]]:
 
     # Create tool_reference objects instead of full definitions
     tool_references = [
-        {"type": "tool_reference", "tool_name": result["tool"]["name"]} for result in results
+        {"type": "tool_reference", "tool_name": result["tool"]["name"], "input_schema": result["tool"]["input_schema"]} for result in results
     ]
 
+    # the print is only for debug , not changing tool_references contents
     print(f"\n🔍 Tool search: '{query}'")
     print(f"   Found {len(tool_references)} tools:")
     for i, result in enumerate(results, 1):
@@ -319,8 +321,8 @@ def handle_tool_search(query: str, top_k: int = 5) -> list[dict[str, any]]:
 #     print(f"  {ref}")
 
 
+# question = "I need to check latest NVDA price, and last 10 days of NVDA price. Also compare with QCOM price and MSFT price with a svg gram."
 question = "I need to check latest NVDA price"
-
 
 # Now is the time to combine with PocketFlow
 prompt = f"""
@@ -368,18 +370,21 @@ tool_references = handle_tool_search(query, top_k)
 # Create tool result with tool_reference content blocks
 tool_search_res.append(
     {
-        "type": "tool_result",
+        "type": "tool_search_result",
         "content": tool_references,
     }
 )
-print(tool_search_res)
 
 tool_exec_res = "no tools called"
 
 prompt = f"""
 #### PROMPT START
 #### CONTEXT
-You are an assistant that can use code execution tool, and your target language is python.
+You are an assistant.
+You can use direct tool calling.
+You can also use code execution tool, and code execution tool can arrange call tool based on python language.
+Your target language is python.
+You need carefully evalute task complexity, and if it needs complex tool calling cycles, you need to consider use code execution first.
 Question: 
 {question}
 Tool Search Results: 
@@ -389,7 +394,7 @@ Tool Calling Results:
 
 #### ACTION SPACE
 [1] code_exec
-  Description: This tool will run python code clock in sandbox and only return execution results. Result string will be taken into your next inference in "Tool Use Results" part. You need to check if there is available python scripts in local to accomplish your task. Describe your functions in first 3-lines of your file.
+  Description: This tool will run python code clock in sandbox and only return execution results. Result string will be taken into your next inference in "Tool Use Results" part.
   Parameters:
     - file_name (str): the file name to store your code, you should name your file intuitively, so LLM could read the file name and understood what is the context inside.
     - code_block (str): the complete code block that can run in a single python file.
@@ -417,7 +422,6 @@ reason: <why you chose this action>
 answer: <if action is answer>
 file_name: <your_file_name if action is code_exec>
 code_block: <your_code if action is code_exec>
-md_block: <your_markdown_content if action is code_exec>
 tool_name: <your_chosen_tool_name if action is tool_use>
 ```
 IMPORTANT: Make sure to:
@@ -428,10 +432,7 @@ IMPORTANT: Make sure to:
 #### END OF PROMPT
 """
 
-
-
-
 response = call_llm("", prompt)
 yaml_str = response.split("```yaml")[1].split("```")[0].strip()
 act_dict = yaml.safe_load(yaml_str)
-print(act_dict)
+print(act_dict["code_block"])
