@@ -19,6 +19,7 @@ ONNX models are from CLIP-AS-SERVICE : https://github.com/jina-ai/clip-as-servic
 - Search Clothing with Pictures (I want the clothing with same feeling of this pic)
 - Search Clothing with Text
 - Search Metadata with Pictures
+- Use SQLite3 to build vector store, file_name as index
 
 
 ## Example Outputs
@@ -33,7 +34,7 @@ pip install -r requirements.txt
 2. Run agent :
 
 ```bash
-python test_clip_preprocess_and_image_search.py
+python build_clothing_vector_store_sqlite3.py
 ```
 
 ## How It Works?
