@@ -201,10 +201,13 @@ def text_to_images_search_1N512(img_vecs, txt_vec, tau=0.02, topk=None, eps=1e-1
     scores = np.sum(I * t, axis=2).reshape(-1)                # (N,)
 
     # 3) softmax over N images (temperature tau) -> percent (display)
-    x = scores / float(tau)
-    x = x - x.max()  # stability
-    p = np.exp(x)
-    percent = (p / p.sum()) * 100.0                           # (N,)
+    # x = scores / float(tau)
+    # x = x - x.max()  # stability
+    # p = np.exp(x)
+    # percent = (p / p.sum()) * 100.0                           # (N,)
+    
+    # 3.1) cosine similarity
+    percent = (scores + 1.0) * 50.0               # (-1~1) -> (0~100)
 
     # 4) ranking by cosine
     order = np.argsort(-scores)
@@ -264,8 +267,10 @@ def main(args=None):
     
     s,p,o,k = text_to_images_search_1N512(img_array_list, img_search_q, topk=5)
     
-    print(k)
+    # print top5 percent , k are the top5 index
+    print(np.array(p)[k])
     
+    # print top5 file name
     print(np.array(file_name_list)[k])
 
 if __name__ == '__main__':
