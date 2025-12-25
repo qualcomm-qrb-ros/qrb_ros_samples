@@ -1,0 +1,15 @@
+qirp-sdk-desktop (2.4.1) noble; urgency=medium
+
+  * Add new ROS Jazzy packages in QIRP SDK.
+
+  Added packages:
+    - ros-jazzy-sample-apriltag,
+    - ros-jazzy-followme
+
+ -- Fulan Liu <fulaliu@qti.qualcomm.com>  Tue, 25 Dec 2025 18:05:19 +0800
+
+qirp-sdk-desktop (2.4.0) noble; urgency=medium
+
+  * first initial for debian release qirp-sdk-desktop
+
+ -- Dapeng Yuan <dapeyuan@qti.qualcomm.com>  Tue, 13 May 2025 14:09:53 -0000
