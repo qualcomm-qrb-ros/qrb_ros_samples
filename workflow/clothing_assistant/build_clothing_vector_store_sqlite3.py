@@ -30,7 +30,39 @@ import sqlite3
 import time
 from typing import Optional, List, Tuple
 
+# ============================================================
+# Minimal ONNX runtime
+# ============================================================
+# Load ONNX Runtime session
+image_sess = ort.InferenceSession("visual.onnx", providers=["CPUExecutionProvider"])
+text_sess = ort.InferenceSession("textual.onnx", providers=["CPUExecutionProvider"])
 
+print()
+print(" ======== CLIP as service Textual ONNX ======== ")
+for inp in text_sess.get_inputs():
+    print("name :", inp.name)
+    print("shape:", inp.shape)
+    print("dtype:", inp.type)
+print()
+print(" ======== CLIP as service Visual ONNX ======== ")
+for inp in image_sess.get_inputs():
+    print("name :", inp.name)
+    print("shape:", inp.shape)
+    print("dtype:", inp.type)
+print()
+
+
+# ============================================================
+# Minimal function name printer
+# ============================================================
+import inspect
+def here():
+    return inspect.currentframe().f_back.f_code.co_name
+
+
+# ============================================================
+# Manual Clip PreProcess Part
+# ============================================================
 # Fetch ONNX CLIP model
 # https://github.com/Lednik7/CLIP-ONNX/tree/main
 # wget https://clip-as-service.s3.us-east-2.amazonaws.com/models/onnx/ViT-B-32/visual.onnx
@@ -40,8 +72,7 @@ from typing import Optional, List, Tuple
 # normalized input image as CLIP needed
 # https://github.com/openai/CLIP/blob/dcba3cb2e2827b402d2701e7e1c7d9fed8a20ef1/clip/clip.py#L85
 # need to keep format as float32 to adapt model input requests
-mean = np.array([0.48145466, 0.4578275, 0.40821073]).astype(np.float32)
-std = np.array([0.26862954, 0.26130258, 0.27577711]).astype(np.float32)
+
 
 def prepare_clip_text_tokenizer():
 
@@ -71,70 +102,39 @@ def prepare_clip_text_tokenizer():
         file.write(response.content)
 
 
-
-# Load ONNX Runtime session
-image_sess = ort.InferenceSession("visual.onnx", providers=["CPUExecutionProvider"])
-text_sess = ort.InferenceSession("textual.onnx", providers=["CPUExecutionProvider"])
-
-print()
-print(" ======== CLIP as service Textual ONNX ======== ")
-for inp in text_sess.get_inputs():
-    print("name :", inp.name)
-    print("shape:", inp.shape)
-    print("dtype:", inp.type)
-print()
-print(" ======== CLIP as service Visual ONNX ======== ")
-for inp in image_sess.get_inputs():
-    print("name :", inp.name)
-    print("shape:", inp.shape)
-    print("dtype:", inp.type)
-print()
-
-def letterbox_to_square(img, target=224, fill=0):
-    """
-    Letterbox to target x target:
-    - Resize so the longer side becomes `target` (keep aspect ratio)
-    - Pad evenly to make a square
-    - fill: padding color (0=black, 128=gray, 255=white for L mode; for RGB use tuple)
-    """
-    w, h = img.size
-
-    # Resize: long side -> target
-    scale = target / max(w, h)
-    nw = int(round(w * scale))
-    nh = int(round(h * scale))
-    img_resized = img.resize((nw, nh), resample=Image.BICUBIC)
-
-    # Pad to target x target (centered)
-    pw = target - nw
-    ph = target - nh
-    left = pw // 2
-    top = ph // 2
-    right = pw - left
-    bottom = ph - top
-    img_padded = ImageOps.expand(img_resized, border=(left, top, right, bottom), fill=fill)
-
-    debug = {
-        "input_size": (w, h),
-        "target": target,
-        "scale": scale,
-        "resized_size": (nw, nh),
-        "padding": (left, top, right, bottom),
-        "output_size": img_padded.size,
-    }
-    
-    return img_padded
-
 def images_norm_transpose(jpg):
     # currently only support 1 jpg file
-    with Image.open(jpg) as img:
-        # normalized input image as CLIP needed
-        # https://github.com/openai/CLIP/blob/dcba3cb2e2827b402d2701e7e1c7d9fed8a20ef1/clip/clip.py#L85
-        # Use Letterbox Resize instead of direct resize
-        img = img.resize((224,224))
-        img_array = np.array(img).astype(np.float32)
-        img_array /= 255.0
-        img_array = (img_array - mean) / std
+    # with Image.open(jpg) as img:
+    #     # normalized input image as CLIP needed
+    #     # https://github.com/openai/CLIP/blob/dcba3cb2e2827b402d2701e7e1c7d9fed8a20ef1/clip/clip.py#L85
+    #     # Use Letterbox Resize instead of direct resize
+    #     img = img.resize((224,224), Image.BICUBIC)
+    #     img_array = np.array(img).astype(np.float32)
+    #     img_array /= 255.0
+    #     img_array = (img_array - mean) / std
+    # r = np.transpose(img_array, (2, 0, 1)).astype(np.float32)
+    
+    # Refering : # https://github.com/openai/CLIP/blob/dcba3cb2e2827b402d2701e7e1c7d9fed8a20ef1/clip/clip.py#L85
+    
+    img = Image.open(jpg).convert("RGB")    
+    
+    # resize shortest side
+    w, h = img.size
+    scale = 224 / min(w, h)
+    img = img.resize((round(w * scale), round(h * scale)), Image.BICUBIC)
+
+    # center crop
+    w, h = img.size
+    left = (w - 224) // 2
+    top  = (h - 224) // 2
+    img = img.crop((left, top, left + 224, top + 224))
+
+    x = np.array(img).astype(np.float32) / 255.0
+
+    mean = np.array([0.48145466, 0.4578275, 0.40821073])
+    std  = np.array([0.26862954, 0.26130258, 0.27577711])
+    img_array = (x - mean[None,None,:]) / std[None,None,:]
+
     r = np.transpose(img_array, (2, 0, 1)).astype(np.float32)
     return r
 
@@ -143,7 +143,12 @@ def extract_image_feature(chw_jpg_array_add_batch):
         "input" : chw_jpg_array_add_batch
     }
     outputs = image_sess.run(None, input_dict)
-    return np.array(outputs)
+    v = outputs[0]
+    v = v / np.linalg.norm(v)
+    print(f"{here()} : v shape:", v.shape)
+    print(f"{here()} : L2 norm after:", np.linalg.norm(v))
+    print(f"{here()} : v@v:", v.squeeze()@v.squeeze())
+    return v
 
 def extract_text_feature(txt):
     # currently only support 1,77 encode
@@ -242,14 +247,10 @@ def text_to_images_search_1N512(img_vecs, txt_vec, tau=0.02, topk=None, eps=1e-1
     return scores, percent, order
 
 
-
-
 # ============================================================
 # Minimal timing helpers
 # ============================================================
-
 _t0 = None
-
 def tic():
     global _t0
     _t0 = time.perf_counter()
@@ -262,15 +263,14 @@ def toc(name: str):
 # ============================================================
 # Global runtime state (explicit, no hidden magic)
 # ============================================================
-
 DIM = 512 # CLIP specific
 MEM_MATRIX = np.empty((0, DIM), dtype=np.float32)
 MEM_LAST_ID = 0
 
+
 # ============================================================
 # SQLite helpers (source of truth)
 # ============================================================
-
 def init_db(db_path: str) -> sqlite3.Connection:
     conn = sqlite3.connect(db_path, check_same_thread=False)
     conn.execute("""
@@ -319,7 +319,6 @@ def fetch_vectors_after(conn: sqlite3.Connection, last_id: int):
 # ============================================================
 # In-memory matrix sync (need to confirm matrix in memory is aligned with DB)
 # ============================================================
-
 def sync_mem_matrix(conn: sqlite3.Connection):
     global MEM_MATRIX, MEM_LAST_ID
 
@@ -340,11 +339,10 @@ def sync_mem_matrix(conn: sqlite3.Connection):
 # ============================================================
 # Search (dot product)
 # ============================================================
-
 def search_db(
     query_vec: np.ndarray,
     conn: sqlite3.Connection,
-    thresh: float = 85
+    thresh: float = 0.85
 ) -> Tuple[List[int], np.ndarray]:
     sync_mem_matrix(conn)
 
@@ -352,45 +350,146 @@ def search_db(
         return [], np.array([])
 
     tic()
+    print(f"{here()} : MEM_MATRIX shape is {MEM_MATRIX.shape}")
+    print(f"{here()} : query_vec.squeeze shape is {query_vec.squeeze().shape}")
     sims = MEM_MATRIX @ query_vec.squeeze()
     toc("dot product")
 
+    # DEBUG : search exsited jpg should be score 1
+    # 
+    # best = np.argmax(sims)
+    # print( [int(best)] )
+    # print( np.array([sims[best]]) )
+    
     idx = np.where(sims >= thresh)[0]
-    idx = idx[np.argsort(-sims[idx])]
+    order = np.argsort(-sims[idx])
+    idx = idx[order]
     return idx.tolist(), sims[idx]
+
+
+# ============================================================
+# match_level (consider results more than 0.85 cosine similarity)
+# ============================================================
+def match_level(cos):
+    if cos >= 0.98:
+        return "SAME"
+    elif cos >= 0.88:
+        return "SIMILAR"
+    elif cos >= 0.85:
+        return "RELATED"
+    else:
+        return None
+
 
 # ============================================================
 # print_matches (search in sql)
 # ============================================================
-
-def print_matches(conn, idx):
+def print_matches(conn, idx, score):
+    output = ""
+    
     if not idx:
         print("match idx: []")
         return
 
-    db_ids = [i + 1 for i in idx]
-    placeholders = ",".join(["?"] * len(db_ids))
-
-    sql = f"""
-    SELECT id, path, metadata
-    FROM visual_store
-    WHERE id IN ({placeholders})
-    ORDER BY id
-    """
-
     print(f"match idx: {idx}")
-    for row in conn.execute(sql, db_ids):
-        print(row)
+
+    # MEM index -> db id
+    db_ids = [i + 1 for i in idx]
+    placeholders = ",".join("?" * len(db_ids))
+
+    rows = conn.execute(
+        f"""
+        SELECT id, path, metadata
+        FROM visual_store
+        WHERE id IN ({placeholders})
+        """,
+        db_ids,
+    ).fetchall()
+
+    row_map = {row[0]: row for row in rows}
+
+    for i, cos in zip(idx, score):
+        level = match_level(cos)
+        if not level:
+            continue
+
+        row = row_map.get(i + 1)
+        if row:
+            output = output + f"{level} {cos:.3f} {row}\n"
+
+    return output
 
 
+# ============================================================
+# render_html (vide coding to output to html for easier look)
+# ============================================================
+import re
+def render_html(result_str, out_path="./output.html"):
+    items = []
+    for line in result_str.strip().splitlines():
+        m = re.match(r"(SAME|SIMILAR)\s+([\d.]+)\s+\((\d+),\s+'([^']+)',\s+'(.+)'\)", line)
+        if m:
+            level, score, id_, img, desc = m.groups()
+            items.append((level, score, id_, img, desc))
+
+    def card(i):
+        return f"""
+        <div class="card {'same' if i[0]=='SAME' else ''}">
+            <img src="{i[3]}" />
+            <div class="meta">
+                <b>{i[0]}</b> · {i[1]} · ID {i[2]}
+                <div>{i[4]}</div>
+            </div>
+        </div>
+        """
+
+    html = f"""<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Image Search Result</title>
+<style>
+body{{font-family:sans-serif;background:#f5f5f5;padding:20px}}
+.grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}}
+.card{{background:#fff;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.1);overflow:hidden}}
+.card.same{{border:3px solid #2ecc71}}
+img{{width:100%;height:auto;max-height:340px;object-fit:contain;background:#eee}}
+.meta{{padding:10px;font-size:12px;line-height:1.4}}
+</style>
+</head>
+<body>
+
+<h2>SAME</h2>
+<div class="grid">
+{''.join(card(i) for i in items if i[0]=='SAME')}
+</div>
+
+<h2>SIMILAR</h2>
+<div class="grid">
+{''.join(card(i) for i in items if i[0]=='SIMILAR')}
+</div>
+
+</body>
+</html>"""
+
+    with open(out_path, "w", encoding="utf-8") as f:
+        f.write(html)
+
+
+# ============================================================
+# main (proceed sample picture search)
+# ============================================================
 def main(args=None):
 
-    # use picture to search pictures
-    with open("file_name_and_metadata.json", "r", encoding="utf-8") as f:
-        data = json.load(f)
-    test_pic_name = "./test/0b48b477aa4075c5489c5bfb0df35017.jpg"
+    # self check of vectorize
+    # v1 = encode_image(img)
+    # v2 = encode_image(img)
+    # 
+    # print("self similarity:", v1 @ v2) , should be one
+
+    test_pic_name = "./test/3b8e5457c9419df3a67ed590cbb46b56.jpg"
     r = images_norm_transpose(test_pic_name)
-    img_search_q = extract_image_feature(np.array([r]))  
+    img_search_q = extract_image_feature([r])
     
     # ====  USE TEXT TO SEARCH ====
     # use metadata to search pictures
@@ -400,9 +499,11 @@ def main(args=None):
     # prepare_clip_text_tokenizer()
     # txt_features = extract_text_feature(search_query)
     # print(f"main : txt_features extracted : shape is {txt_features.shape} , value is {txt_features}")
-    # exit()
     # ====  END ====
     
+    # use picture to search pictures
+    with open("file_name_and_metadata.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
     # init DB
     DB_PATH = "visual.db"
     conn = init_db(DB_PATH)
@@ -412,7 +513,7 @@ def main(args=None):
         if get_id_by_path(conn, jpg) is None:
             print(f" the jpg file not exsited in DB : {jpg}")
             r = images_norm_transpose(jpg)
-            img_array = np.array([r])
+            img_array = [r]
             images_features = extract_image_feature(img_array)
             insert_vector(conn, jpg, images_features, data[jpg]["metadata"])            
         else:
@@ -422,8 +523,8 @@ def main(args=None):
     idx, score = search_db(img_search_q, conn)
     print("match idx:", idx)
     print("score:", score)
-    print_matches(conn, idx)
+    o = print_matches(conn, idx, score)
+    render_html(o)
 
 if __name__ == '__main__':
     main()
-    
