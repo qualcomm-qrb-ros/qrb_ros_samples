@@ -16,14 +16,17 @@ ONNX models are from CLIP-AS-SERVICE : https://github.com/jina-ai/clip-as-servic
 
 ## Features (planing)
 
-- Search Clothing with Pictures (I want the clothing with same feeling of this pic)
+- Search Clothing with Pictures (same feeling / structure of this pic)
 - Search Clothing with Text
 - Search Metadata with Pictures
 - Use SQLite3 to build vector store, file_name as index
+- Use HTML to render outputs
+- **Manual Implementation of CLIP preprocessing**
 
 
 ## Example Outputs
 ![ExampleOutputs](./example1.jpg)
+![ExampleOutputs](./example2.jpg)
 
 ## Getting Started
 
