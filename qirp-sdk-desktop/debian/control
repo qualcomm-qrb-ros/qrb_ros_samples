@@ -1,4 +1,4 @@
-Source: qirp-sdk
+Source: qirp-sdk-desktop
 Section: misc
 Priority: optional
 Maintainer: Dapeng Yuan <dapeyuan@qti.qualcomm.com>
@@ -6,7 +6,7 @@ Build-Depends: debhelper-compat (= 13)
 Homepage:
 Standards-Version: 3.9.2
 
-Package: qirp-sdk
+Package: qirp-sdk-desktop
 Architecture: any
 Depends: ${misc:Depends},
          ros-jazzy-simulation-remote-assistant,
@@ -31,7 +31,6 @@ Depends: ${misc:Depends},
          ros-jazzy-qrb-ros-battery,
          ros-jazzy-qrb-ros-benchmark,
          ros-jazzy-qrb-ros-camera (>= 2.0.1),
-         ros-jazzy-qrb-ros-colorspace-convert,
          ros-jazzy-qrb-ros-imu,
          ros-jazzy-qrb-ros-system-monitor,
          ros-jazzy-qrb-ros-video,
@@ -47,7 +46,6 @@ Depends: ${misc:Depends},
          ros-jazzy-orbbec-camera-msgs,
          ros-jazzy-qcom-cartographer,
          ros-jazzy-qrb-camera (>= 2.0.1),
-         ros-jazzy-qrb-colorspace-convert-lib,
          ros-jazzy-qrb-ros-amr,
          ros-jazzy-qrb-ros-cv-tensor-common-process,
          ros-jazzy-qrb-ros-follow-path,
