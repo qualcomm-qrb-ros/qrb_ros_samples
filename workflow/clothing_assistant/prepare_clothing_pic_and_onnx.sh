@@ -9,6 +9,8 @@ wget https://s3.amazonaws.com/ifashionist-dataset/images/val_test2020.zip
 
 wget s3.amazonaws.com/ifashionist-dataset/annotations/instances_attributes_val2020.json
 
+wget https://raw.githubusercontent.com/mediaelement/mediaelement-files/master/big_buck_bunny.mp4 -O big_buck_bunny.mp4
+
 unzip val_test2020.zip
 
 python generate_file_name_and_metadata_json.py
