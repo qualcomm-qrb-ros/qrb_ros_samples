@@ -1,11 +1,15 @@
-# Plan + Code Execution + Tool Search Tool
+# Prototype Claude Skills And Program Tools (Plan + Code Execution + Tool Search Tool)
 
-This project demonstrates a simple yet powerful LLM-powered research agent. This implementation is based directly on the tutorial: [LLM Agents are simply Graph — Tutorial For Dummies](https://zacharyhuang.substack.com/p/llm-agent-internal-as-a-graph-tutorial).
+This implementation is based directly on the tutorial: [LLM Agents are simply Graph — Tutorial For Dummies](https://zacharyhuang.substack.com/p/llm-agent-internal-as-a-graph-tutorial).
 
 ---
 This specific project is inspired by : https://www.anthropic.com/engineering/advanced-tool-use
 
-Also inspired by : https://github.com/anthropics/claude-cookbooks/blob/main/tool_use/tool_search_with_embeddings.ipynb
+**One of the critical problem of Context Engineering is solving the massive tooling prompt, and opensource world had lots of ideas about it. the key concept is to avoid loading metadata directly but also finding the right tool while needed.**
+
+**There are also explorations targetting a more efficient way than MCP, such as Claude Skills.**
+
+Refering and inspired by : https://github.com/anthropics/claude-cookbooks/blob/main/tool_use/tool_search_with_embeddings.ipynb
 
 https://github.com/anthropics/claude-cookbooks/blob/main/tool_use/programmatic_tool_calling_ptc.ipynb
 
