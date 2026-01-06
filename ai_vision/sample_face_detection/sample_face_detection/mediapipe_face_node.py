@@ -106,7 +106,7 @@ class MediaFaceDetNode(Node):
         with self.lock:
             # If we're currently paused, check if pause has expired and clear it.
             if self.paused_until and now >= self.paused_until:
-                self.get_logger().warn("Pause after timeout expired, resuming message handling.")
+                self.get_logger().info("Pause after timeout expired, resuming message handling.")
                 self.paused_until = 0.0
                 # Ensure processing flags are cleared
                 self.processing = False
@@ -118,8 +118,8 @@ class MediaFaceDetNode(Node):
                 elapsed = now - self.last_request_time
                 if elapsed > DEFAULT_TIMEOUT:
                     try:
-                        self.get_logger().warn(
-                            f"⚠️ Face detector timeout ({elapsed:.2f}s > {DEFAULT_TIMEOUT}s) "
+                        self.get_logger().info(
+                            f"Face detector timeout ({elapsed:.2f}s > {DEFAULT_TIMEOUT}s) "
                             f"- Skipping frame {self.current_request_id}, ready for next frame"
                         )
                     except Exception:
@@ -136,8 +136,8 @@ class MediaFaceDetNode(Node):
                 elapsed = now - self.last_request_time
                 if elapsed > LANDMARK_TIMEOUT:
                     try:
-                        self.get_logger().warn(
-                            f"⚠️ Landmark detector timeout ({elapsed:.2f}s > {LANDMARK_TIMEOUT}s) "
+                        self.get_logger().info(
+                            f"Landmark detector timeout ({elapsed:.2f}s > {LANDMARK_TIMEOUT}s) "
                             f"- Skipping frame {self.current_request_id}, ready for next frame"
                         )
                     except Exception:
