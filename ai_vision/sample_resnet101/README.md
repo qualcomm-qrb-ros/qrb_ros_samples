@@ -175,6 +175,21 @@ data: 'sunglass
 
 <details>
   <summary>Build from source details</summary>
+Download AI model
+
+```
+sudo mkdir -p /opt/model && cd /opt/model
+sudo wget https://huggingface.co/qualcomm/ResNet101/resolve/121564046ebb2353d4a0aa67bf89c11e0c8e80d9/ResNet101_w8a8.bin?download=true -O ResNet101_w8a8.bin
+sudo wget https://raw.githubusercontent.com/quic/ai-hub-models/refs/heads/main/qai_hub_models/labels/imagenet_labels.txt -O imagenet_labels.txt
+```
+
+Add qcom ppa
+
+```
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
 
 Install dependencies
 
@@ -198,7 +213,7 @@ Download the source code and build with colcon
 ```bash
 source /opt/ros/jazzy/setup.bash
 git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
-cd ai_vision/sample_resnet101
+cd qrb_ros_samples/ai_vision/sample_resnet101
 colcon build
 ```
 

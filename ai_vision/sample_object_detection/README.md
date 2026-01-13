@@ -86,13 +86,14 @@ sudo apt update
 Install Debian package:
 
 ```bash
-sudo apt install ros-jazzy-sample-object-detection
+sudo apt install ros-jazzy-sample-object-detection ros-jazzy-qrb-ros-cv-tensor-common-process
 ```
 
 ## 🚀 Usage
 
 <details>
   <summary>Usage details</summary>
+
 
 **On Host**
 
@@ -128,7 +129,7 @@ mv yolov8_det_qcs9075.bin /opt/model/
 mv coco.ymal /opt/
 
 source /opt/ros/jazzy/setup.bash
-ros2 launch sample_object_detection launch_with_qrb_ros_camera.py  model:=<the device model>
+ros2 launch sample_object_detection launch_with_qrb_ros_camera.py model:=/opt/model/yolov8_det_qcs9075.bin
 ```
 
 The output for these commands:
@@ -189,27 +190,14 @@ Then you can check ROS topics with the name`/yolo_detect_overlay` in  rviz2
 <details>
   <summary>Build from source details</summary>
 Install dependencies
-
-```
-sudo apt install ros-jazzy-rclpy \
-  ros-jazzy-sensor-msgs \
-  ros-jazzy-std-msgs \
-  ros-jazzy-cv-bridge \
-  ros-jazzy-ament-index-python \
-  ros-jazzy-qrb-ros-tensor-list-msgs \
-  python3-opencv \
-  python3-numpy \
-  ros-jazzy-image-publisher \
-  ros-jazzy-qrb-ros-nn-inference \
-  ros-jazzy-qrb-ros-camera \
-```
+> [!IMPORTANT] Complete **Installation** and **Usage** step first!
 
 Download the source code and build with colcon
 
 ```bash
 source /opt/ros/jazzy/setup.bash
 git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
-cd ai_vision/sample_object_detection
+cd qrb_ros_samples/ai_vision/sample_object_detection
 colcon build
 ```
 
