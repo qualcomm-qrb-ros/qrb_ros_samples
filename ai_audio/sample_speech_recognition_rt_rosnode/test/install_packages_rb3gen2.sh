@@ -18,68 +18,74 @@
 
 #!/bin/bash
 
-# 自动输入 y 或回车
+# set -eo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
-# 更新包列表
-echo "Updating package list..."
-yes | apt-get update
+# system baseic and Locale
+echo "[1] Updating package list..."
+sudo apt-get update -y
+sudo apt-get install -y locales software-properties-common curl build-essential python3-pip
 
-# 安装必要的包
-echo "Installing required packages..."
-yes | apt-get install -y locales software-properties-common curl
+# verify in env
+if [ -z "${VIRTUAL_ENV:-}" ]; then
+    echo "❌ ERROR: 必须先手动进入 venv 再执行此脚本！"
+    echo "请运行："
+    echo "    source ~/venv_ros/bin/activate"
+    exit 1
+fi
+echo "[2] Detected venv at: $VIRTUAL_ENV"
+echo "所有 Python 库将安装到此虚拟环境中。"
 
-# 设置语言环境
-echo "Setting up locale..."
-locale-gen en_US en_US.UTF-8
-update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
-export LANG=en_US.UTF-8
+# set env
+# echo "[3] Setting up locale..."
+# sudo locale-gen en_US en_US.UTF-8
+# sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+# export LANG=en_US.UTF-8
 
-# 添加 ROS 2 软件源
-echo "Adding ROS 2 repository..."
-curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
+# add ROS 2 source & install ROS Jazzy
+# echo "[4] Installing ROS 2 Jazzy..."
+# sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
+#   -o /usr/share/keyrings/ros-archive-keyring.gpg
 
-# 更新包列表并升级系统
-echo "Updating package list and upgrading system..."
-yes | apt-get update
-yes | apt-get upgrade -y
+# echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] \
+# http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
+# | sudo tee /etc/apt/sources.list.d/ros2.list >/dev/null
 
-# 安装 ROS 2
-echo "Installing ROS 2..."
-yes | apt-get install -y ros-jazzy-ros-base
+# sudo apt-get update -y
+# sudo apt-get install -y ros-jazzy-ros-base
 
-# 安装 pip
-echo "Installing pip..."
-apt-get install -y python3-pip
+# install HDF5
+echo "[5] Installing PortAudio & HDF5 system libs..."
+sudo apt-get install -y libhdf5-dev libportaudio2 libportaudiocpp0 portaudio19-dev
 
-# 安装 HDF5
-echo "Installing HDF5..."
-apt-get install -y libhdf5-dev
+# install colcon in venv
+echo "[6] Installing colcon-common-extensions into venv..."
+python3 -m pip install -U pip wheel setuptools
+python3 -m pip install -U colcon-common-extensions
 
-# 安装 colcon
-echo "Installing colcon..."
-apt-get install -y python3-colcon-common-extensions
+# install Python dependence
+echo "[7] Installing Python dependencies into venv..."
 
-# 安装 h5py
-echo "Installing h5py..."
-pip install "h5py==3.14.0"
+python3 -m pip install \
+  "h5py==3.14.0" \
+  "scipy==1.15.3" \
+  "sounddevice==0.5.2" \
+  "samplerate==0.1.0" \
+  "openai-whisper==20240930" \
+  "librosa" \
+  "numba==0.62.0" \
+  "coverage==7.10.7"
 
-# 安装相关包
-echo "Installing related packages..."
-pip install "sounddevice==0.5.2"
-pip install "samplerate==0.1.0"
-pip install "tensorflow==2.19.0"
-pip install "torch==2.5.1"
-pip install "scipy==1.15.3"
-pip install "openai-whisper==20240930"
-pip install "qai_hub_models==0.34.1"
-pip install librosa
-pip install numba==0.62.0 coverage==7.10.7
-
-apt-get install -y libportaudio2 libportaudiocpp0 portaudio19-dev
+python3 -m pip install "torch==2.5.1"
+python3 -m pip install "tensorflow==2.19.0"
+python3 -m pip install "qai_hub_models==0.34.1"
 
 echo "All packages installed successfully!"
 
-export PATH=/root/venv_ros/bin:$PATH
-export PYTHONPATH=/root/venv_ros/lib/python3.12/site-packages:$PYTHONPATH
+# verify venv
+echo "[8] Validating sounddevice import..."
+python3 - <<'PY'
+import sys, sounddevice as sd
+print("[OK] Python   ->", sys.executable)
+print("[OK] sd ver.  ->", sd.__version__)
+PY
