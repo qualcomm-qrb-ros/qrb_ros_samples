@@ -47,7 +47,7 @@ As the scale grows, naive computation becomes infeasible.
 
 ---
 
-### 1. Brute Force (Baseline)
+### 1. Brute Computation (Baseline)
 
 #### Step‑by‑step
 
@@ -65,6 +65,9 @@ q ──► dist(v1)
 **Time complexity**: `O(N · d)`  
 **Properties**: exact, no index  
 **Effective scale**: ≤ 10⁴ vectors
+
+#### Diagram
+![brute](./brute.jpg)
 
 ---
 
@@ -92,6 +95,10 @@ Level 0: o──o──o──o──o
 **Properties**: high recall, very low latency  
 **Trade‑off**: higher memory usage due to graph edges  
 **Effective scale**: 10⁵ – 10⁷ vectors
+
+
+#### Diagram
+![hnsw](./hnsw.jpg)
 
 ---
 
@@ -130,6 +137,10 @@ Query q
 **Sensitivity**: depends on `nlist` and `nprobe`  
 **Effective scale**: 10⁶ – 10⁸ vectors
 
+
+#### Diagram
+![ivf](./ivf.jpg)
+
 ---
 
 ### 4. PQ (Product Quantization)
@@ -149,6 +160,9 @@ Vector v
 
 Each sub‑vector is quantized independently and stored as an integer code.
 
+#### Diagram
+![pq_encode](./pq_encode.jpg)
+
 #### Distance computation (ADC)
 
 ```
@@ -158,6 +172,10 @@ LUT1[code1] + LUT2[code2] + LUT3[code3]
 **Properties**: extreme compression, very fast distance computation  
 **Trade‑off**: small, controlled accuracy loss  
 **Effective scale**: 10⁷ – 10⁹+ vectors
+
+
+#### Diagram
+![pq_search](./pq_search.jpg)
 
 ---
 
@@ -172,8 +190,6 @@ Routing      Pruning        Compression
   HNSW   →     IVF     →        PQ
 ```
 
----
-
 #### Index construction pipeline
 
 ```
@@ -183,9 +199,6 @@ Raw Vectors
   ├─► Train PQ codebooks
   └─► Encode vectors → inverted lists
 ```
-
----
-
 #### Query execution path
 
 ```
@@ -196,13 +209,11 @@ Query
   ├─► ADC distance computation
   └─► Top‑K results
 ```
-
 ---
-
 ### 6. Scale vs Technique Cheat Sheet
 
 ```
-10^4          → Brute Force
+10^4          → Brute Computation
 10^5 – 10^7   → HNSW
 10^6 – 10^8   → IVF
 10^7 – 10^9+  → IVF + PQ
