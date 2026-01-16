@@ -7,7 +7,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     return LaunchDescription([
         Node(
-            package='qrb_ros_speech_recognition',
+            package='qrb_ros_speech_recognition_rt_rosnode',
             executable='qrb_ros_speech_recognition',
             name='SpeechRecognition',
             output='screen',
@@ -16,7 +16,8 @@ def generate_launch_description():
                 {'ShortTermWindow': 0.1},       # Time window (in seconds) for sampling audio energy
                 {'MovingAverageWindow': 30},    # Number of samples for moving average window
                 {'AvailableWindow': 1},         # Minimum valid audio length (in seconds)
-                {'LocalTiny': 0}                # 1: run local tiny_en model; 0: use remote service
+                {'LocalTiny': 0},               # 1: run local tiny_en model; 0: use remote service
+                {'ServerUrl': 'http://10.92.128.242:5000/transcribe'}  # Remote Service Sddress
             ]
         ),
     ])

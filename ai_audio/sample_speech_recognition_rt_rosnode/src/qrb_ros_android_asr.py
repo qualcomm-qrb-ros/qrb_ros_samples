@@ -30,8 +30,8 @@ class SpeechRecognition(Node):
 
         self.get_logger().info(f'🎧 waiting for audio files ......')
 
-        # 初始化了 AudioProcessor 实例
-        self.server_url = "http://10.92.128.242:5000/transcribe"
+        self.declare_parameter('ServerUrl', 'http://10.92.128.242:5000/transcribe')
+        self.server_url = self.get_parameter('ServerUrl').get_parameter_value().string_value
 
     def audio_callback(self, msg):
         self.get_logger().info(f'reveived the wav')

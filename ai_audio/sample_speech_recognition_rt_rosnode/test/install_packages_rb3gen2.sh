@@ -28,13 +28,12 @@ sudo apt-get install -y locales software-properties-common curl build-essential 
 
 # verify in env
 if [ -z "${VIRTUAL_ENV:-}" ]; then
-    echo "❌ ERROR: 必须先手动进入 venv 再执行此脚本！"
-    echo "请运行："
-    echo "    source ~/venv_ros/bin/activate"
+    echo "ERROR: Must into the venv then run this script!"
+    echo "please run: source ~/venv_ros/bin/activate"
     exit 1
 fi
 echo "[2] Detected venv at: $VIRTUAL_ENV"
-echo "所有 Python 库将安装到此虚拟环境中。"
+echo "All Python Lib install into venv."
 
 # set env
 # echo "[3] Setting up locale..."
