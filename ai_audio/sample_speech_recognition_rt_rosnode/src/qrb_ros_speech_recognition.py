@@ -29,7 +29,7 @@ class SpeechRecognition(Node):
         self.declare_parameter("MovingAverageWindow", 30)
         self.declare_parameter("AvailableWindow", 1)
         self.declare_parameter("LocalTiny", 1)
-        server_url = "http://10.92.128.242:5000/transcribe"
+        self.declare_parameter('ServerUrl', 'http://10.92.128.242:5000/transcribe')
 
         # Get Parameters
         self.AudioEnergyThreshold = self.get_parameter("AudioEnergyThreshold").value
@@ -37,10 +37,11 @@ class SpeechRecognition(Node):
         self.MovingAverageWindow = self.get_parameter("MovingAverageWindow").value
         self.AvailableWindow = self.get_parameter("AvailableWindow").value
         self.localtiny = self.get_parameter("LocalTiny").value
+        self.server_url = self.get_parameter('ServerUrl').get_parameter_value().string_value
 
         # Initialize AudioProcessor
         self.audio_processor = AudioProcessor(
-            server_url=server_url,
+            server_url=self.server_url,
             audio_energy_threshold=self.AudioEnergyThreshold,
             short_term_window=self.ShortTermWindow,
             moving_average_window=self.MovingAverageWindow,

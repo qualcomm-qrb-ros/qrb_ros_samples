@@ -1,6 +1,6 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>qrb_ros_speech_recognition</name>
+  <name>qrb_ros_speech_recognition_rt_rosnode</name>
   <version>1.0.0</version>
   <description>QRB ROS Speech Recognition</description>
   <maintainer email="quic_shouhu@quicinc.com">shouyi hu</maintainer>

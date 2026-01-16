@@ -5,7 +5,7 @@ import os
 from glob import glob
 from setuptools import setup, find_packages
 
-package_name = 'qrb_ros_speech_recognition'
+package_name = 'qrb_ros_speech_recognition_rt_rosnode'
 
 setup(
     name=package_name,

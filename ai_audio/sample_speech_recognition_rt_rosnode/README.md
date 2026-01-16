@@ -154,7 +154,7 @@ source install/local_setup.bash
 
 2. Run the ROS2 package.
 ```bash
-ros2 launch qrb_ros_speech_recognition qrb_ros_speech_recognition.launch.py
+ros2 launch qrb_ros_speech_recognition_rt_rosnode qrb_ros_speech_recognition.launch.py
 ```
 
 3. Run the test Node to print the speech recognition result.
@@ -190,7 +190,7 @@ source install/local_setup.bash
 
 2. Run the ROS2 package.
 ```bash
-ros2 launch qrb_ros_speech_recognition qrb_ros_android_asr.launch.py
+ros2 launch qrb_ros_speech_recognition_rt_rosnode qrb_ros_android_asr.launch.py
 ```
 
 3. Run the test Node.
@@ -214,9 +214,9 @@ model = whisper.load_model("turbo", device="cuda")
 ```python
 app.run(host='10.92.128.242', port=5000)
 ```
-- Example ROS Node qrb_ros_speech_recognition.py:
+- Example ROS Node qrb_ros_speech_recognition.launch.py:
 ```python
-server_url = 'http://10.92.128.242:5000/transcribe'
+{'ServerUrl': 'http://10.92.128.242:5000/transcribe'}
 ```
 
 4. Modify launch file choice remote service.
