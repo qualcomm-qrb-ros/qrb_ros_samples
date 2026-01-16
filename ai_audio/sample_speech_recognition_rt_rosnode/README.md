@@ -96,32 +96,26 @@ The QRB ROS Speech Recognition Node is a real-time speech-to-text solution desig
 
 1. Clone the repository
 
-2. Install virtualenv
+3. Install virtualenv
 ```bash
 sudo apt-get update
 sudo apt-get install -y python3.12-venv
-python3 -m venv --copies --upgrade-deps ~/venv_ros
+python3 -m venv ~/venv_ros
 source ~/venv_ros/bin/activate
 ```
 
-3. Install ROS2 jazzy
-> [!IMPORTANT]
-> **PREREQUISITES**: The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
-> Reference [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
-
-4. Install dependencies (All operations are in venv_ros)
+34. Install dependencies
 ```bash
-cd ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode
 source ./test/install_packages_rb3gen2.sh
 ```
 
-5. Prepare AI-HUB model (only support for rb5gen2)
+4. Prepare AI-HUB model (for local mode)
 ```bash
 cd ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode
 mkdir model
 ```
 
-6. Download relate model files (only support for rb5gen2)
+5. Download relate model files (only support for rb5gen2)
 ```bash
 # Download MEL FILTER FILE to ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode/model.
 wget https://qaihub-public-assets.s3.us-west-2.amazonaws.com/qai-hub-models/models/whisper_asr_shared/v1/openai_assets/mel_filters.npz
@@ -133,16 +127,12 @@ wget https://huggingface.co/qualcomm/Whisper-Tiny-En/resolve/a524bc29bc56e448181
 ```
 
 #### Build
-1. setup env and build
 ```bash
 source /opt/ros/jazzy/setup.bash
-cd ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode
-python3 -m colcon build
-```
-
-2. set model path (only support for rb5gen2)
-```bash
+export PATH=/root/venv_ros/bin:$PATH
+export PYTHONPATH=/root/venv_ros/lib/python3.12/site-packages:$PYTHONPATH
 export WHISPER_MODEL_PATH="<path of your model>"
+colcon build --cmake-clean-cache
 ```
 
 #### Run Real-Time Speech Recognition (USB Mic)
