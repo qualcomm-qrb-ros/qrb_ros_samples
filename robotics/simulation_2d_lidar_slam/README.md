@@ -24,12 +24,14 @@ The [Simulation 2D Lidar SLAM](https://github.com/qualcomm-qrb-ros/qrb_ros_sampl
 
 ## 🔎 Table of contents
   * [APIs](#-apis)
-     * [ROS interfaces](#ROS-interfaces)
+     * [ROS interfaces](#ros-interfaces)
   * [Supported targets](#-supported-targets)
   * [Installation](#-installation)
   * [Usage](#-usage)
      * [Prerequisites](#-prerequisites)
-     * [Start the ROS2 node](#-start-the-ROS2-node-on-device)
+     * [Start cartographer on device](#-start-cartographer-on-device)
+     * [Launch RVIZ for visulization on host](#-launch-rviz-for-visulization-on-host)
+     * [Control the AMR to start mapping on host](#-control-the-amr-to-start-mapping-on-host)
   * [Contributing](#-contributing)
   * [Contributors](#%EF%B8%8F-contributors)
   * [License](#-license)
@@ -116,6 +118,21 @@ The [Simulation 2D Lidar SLAM](https://github.com/qualcomm-qrb-ros/qrb_ros_sampl
 > Reference [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
 > For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
 
+Add Qualcomm IOT PPA for Ubuntu:
+
+```bash
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
+
+Install Debian package:
+
+```bash
+sudo apt install qcom-adreno-dev
+sudo apt install ros-jazzy-qcom-cartographer ros-jazzy-qrb-ros-slam-msgs ros-jazzy-qcom-cartographer-ros
+```
+
 ## 🚀 Usage
 
 ### 🔹 Prerequisites
@@ -124,33 +141,58 @@ The [Simulation 2D Lidar SLAM](https://github.com/qualcomm-qrb-ros/qrb_ros_sampl
 
 Please refer to the `Quick Start` of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to `setup` the simulation development environment and `build` the `QRB ROS Simulation` project on your host machine. Ensure that the device and the host are on the same local network and can communicate with each other via ROS2.
 
-#### Launch the `QRB Robot Base AMR` on host
+#### Launch the `QRB Robot Base Mini AMR` on host
 
 ```bash
-ros2 launch qrb_ros_sim_gazebo gazebo_robot_base.launch.py world_model:=ionic
+ros2 launch qrb_ros_sim_gazebo gazebo_robot_base_mini.launch.py world_model:=ionic enable_rgb_camera:=false enable_depth_camera:=false
 ```
 
-### 🔹 Start the ROS2 node on device
+Press the `Play` button to start the simulation.
 
-To Login to the device, please use the command `ssh root@[ip-addr]`
-
-Prepare Device environment refer to [Qualcomm Intelligent Robotics (QIR) SDK User Guide](https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-265/quick_start.html?state=releasecandidate#setup-demo-qs)
+### 🔹 Start cartographer on device
 
 ```bash
-source /usr/share/qirp-setup.sh
-ros2 launch cartographer_ros qrb_2d_lidar_slam_gazebo_sim.launch.py
+# Prepare for running the 2D lidar SLAM
+sudo chmod 755 /opt/ros/jazzy/share/cartographer_ros/scripts/qrb_slam_service_request.sh
+sudo chmod 755 /opt/ros/jazzy/share/cartographer_ros/
+sudo chmod -R 755 /opt/ros/jazzy/share/cartographer_ros/map
+
+# Run the 2D lidar SLAM
+source /opt/ros/jazzy/setup.bash
+ros2 launch cartographer_ros qrb_2d_lidar_slam.launch.py use_sim_time:=true
 ```
 
 The output for these commands:
 
 ```bash
-[INFO] [launch]: All log files can be found below /opt/.ros/log/1980-01-06-03-53-48-803981-qcs6490-rb3gen2-vision-kit-4264
+[INFO] [launch]: All log files can be found below /home/ubuntu/.ros/log/2026-01-17-08-23-57-220541-ubuntu-4753
 [INFO] [launch]: Default logging verbosity is set to INFO
-[INFO] [cartographer_node-1]: process started with pid [4270]
-[INFO] [cartographer_occupancy_grid_node-2]: process started with pid [4271]
-[cartographer_node-1] [INFO] [0315978829.004265169] [cartographer logger]: I19800106 03:53:49.-2147483648  4270 node_main.cpp:36] Run Ignore Cycle
-[cartographer_node-1] [INFO] [0315978829.012877148] [cartographer logger]: I19800106 03:53:49.-2147483648  4270 configuration_file_resolver.cc:41] Found '/usr/share/cartographer_ros/configuration_files/qrb_amr_mapping_2d.lua' for 'qrb_amr_mapping_2d.lua'.
-[cartographer_node-1] [INFO] [0315978829.013167200] [cartographer logger]: I19800106 03:53:49.-2147483648  4270 configuration_file_resolver.cc:41] Found '/usr/share/cartographer/configuration_files/map_builder.lua' for 'map_builder.lua'.
+[INFO] [cartographer_node-1]: process started with pid [4756]
+[INFO] [cartographer_occupancy_grid_node-2]: process started with pid [4757]
+[cartographer_node-1] [INFO] [1768638237.614985282] [cartographer logger]: I20260117 08:23:57.-2147483648  4756 node_main.cpp:42] Run Ignore Cycle
+[cartographer_node-1] [INFO] [1768638237.630617976] [cartographer logger]: I20260117 08:23:57.-2147483648  4756 configuration_file_resolver.cc:41] Found '/opt/ros/jazzy/share/cartographer_ros/configuration_files/qrb_amr_mapping_2d.lua' for 'qrb_amr_mapping_2d.lua'.
+```
+
+### 🔹 Launch RVIZ for visulization on host
+
+```bash
+rviz2
+```
+
+Subscribe to the `/map` and `/robot_description` topic, set the Fixed Frame of Global Options to `map`.
+
+<div align="center">
+  <img src="./resource/simulation-2d-lidar-slam-rviz.png" alt="pipeline">
+</div>
+
+### 🔹 Control the AMR to start mapping on host
+
+```bash
+# Install teleop_twist_keyboard ROS package on host
+sudo apt install ros-jazzy-teleop-twist-keyboard
+
+# Run
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
 ---
@@ -166,7 +208,7 @@ Thanks to all our contributors who have helped make this project better!
 
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/quic-weijshen"><img src="https://avatars.githubusercontent.com/u/191950784?s=96&v=4" width="100" height="100" alt="quic-weijshen"/><br /><sub><b>quic-weijshen</b></sub></a></td>
+    <td align="center"><a href="https://github.com/qti-weijshen"><img src="https://avatars.githubusercontent.com/u/191950784?s=96&v=4" width="100" height="100" alt="qti-weijshen"/><br /><sub><b>qti-weijshen</b></sub></a></td>
     <td align="center"><a href="https://github.com/fulaliu"><img src="https://avatars.githubusercontent.com/u/129727781?v=4" width="100" height="100" alt="fulaliu"/><br /><sub><b>fulaliu</b></sub></a></td>
   </tr>
 </table>
