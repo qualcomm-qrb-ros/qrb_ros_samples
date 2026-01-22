@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiled Matrix Multiplication Animation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .left-panel {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .right-panel {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .matrices {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .matrix-container {
+            text-align: center;
+        }
+        .matrix-label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .matrix {
+            display: inline-grid;
+            gap: 2px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+        .matrix-4x4 {
+            grid-template-columns: repeat(4, 40px);
+        }
+        .matrix-16x16 {
+            grid-template-columns: repeat(16, 25px);
+        }
+        .cell {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ddd;
+            background: white;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        .cell-small {
+            width: 25px;
+            height: 25px;
+            font-size: 10px;
+        }
+        .cell.highlight-a {
+            background: #ffeb3b;
+            border-color: #fbc02d;
+            font-weight: bold;
+        }
+        .cell.highlight-b {
+            background: #81d4fa;
+            border-color: #0288d1;
+            font-weight: bold;
+        }
+        .cell.highlight-result {
+            background: #a5d6a7;
+            border-color: #388e3c;
+            font-weight: bold;
+        }
+        .cell.tile-active {
+            border: 2px solid #f44336;
+            box-shadow: 0 0 8px rgba(244, 67, 54, 0.5);
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background: #2196f3;
+            color: white;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #1976d2;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .code-display {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .code-line {
+            padding: 2px 0;
+            transition: background 0.3s;
+        }
+        .code-line.active {
+            background: #37474f;
+            border-left: 4px solid #4caf50;
+            padding-left: 10px;
+        }
+        .status {
+            padding: 15px;
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .status-item {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .operator {
+            font-size: 24px;
+            font-weight: bold;
+            color: #666;
+        }
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-box {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ddd;
+        }
+        .speed-control {
+            text-align: center;
+            margin: 10px 0;
+        }
+        .speed-control label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tiled Matrix Multiplication (16×16) - Step-by-Step Animation</h1>
+    
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-box" style="background: #ffeb3b;"></div>
+            <span>Matrix A Element</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-box" style="background: #81d4fa;"></div>
+            <span>Matrix B Element</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-box" style="background: #a5d6a7;"></div>
+            <span>Result Element</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-box" style="border: 2px solid #f44336;"></div>
+            <span>Active Tile</span>
+        </div>
+    </div>
+
+    <div class="speed-control">
+        <label for="speed">Animation Speed:</label>
+        <input type="range" id="speed" min="100" max="2000" value="800" step="100">
+        <span id="speed-value">800ms</span>
+    </div>
+
+    <div class="controls">
+        <button id="start">Start</button>
+        <button id="step">Step Forward</button>
+        <button id="reset">Reset</button>
+        <button id="pause">Pause</button>
+    </div>
+
+    <div class="container">
+        <div class="left-panel">
+            <h3>Current Tile Operation</h3>
+            <div class="matrices" id="tile-view">
+                <div class="matrix-container">
+                    <div class="matrix-label">Tile A</div>
+                    <div class="matrix matrix-4x4" id="tileA"></div>
+                </div>
+                <div class="operator">×</div>
+                <div class="matrix-container">
+                    <div class="matrix-label">Tile B</div>
+                    <div class="matrix matrix-4x4" id="tileB"></div>
+                </div>
+                <div class="operator">=</div>
+                <div class="matrix-container">
+                    <div class="matrix-label">Partial Result</div>
+                    <div class="matrix matrix-4x4" id="tileResult"></div>
+                </div>
+            </div>
+            
+            <div class="status">
+                <div class="status-item"><strong>Current Tile Position:</strong> <span id="tile-pos">-</span></div>
+                <div class="status-item"><strong>Element Position:</strong> <span id="elem-pos">-</span></div>
+                <div class="status-item"><strong>Tile Iteration:</strong> <span id="tile-iter">-</span></div>
+                <div class="status-item"><strong>Current Operation:</strong> <span id="operation">-</span></div>
+                <div class="status-item"><strong>Accumulator Value:</strong> <span id="accumulator">0</span></div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <h3>Full Matrices (16×16)</h3>
+            <div class="matrices">
+                <div class="matrix-container">
+                    <div class="matrix-label">Matrix A</div>
+                    <div class="matrix matrix-16x16" id="matrixA"></div>
+                </div>
+                <div class="operator">×</div>
+                <div class="matrix-container">
+                    <div class="matrix-label">Matrix B</div>
+                    <div class="matrix matrix-16x16" id="matrixB"></div>
+                </div>
+                <div class="operator">=</div>
+                <div class="matrix-container">
+                    <div class="matrix-label">Matrix C</div>
+                    <div class="matrix matrix-16x16" id="matrixC"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="code-display" id="code-display">
+        <div class="code-line" data-line="0">// Tiled Matrix Multiplication Algorithm</div>
+        <div class="code-line" data-line="1">for (tileRow = 0; tileRow < 4; tileRow++) {</div>
+        <div class="code-line" data-line="2">  for (tileCol = 0; tileCol < 4; tileCol++) {</div>
+        <div class="code-line" data-line="3">    for (ty = 0; ty < TILE_WIDTH; ty++) {</div>
+        <div class="code-line" data-line="4">      for (tx = 0; tx < TILE_WIDTH; tx++) {</div>
+        <div class="code-line" data-line="5">        float sum = 0.0;</div>
+        <div class="code-line" data-line="6">        for (m = 0; m < 4; m++) {</div>
+        <div class="code-line" data-line="7">          // Load tile from A</div>
+        <div class="code-line" data-line="8">          tileA[ty][tx] = A[row][m*TILE_WIDTH + tx];</div>
+        <div class="code-line" data-line="9">          // Load tile from B</div>
+        <div class="code-line" data-line="10">          tileB[ty][tx] = B[m*TILE_WIDTH + ty][col];</div>
+        <div class="code-line" data-line="11">          // Compute partial product</div>
+        <div class="code-line" data-line="12">          for (k = 0; k < TILE_WIDTH; k++) {</div>
+        <div class="code-line" data-line="13">            sum += tileA[ty][k] * tileB[k][tx];</div>
+        <div class="code-line" data-line="14">          }</div>
+        <div class="code-line" data-line="15">        }</div>
+        <div class="code-line" data-line="16">        // Write result</div>
+        <div class="code-line" data-line="17">        C[row][col] = sum;</div>
+        <div class="code-line" data-line="18">      }</div>
+        <div class="code-line" data-line="19">    }</div>
+        <div class="code-line" data-line="20">  }</div>
+        <div class="code-line" data-line="21">}</div>
+    </div>
+
+    <script>
+        const N = 16;
+        const TILE_WIDTH = 4;
+        const NUM_TILES = N / TILE_WIDTH;
+        
+        let A = [], B = [], C = [];
+        let tileA = [], tileB = [], tileResult = [];
+        let animationSteps = [];
+        let currentStep = 0;
+        let isPlaying = false;
+        let animationInterval = null;
+        let animationSpeed = 800;
+
+        // Initialize matrices
+        function initMatrices() {
+            for (let i = 0; i < N; i++) {
+                A[i] = [];
+                B[i] = [];
+                C[i] = [];
+                for (let j = 0; j < N; j++) {
+                    A[i][j] = Math.floor(Math.random() * 5) + 1;
+                    B[i][j] = Math.floor(Math.random() * 5) + 1;
+                    C[i][j] = 0;
+                }
+            }
+            
+            for (let i = 0; i < TILE_WIDTH; i++) {
+                tileA[i] = new Array(TILE_WIDTH).fill(0);
+                tileB[i] = new Array(TILE_WIDTH).fill(0);
+                tileResult[i] = new Array(TILE_WIDTH).fill(0);
+            }
+        }
+
+        // Generate animation steps
+        function generateSteps() {
+            animationSteps = [];
+            
+            for (let tileRow = 0; tileRow < NUM_TILES; tileRow++) {
+                for (let tileCol = 0; tileCol < NUM_TILES; tileCol++) {
+                    for (let ty = 0; ty < TILE_WIDTH; ty++) {
+                        for (let tx = 0; tx < TILE_WIDTH; tx++) {
+                            let sum = 0;
+                            const row = tileRow * TILE_WIDTH + ty;
+                            const col = tileCol * TILE_WIDTH + tx;
+                            
+                            for (let m = 0; m < NUM_TILES; m++) {
+                                // Load tile A
+                                animationSteps.push({
+                                    type: 'load_a',
+                                    tileRow, tileCol, ty, tx, m,
+                                    row, col,
+                                    line: 8,
+                                    description: `Loading tile A[${tileRow}][${m}] element (${ty},${tx})`
+                                });
+                                
+                                // Load tile B
+                                animationSteps.push({
+                                    type: 'load_b',
+                                    tileRow, tileCol, ty, tx, m,
+                                    row, col,
+                                    line: 10,
+                                    description: `Loading tile B[${m}][${tileCol}] element (${ty},${tx})`
+                                });
+                                
+                                // Compute partial products
+                                for (let k = 0; k < TILE_WIDTH; k++) {
+                                    const aVal = A[row][m * TILE_WIDTH + k];
+                                    const bVal = B[m * TILE_WIDTH + k][col];
+                                    sum += aVal * bVal;
+                                    
+                                    animationSteps.push({
+                                        type: 'compute',
+                                        tileRow, tileCol, ty, tx, m, k,
+                                        row, col,
+                                        aVal, bVal, sum,
+                                        line: 13,
+                                        description: `Computing: ${aVal} × ${bVal} = ${aVal * bVal}, sum = ${sum}`
+                                    });
+                                }
+                            }
+                            
+                            // Write result
+                            animationSteps.push({
+                                type: 'write',
+                                tileRow, tileCol, ty, tx,
+                                row, col, sum,
+                                line: 17,
+                                description: `Writing result C[${row}][${col}] = ${sum}`
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        // Render matrices
+        function renderMatrix(containerId, matrix, size, cellClass = 'cell') {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = cellClass;
+                    cell.textContent = matrix[i][j];
+                    cell.id = `${containerId}-${i}-${j}`;
+                    container.appendChild(cell);
+                }
+            }
+        }
+
+        function renderAll() {
+            renderMatrix('matrixA', A, N, 'cell cell-small');
+            renderMatrix('matrixB', B, N, 'cell cell-small');
+            renderMatrix('matrixC', C, N, 'cell cell-small');
+            renderMatrix('tileA', tileA, TILE_WIDTH, 'cell');
+            renderMatrix('tileB', tileB, TILE_WIDTH, 'cell');
+            renderMatrix('tileResult', tileResult, TILE_WIDTH, 'cell');
+        }
+
+        // Execute animation step
+        function executeStep(step) {
+            // Clear previous highlights
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.classList.remove('highlight-a', 'highlight-b', 'highlight-result', 'tile-active');
+            });
+            document.querySelectorAll('.code-line').forEach(line => {
+                line.classList.remove('active');
+            });
+
+            // Highlight current code line
+            const codeLine = document.querySelector(`[data-line="${step.line}"]`);
+            if (codeLine) codeLine.classList.add('active');
+
+            // Update status
+            document.getElementById('tile-pos').textContent = `Tile (${step.tileRow}, ${step.tileCol})`;
+            document.getElementById('elem-pos').textContent = `Element (${step.ty}, ${step.tx})`;
+            document.getElementById('tile-iter').textContent = step.m !== undefined ? `m = ${step.m}` : '-';
+            document.getElementById('operation').textContent = step.description;
+            document.getElementById('accumulator').textContent = step.sum || 0;
+
+            if (step.type === 'load_a') {
+                // Load tile A
+                for (let i = 0; i < TILE_WIDTH; i++) {
+                    for (let j = 0; j < TILE_WIDTH; j++) {
+                        const srcRow = step.tileRow * TILE_WIDTH + i;
+                        const srcCol = step.m * TILE_WIDTH + j;
+                        tileA[i][j] = A[srcRow][srcCol];
+                        
+                        // Highlight source in full matrix
+                        const cellId = `matrixA-${srcRow}-${srcCol}`;
+                        const cell = document.getElementById(cellId);
+                        if (cell) cell.classList.add('tile-active');
+                    }
+                }
+                renderMatrix('tileA', tileA, TILE_WIDTH, 'cell');
+            }
+            else if (step.type === 'load_b') {
+                // Load tile B
+                for (let i = 0; i < TILE_WIDTH; i++) {
+                    for (let j = 0; j < TILE_WIDTH; j++) {
+                        const srcRow = step.m * TILE_WIDTH + i;
+                        const srcCol = step.tileCol * TILE_WIDTH + j;
+                        tileB[i][j] = B[srcRow][srcCol];
+                        
+                        // Highlight source in full matrix
+                        const cellId = `matrixB-${srcRow}-${srcCol}`;
+                        const cell = document.getElementById(cellId);
+                        if (cell) cell.classList.add('tile-active');
+                    }
+                }
+                renderMatrix('tileB', tileB, TILE_WIDTH, 'cell');
+            }
+            else if (step.type === 'compute') {
+                // Highlight elements being multiplied
+                const aCell = document.getElementById(`tileA-${step.ty}-${step.k}`);
+                const bCell = document.getElementById(`tileB-${step.k}-${step.tx}`);
+                if (aCell) aCell.classList.add('highlight-a');
+                if (bCell) bCell.classList.add('highlight-b');
+                
+                // Update partial result
+                tileResult[step.ty][step.tx] = step.sum;
+                renderMatrix('tileResult', tileResult, TILE_WIDTH, 'cell');
+                const resultCell = document.getElementById(`tileResult-${step.ty}-${step.tx}`);
+                if (resultCell) resultCell.classList.add('highlight-result');
+            }
+            else if (step.type === 'write') {
+                // Write to result matrix
+                C[step.row][step.col] = step.sum;
+                renderMatrix('matrixC', C, N, 'cell cell-small');
+                const resultCell = document.getElementById(`matrixC-${step.row}-${step.col}`);
+                if (resultCell) resultCell.classList.add('highlight-result');
+                
+                // Reset tile result for next element
+                for (let i = 0; i < TILE_WIDTH; i++) {
+                    for (let j = 0; j < TILE_WIDTH; j++) {
+                        tileResult[i][j] = 0;
+                    }
+                }
+            }
+        }
+
+        // Control functions
+        function start() {
+            if (currentStep >= animationSteps.length) {
+                reset();
+            }
+            isPlaying = true;
+            document.getElementById('start').disabled = true;
+            document.getElementById('pause').disabled = false;
+            playAnimation();
+        }
+
+        function playAnimation() {
+            if (!isPlaying || currentStep >= animationSteps.length) {
+                stop();
+                return;
+            }
+            executeStep(animationSteps[currentStep]);
+            currentStep++;
+            animationInterval = setTimeout(playAnimation, animationSpeed);
+        }
+
+        function stop() {
+            isPlaying = false;
+            document.getElementById('start').disabled = false;
+            document.getElementById('pause').disabled = true;
+            if (animationInterval) {
+                clearTimeout(animationInterval);
+                animationInterval = null;
+            }
+        }
+
+        function step() {
+            if (currentStep < animationSteps.length) {
+                executeStep(animationSteps[currentStep]);
+                currentStep++;
+            }
+        }
+
+        function reset() {
+            stop();
+            currentStep = 0;
+            initMatrices();
+            generateSteps();
+            renderAll();
+            document.querySelectorAll('.code-line').forEach(line => {
+                line.classList.remove('active');
+            });
+            document.getElementById('tile-pos').textContent = '-';
+            document.getElementById('elem-pos').textContent = '-';
+            document.getElementById('tile-iter').textContent = '-';
+            document.getElementById('operation').textContent = '-';
+            document.getElementById('accumulator').textContent = '0';
+        }
+
+        // Event listeners
+        document.getElementById('start').addEventListener('click', start);
+        document.getElementById('step').addEventListener('click', step);
+        document.getElementById('reset').addEventListener('click', reset);
+        document.getElementById('pause').addEventListener('click', stop);
+        
+        document.getElementById('speed').addEventListener('input', (e) => {
+            animationSpeed = parseInt(e.target.value);
+            document.getElementById('speed-value').textContent = animationSpeed + 'ms';
+        });
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            reset();
+        });
+    </script>
+</body>
+</html>
