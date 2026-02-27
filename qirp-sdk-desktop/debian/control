@@ -65,9 +65,9 @@ Depends: ${misc:Depends},
          ros-jazzy-ros2-benchmark-interfaces,
          ros-jazzy-ros-base,
          ros-jazzy-follow-me,
-         ros-jazzy-sample-apriltag,
          libqnn-dev,
          libqnn1,
          qnn-tools,
          python3-pip,
+Conflicts: qcom-adreno1
 Description: The Qualcomm® Intelligent Robotics (QIR) SDK is a collection of components that enable you to develop robotic features on Qualcomm platforms. This SDK is applicable to the Qualcomm Linux releases.
