@@ -10,9 +10,16 @@ from launch.substitutions import PathJoinSubstitution
 
 def generate_launch_description():
     # -------- QRB ROS Camera (IMX577 example) --------
+    camera_info_file_arg = DeclareLaunchArgument(
+        'camera_info_file',
+        default_value='camera_info_imx577.yaml',
+        description='camera info yaml filename'
+    )
+
     camera_info_config_file_path = PathJoinSubstitution([
-        get_package_share_directory('qrb_ros_camera'),
-        'config', 'camera_info_imx577.yaml'
+        FindPackageShare('qrb_ros_camera'),
+        'config',
+        LaunchConfiguration('camera_info_file')
     ])
 
     camera_node = ComposableNode(

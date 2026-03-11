@@ -7,8 +7,6 @@
   <maintainer email="fulaliu@qti.qualcomm.com">Fulan Liu</maintainer>
   <license>BSD-3-Clause</license>
 
-  <buildtool_depend>ament_python</buildtool_depend>
-
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>std_srvs</exec_depend>
