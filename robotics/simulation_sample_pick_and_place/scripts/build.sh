@@ -10,7 +10,7 @@ fi
 cd "$OECORE_TARGET_SYSROOT/usr/lib" || { echo "Failed to enter directory"; exit 1; }
 
 # Create symbolic links
-for lib in liboctomath.so liboctomap.so libosqp.so; do
+for lib in liboctomath.so liboctomap.so ; do
     if [ -e "$lib" ]; then
         echo "Info: $lib exist."
         ln -sf "$lib" "${lib%.so}.a"
@@ -19,6 +19,18 @@ for lib in liboctomath.so liboctomap.so libosqp.so; do
         echo "Warning: $lib does not exist, skipping symbolic link creation."
     fi
 done
+
+cd -
+cd "$OECORE_TARGET_SYSROOT/usr/ros/jazzy/lib" || { echo "Failed to enter directory"; exit 1; }
+
+# Create symbolic links
+if [ -e "libosqp.so" ]; then
+    echo "Info: libosqp.so exist."
+    ln -sf "libosqp.so" "libosqp.a"
+    echo "Info: libosqp.so symbolic link created."
+else
+    echo "Warning: libosqp.so does not exist, skipping symbolic link creation."
+fi
 
 cd -
 echo "Info: build.sh finished."
