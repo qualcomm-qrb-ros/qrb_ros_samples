@@ -10,7 +10,7 @@ fi
 cd "$OECORE_TARGET_SYSROOT/usr/lib" || { echo "Failed to enter directory"; exit 1; }
 
 # Create symbolic links
-for lib in liboctomath.so liboctomap.so ; do
+for lib in liboctomath.so liboctomap.so libosqp.so; do
     if [ -e "$lib" ]; then
         echo "Info: $lib exist."
         ln -sf "$lib" "${lib%.so}.a"
