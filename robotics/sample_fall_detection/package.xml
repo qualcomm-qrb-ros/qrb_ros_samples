@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>sample_fall_detection</name>
+  <version>1.0.0</version>
+  <description>Sample fall detection node with Edge Impulse inference and QRB ROS camera launch.</description>
+
+  <maintainer email="fulaliu@qti.qualcomm.com">Fulan Liu</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
+
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+
+  <exec_depend>qrb_ros_camera</exec_depend>
+  <exec_depend>rclcpp_components</exec_depend>
+
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
