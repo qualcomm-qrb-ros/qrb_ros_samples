@@ -1,6 +1,17 @@
+qirp-sdk-desktop (2.4.3) unstable; urgency=medium
+
+  * Add QIM SDK runtime dependencies.
+    - Add gstreamer1.0-tools.
+    - Add gstreamer1.0-qcom-sample-apps.
+    - Add gstreamer1.0-qcom-python-examples.
+    - Add tensorflow-lite-qcom-apps.
+    - Add snpe-tools.
+  * Align SDK dependency set for QIM-based multimedia and AI samples.
+
+ -- Fulan Liu <fulaliu@qti.qualcomm.com>  Tue, 31 Mar 2026 15:38:50 +0800
 qirp-sdk-desktop (2.4.2) noble; urgency=medium
 
-    * Modify depends
+  * Modify depends
     - Removed dependency on ros-jazzy-sample-apriltag
     - Added Conflicts field to declare incompatibility with qcom-adreno1
 
