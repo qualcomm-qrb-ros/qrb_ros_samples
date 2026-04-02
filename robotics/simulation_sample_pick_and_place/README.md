@@ -28,6 +28,7 @@
 - [🎯 Supported targets](#-supported-targets)
 - [✨ Installation](#-installation)
 - [🚀 Usage](#-usage)
+- [👨‍💻 Build from source](#-build-from-source)
 - [🤝 Contributing](#-contributing)
 - [❤️ Contributors](#️-contributors)
 - [❔ FAQs](#-faqs)
@@ -83,12 +84,23 @@
 > Refer to [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to set up the environment. <br>
 > For Qualcomm Linux, please check the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documentation.
 
+- Add Qualcomm PPA repositories on device:
+```bash
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
+sudo apt update
+```
+
+- Install the pick-and-place Debian package on device: 
+```bash
+sudo apt install -y ros-jazzy-simulation-sample-pick-and-place ros-jazzy-moveit qcom-adreno-dev
+```
+
 ## 🚀 Usage
 
 The following steps assume a ROS 2 Jazzy + Gazebo environment. Follow the official installation docs to install [ROS 2 Jazzy](https://docs.ros.org/en/jazzy/Installation.html) and [Gazebo](https://gazebosim.org/docs/all/getstarted/). You can also use [qrb_ros_simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation/tree/main) to launch a Docker environment and run the steps.
-
 <details>
-  <summary>Install via Debian package</summary>
+  <summary>Debian package usage details</summary>
 
 1. Launch simulation environment on the HOST.
 
@@ -111,18 +123,6 @@ ros2 launch qrb_ros_sim_gazebo gazebo_rml_63_gripper_load_controller.launch.py
 - After Gazebo starts in the host Docker container, run the pick-and-place node on the device.
 
 2. The following steps run on a Qualcomm device (see the [Supported targets](#-supported-targets) table).
-
-- Add Qualcomm PPA repositories:
-```bash
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
-sudo apt update
-```
-
-- Install the pick-and-place Debian package: 
-```bash
-sudo apt install -y ros-jazzy-simulation-sample-pick-and-place ros-jazzy-moveit qcom-adreno-dev
-```
 
 - Launch MoveIt 2 and the demo to start the arm motion:
 ```bash
