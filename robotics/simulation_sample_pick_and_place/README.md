@@ -131,13 +131,6 @@ export ROS_DOMAIN_ID=55
 ros2 launch simulation_sample_pick_and_place simulation_sample_pick_and_place.launch.py
 ```
 
-- When the node starts, you should see a log beginning with `[move_group-1] You can start planning now!`. In another terminal, start the pick-and-place node:
-```bash
-source /opt/ros/jazzy/setup.bash
-export ROS_DOMAIN_ID=55
-ros2 run simulation_sample_pick_and_place qrb_ros_arm_pick_place
-```
-
 - You can then view the arm executing the pick-and-place operation in Gazebo.
 
 </details>
@@ -212,13 +205,6 @@ colcon build
 source install/setup.bash
 export ROS_DOMAIN_ID=55
 ros2 launch simulation_sample_pick_and_place simulation_sample_pick_and_place.launch.py
-```
-
-- When the node starts, you should see a log beginning with `[move_group-1] You can start planning now!`. In another terminal, start the pick-and-place node:
-```bash
-source install/setup.bash
-export ROS_DOMAIN_ID=55
-ros2 run simulation_sample_pick_and_place qrb_ros_arm_pick_place
 ```
 
 - You can then view the arm executing the pick-and-place operation in Gazebo.
