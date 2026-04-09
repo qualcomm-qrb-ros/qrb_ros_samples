@@ -1,3 +1,9 @@
+ros-jazzy-simulation-sample-pick-and-place (1.0.1.1) noble; urgency=high
+
+  * Resolve URDF path error and integrate pick-and-place node.
+
+ -- Teng Fan <tengf@qti.qualcomm.com>  Thu, 09 Apr 2026 06:34:48 -0000
+
 ros-jazzy-simulation-sample-pick-and-place (1.0.1) noble; urgency=high
 
   * Initial release for simulation sample pick and place.
