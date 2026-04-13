@@ -83,7 +83,7 @@ The [Simulation Sample AMR Simple Motion](https://github.com/qualcomm-qrb-ros/qr
 Add Qualcomm IOT PPA for Ubuntu:
 
 ```bash
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-noble-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
 sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
 sudo apt update
 ```
