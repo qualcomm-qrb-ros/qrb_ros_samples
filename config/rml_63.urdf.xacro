@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
 SPDX-License-Identifier: BSD-3-Clause-Clear -->
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rml_63">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rml_63_arm_robot">
   <xacro:arg name="topic_ns" default=""/>
   <!-- Import description urdf file -->
   <xacro:include filename="$(find simulation_sample_pick_and_place)/urdf/rml_63_gripper_arm/rml_63.urdf" />
