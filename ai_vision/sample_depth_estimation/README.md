@@ -26,15 +26,19 @@
 
 ## 🔎 Table of contents
 
-  * [Used ROS Topics](#-used-ros-topics)
-  * [Supported targets](#-supported-targets)
-  * [Installation](#-installation)
-  * [Usage](#-usage)
-  * [Build from source](#-build-from-source)
-  * [Contributing](#-contributing)
-  * [Contributors](#%EF%B8%8F-contributors)
-  * [FAQs](#-faqs)
-  * [License](#-license)
+- [👋 Overview](#-overview)
+- [🔎 Table of contents](#-table-of-contents)
+- [⚓ Used ROS Topics](#-used-ros-topics)
+- [🎯 Supported targets](#-supported-targets)
+- [✨ Installation](#-installation)
+- [🚀 Usage](#-usage)
+- [👨‍💻 Visualization](#-visualization)
+- [👨‍💻 Prerequisites](#-prerequisites)
+- [👨‍💻 Build from source](#-build-from-source)
+- [🤝 Contributing](#-contributing)
+- [❤️ Contributors](#️-contributors)
+- [❔ FAQs](#-faqs)
+- [📜 License](#-license)
 
 ## ⚓ Used ROS Topics 
 
@@ -73,13 +77,6 @@
 > Refer to [Install Ubuntu on Qualcomm IoT Platforms](https://ubuntu.com/download/qualcomm-iot) and [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
 > For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
 
-
-## 🚀 Usage
-<details>
-  <summary>Install via Debian package</summary>
-
-## 👨‍💻 Prerequisites
-
 - Add qcom ppa repository source:
 ```bash
 sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
@@ -89,9 +86,12 @@ sudo apt update
 
 - Install the depth estimation Debian package: 
 ```bash
-
 sudo apt install -y ros-jazzy-sample-depth-estimation
 ```
+
+## 🚀 Usage
+<details>
+  <summary>Debian package usage details</summary>
 
 - Run sample depth estimation:
 ```bash
