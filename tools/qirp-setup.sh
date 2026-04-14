@@ -114,7 +114,7 @@ function scripts_env_setup(){
     fi
     #add qualcomm carmel ppa
     echo "Add qualcomm carmel ppa , wait few minutes..."
-    sudo add-apt-repository -y ppa:ubuntu-qcom-iot/qcom-noble-ppa
+    sudo add-apt-repository -y ppa:ubuntu-qcom-iot/qcom-ppa
     sudo add-apt-repository -y ppa:ubuntu-qcom-iot/qirp
     #add ros ppa 
     export ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}')
