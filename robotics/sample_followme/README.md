@@ -1,179 +1,181 @@
-# Follow Me
+<div align="center">
+  <h1>Follow Me</h1>
+  <!-- <p align="center">
+    <img src='https://via.placeholder.com/600x400?text=Person+Tracking+Demo' alt='Follow Me Demo'></img>
+  </p> -->
+  <p>Person tracking and following system based on Re-ID with external service integration for ROS 2</p>
 
-<img src="https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/robotics/sample_followme/resources/follow_me_gif.gif" style="zoom:80%;" />
+  <a href="https://docs.ros.org/en/jazzy/" target="_blank"><img src="https://img.shields.io/badge/ROS%202-Jazzy-1c428a?style=for-the-badge&logo=ros&logoColor=white" alt="ROS 2 Jazzy"></a>
+
+</div>
+
+---
 
 ## 👋 Overview
 
-The `Follow Me` sample is a AMR to detect, track, and follow a moving person in real time. It integrates sensor emulation and motion control to  follow human-following behavior in real environments.
+The `follow_me` is the ROS 2 package for person tracking and following using Re-ID features. It integrates with an external Re-ID service package to extract features and compute similarity scores for robust person tracking in multi-person scenarios.
 
-![](./resources/image_1.png)
+<!-- <div align="center">
+  <img src="./resource/architecture.png" alt="architecture" width="600">
+</div> -->
 
-| Node Name            | Function                                                     |
-| -------------------- | ------------------------------------------------------------ |
-| camera node          | Publishes camera frames rgb image data to a ROS topic in Gazebo |
-| depth camera node    | Publishes camera frames depth image data to a ROS topic in Gazebo |
-| Root base node       | Subscribes to control commands and coordinates motion with the AMR in Gazebo. |
-| Follow me Tracker    | Subscribes camera info and run model to target detection on Device |
-| Follow me Controller | Publishes movement execution /cmd_vel commands on Device     |
+<br>
+
+- The pipeline accepts RGB images from `/camera/color/image_raw`, depth images from `/camera/depth/image_raw`, and person detections from `/yolo_detect_result`.
+- Target initialization occurs when exactly one person is detected in the image center within the specified distance range (1.5m - 3.0m).
+- Re-ID matching uses external services: `ExtractFeature` for feature extraction and `ComputeSimilarity` for similarity computation.
+- Matching logic: similarity < match_threshold means same person; similarity < template_update_threshold triggers template update.
+- The node publishes control commands to `/cmd_vel` to keep the target centered and at target distance.
 
 ## 🔎 Table of contents
 
   * [Used ROS Topics](#-used-ros-topics)
-  * [Supported targets](#-supported-targets)
+  * [Re-ID Service Interface](#-re-id-service-interface)
   * [Installation](#-installation)
   * [Usage](#-usage)
-  * [Build from source](#build-from-source)
+  * [Build from source](#-build-from-source)
   * [Contributing](#-contributing)
-  * [Contributors](#%EF%B8%8F-contributors)
-  * [FAQs](#-faqs)
   * [License](#-license)
 
-## ⚓ Used ROS Topics 
+## ⚓ Used ROS Topics
 
-| ROS Topic                  | Type                          | Description              |
-| -------------------------- | ----------------------------- | ------------------------ |
-| `/camera/color/image_raw ` | `< sensor_msgs.msg.Image> `   | image rgb topic          |
-| `/camera/depth/image_raw ` | `< sensor_msgs.msg.Image> `   | image depth topic        |
-| `/cmd_vel `                | `< geometry_msgs/msg/Twist> ` | movement execution topic |
+| ROS Topic                       | Type                                          | Description                    |
+| ------------------------------- | --------------------------------------------- | ------------------------------ |
+| `/camera/color/image_raw` | `sensor_msgs/msg/Image` | RGB camera stream |
+| `/camera/depth/image_raw` | `sensor_msgs/msg/Image` | Depth image stream |
+| `/camera/color/camera_info` | `sensor_msgs/msg/CameraInfo` | Camera intrinsics |
+| `/yolo_detect_result` | `vision_msgs/msg/Detection2DArray` | Person detections from YOLO |
+| `/cmd_vel` | `geometry_msgs/msg/Twist` | Robot velocity commands |
+| `/target_visualization` | `sensor_msgs/msg/Image` | Debug visualization with bounding boxes |
+| `/follow_me/state_control` | `follow_me/srv/StateControl` | State control service (start/pause/resume/finish) |
 
-## 🎯 Supported targets
+## ✨ Re-ID Service Interface
 
-<table >
-  <tr>
-    <th>Development Hardware</th>
-    <td>Qualcomm Dragonwing™ RB3 Gen2</td>
-    <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
-    <td>Qualcomm Dragonwing™ IQ-8275 EVK</td>
-  </tr>
-  <tr>
-    <th>Hardware Overview</th>
-    <th><a href="https://www.qualcomm.com/developer/hardware/rb3-gen-2-development-kit"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3-gen2-carousel?fmt=webp-alpha&qlt=85" width="180"/></a></th>
-    <th><a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160"></a></th>
-    <th>coming soon...</th>
-  </tr>
-</table>
+This project requires an external Re-ID package that provides the following services:
 
+| Service | Request | Response | Description |
+| --- | --- | --- | --- |
+| `/extract_feature` | `sensor_msgs/Image image` | `float32[] feature`, `bool success`, `string message` | Extract feature vector from image |
+| `/compute_similarity` | `float32[] feature1`, `float32[] feature2` | `float32 similarity`, `bool success`, `string message` | Compute cosine similarity between two features |
 
-## ✨ Installation
-
-> [!IMPORTANT]
-> **PREREQUISITES**: The following steps need to be run on **Qualcomm Ubuntu** and **ROS Jazzy**.<br>
-> For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents to prepare  complete the device.
-
-Add Qualcomm IOT PPA for Ubuntu:
-
-```bash
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
-sudo apt update
-```
-
-Download model files:
-```bash
-# Download label file
-wget https://github.com/amikelive/coco-labels/blob/master/coco-labels-2014_2017.txt
-# Download model weights
-wget https://github.com/dog-qiuqiu/FastestDet/blob/main/example/ncnn/FastestDet.bin
-wget https://github.com/dog-qiuqiu/FastestDet/blob/main/example/ncnn/FastestDet.param
-# copy model files
-cp FastestDet.bin FastestDet.param coco-labels-2014_2017.txt /usr/share/follow-me/model/
-```
-
-
-Install Debian packages:
-
-```bash
-sudo apt install ros-jazzy-ncnn
-sudo apt install ros-jazzy-follow-me
-```
 
 ## 🚀 Usage
 
-<details>
-  <summary>Usage details</summary>
+### Start the simulator on host
 
-### On Device
+Please refer to the `Quick Start` of [QRB ROS Simulation](https://github.com/qualcomm-qrb-ros/qrb_ros_simulation) to launch `QRB Robot Base AMR` on host. Ensure that the device and the host are on the same local network and can communicate with each other via ROS communication.
 
-To Login to the device, please use the command `ssh root@[ip-addr]`.
-
+```bash
+ros2 launch qrb_ros_sim_gazebo gazebo_robot_base_mini.launch.py world_model:=warehouse_followme_path2 enable_laser:=false
 ```
-# run camera node on device.
-source /usr/share/qirp-setup.sh
+
+### Build follow_me and re-id on device
+
+```bash
+git clone ...
 source /opt/ros/jazzy/setup.bash
-ros2 launch orbbec_camera gemini_330_series.launch.py color_width=848 color_height=480 color_fps=15
-
-# run follow me on device.
-source /usr/share/qirp-setup.sh
-follow_me
-```
-
-</details>
-
-## 👨‍💻 Build from source
-
-### Dependencies
-Install dependencies
-
-```bash
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
-sudo apt update
-
-sudo apt install ncnn-dev
-```
-Download model files:
-```bash
-# Download label file
-wget https://github.com/amikelive/coco-labels/blob/master/coco-labels-2014_2017.txt
-# Download model weights
-wget https://github.com/dog-qiuqiu/FastestDet/blob/main/example/ncnn/FastestDet.bin
-wget https://github.com/dog-qiuqiu/FastestDet/blob/main/example/ncnn/FastestDet.param
-# copy model files
-cp FastestDet.bin FastestDet.param coco-labels-2014_2017.txt /usr/share/follow-me/model/
-```
-
-Download the source code and build with colcon
-```bash
-source /opt/ros/jazzy/setup.bash
-git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
-cd qrb_ros_samples/robotisc/sample_followme/
 colcon build
+source install/setup.bash
 ```
+### Start the yolo object detection
 
-Run
+Please refer to [sample object detection](https://github.com/qualcomm-qrb-ros/qrb_ros_samples/tree/main/ai_vision/sample_object_detection) to launch `object detection` on device.
+
 
 ```bash
-cd ./install/follow_me/bin/
-.follow_me
+ros2 launch sample_object_detection launch_with_orbbec_camera.py model:=/opt/model/yolov8_det_qcs9075.bin score_thres:=0.4
 ```
 
+### Start the reid service
+```bash
+ros2 launch qrb_ros_people_reid qrb_sample_people_reid.launch.py reid_model_path:=xxx/sample_people_reid/osnet.bin
+```
+
+### Start the tracking pipeline
+
+```bash
+# Launch follow_me
+ros2 launch follow_me person_tracking.launch.py use_sim_time:=true
+
+# Launch with debug logging
+# ros2 launch follow_me person_tracking.launch.py use_sim_time:=true log_level:=DEBUG
+```
+
+### Control the tracker state
+
+Use the `StateControl` service to manage tracking:
+
+```bash
+# Start tracking
+ros2 service call /follow_me/state_control \
+  follow_me/srv/StateControl "{set_state: 1}"
+
+# Pause tracking
+ros2 service call /follow_me/state_control \
+  follow_me/srv/StateControl "{set_state: 2}"
+
+# Resume tracking
+ros2 service call /follow_me/state_control \
+  follow_me/srv/StateControl "{set_state: 3}"
+
+# Finish tracking
+ros2 service call /follow_me/state_control \
+  follow_me/srv/StateControl "{set_state: 4}"
+```
+
+### Monitor tracking on host
+
+```bash
+# View debug visualization
+ros2 run rqt_image_view rqt_image_view /target_visualization
+```
+
+## Configuration
+
+Main parameters can be configured via launch arguments or in `config/tracking_params.yaml`:
+
+```yaml
+person_tracker_node:
+  ros__parameters:
+    # Detection parameters
+    detection_image_width: 640    # Detection model input image width (pixels)
+    detection_image_height: 640   # Detection model input image height (pixels)
+    
+    # Tracking parameters
+    target_distance: 2.0          # Target tracking distance (meters)
+    min_init_distance: 1.5        # Minimum initialization distance (meters)
+    max_init_distance: 3.0        # Maximum initialization distance (meters)
+    person_class_id: 0            # Person class ID in detection (0 for COCO dataset)
+    
+    # Re-ID parameters
+    template_update_threshold: 0.1  # Template update threshold
+    match_threshold: 0.3            # Matching threshold
+    drift_threshold: 0.6             # Anti-drift threshold
+    max_processing_time_ms: 200      # Maximum processing time (milliseconds)
+    
+    # PID parameters - Linear velocity
+    linear_kp: 0.5
+    linear_ki: 0.0
+    linear_kd: 0.1
+    
+    # PID parameters - Angular velocity
+    angular_kp: 2.0
+    angular_ki: 0.0
+    angular_kd: 0.2
+    
+    # Velocity limits
+    max_linear_speed: 0.5   # Maximum linear velocity (m/s)
+    max_angular_speed: 0.5  # Maximum angular velocity (rad/s)
+    
+    # Debug mode
+    debug_mode: true        # Enable debug mode (publish visualization)
+```
 
 ## 🤝 Contributing
 
 We love community contributions! Get started by reading our [CONTRIBUTING.md](CONTRIBUTING.md).<br>
 Feel free to create an issue for bug report, feature requests or any discussion💡.
 
-## ❤️ Contributors
-
-Thanks to all our contributors who have helped make this project better!
-
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/quic-fulan"><img src="https://avatars.githubusercontent.com/u/129727781?v=4" width="100" height="100" alt="quic-fulan"/><br /><sub><b>quic-fulan</b></sub></a></td>
-    <td align="center"><a href="https://github.com/yuji-quic"><img src="https://avatars.githubusercontent.com/u/33081913?v=4" width="100" height="100" alt="yuji-quic"/><br /><sub><b>yuji-quic</b></sub></a></td>
-  </tr>
-</table>
-
-## ❔ FAQs
-
-<details>
-<summary>Why only have two pre-set path in the sample?</summary><br>
-This sample is intended to demonstrate our existing "follow-me" functionality and the simulation environment. Therefore, additional scenes are not configured. If needed, you can modify the world model file (for example: warehouse_followme_path2 in qrb ros simulation project) to change the character’s movement trajectory.
-</details>
-
 ## 📜 License
 
-Project is licensed under the [BSD-3-Clause](https://spdx.org/licenses/BSD-3-Clause.html) License. See [LICENSE](./LICENSE) for the full license text.
-
-
-
+Project is licensed under the [BSD-3-Clause-Clear](https://spdx.org/licenses/BSD-3-Clause-Clear.html) License. See [LICENSE](../../LICENSE) for the full license text.

@@ -1,0 +1,34 @@
+person_tracker_node:
+  ros__parameters:
+    # Detection parameters
+    detection_image_width: 640    # Detection model input image width (pixels)
+    detection_image_height: 640   # Detection model input image height (pixels)
+    
+    # Tracking parameters
+    target_distance: 2.0          # Target tracking distance (meters)
+    min_init_distance: 1.5        # Minimum initialization distance (meters)
+    max_init_distance: 3.0        # Maximum initialization distance (meters)
+    person_class_id: 0            # Person class ID in detection (0 for COCO dataset)
+    
+    # Re-ID parameters
+    template_update_threshold: 0.1  # Template update threshold
+    match_threshold: 0.3            # Matching threshold
+    drift_threshold: 0.6             # Anti-drift threshold
+    max_processing_time_ms: 200      # Maximum processing time (milliseconds)
+    
+    # PID parameters - Linear velocity
+    linear_kp: 0.5
+    linear_ki: 0.0
+    linear_kd: 0.1
+    
+    # PID parameters - Angular velocity
+    angular_kp: 2.0
+    angular_ki: 0.0
+    angular_kd: 0.2
+    
+    # Velocity limits
+    max_linear_speed: 0.5   # Maximum linear velocity (m/s)
+    max_angular_speed: 0.5  # Maximum angular velocity (rad/s)
+    
+    # Debug mode
+    debug_mode: true        # Enable debug mode (publish visualization)
