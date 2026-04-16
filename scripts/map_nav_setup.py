@@ -30,10 +30,14 @@ def kill_all():
     print('All child processes killed.')
 
 def sigint_handler(sig, frame):
-    kill_all()
-    sys.exit(0)
+    # This handler will raise a KeyboardInterrupt in the main thread.
+    # The main thread's finally block will handle the cleanup.
+    print("\nSIGINT or SIGTERM received, initiating shutdown...")
+    # It's generally better to raise an exception that the main thread can catch.
+    raise KeyboardInterrupt
 
 if __name__ == '__main__':
+    # Let the default KeyboardInterrupt exception be the main mechanism for shutdown.
     signal.signal(signal.SIGINT, sigint_handler)
     signal.signal(signal.SIGTERM, sigint_handler)
     try:
@@ -43,8 +47,13 @@ if __name__ == '__main__':
 
         print('Running build_map_node...')
         buildmap_proc = launch_ros_run('simulation_remote_assistant', 'build_map_node')
-        buildmap_proc.wait()
+        while buildmap_proc.poll() is None:
+            time.sleep(0.1)
         print('Mapping finished.')
+
+        # Check if user interrupted during mapping
+        if buildmap_proc.returncode != 0:
+             raise KeyboardInterrupt # Trigger the shutdown logic
 
         print('Restarting cartographer_ros...')
         if carto_proc and carto_proc.poll() is None:
@@ -56,13 +65,14 @@ if __name__ == '__main__':
 
         print('Running nav_preparation_node...')
         navprep_proc = launch_ros_run('simulation_remote_assistant', 'nav_preparation_node')
-        navprep_proc.wait()
+        while navprep_proc.poll() is None:
+            time.sleep(0.1)
 
     except KeyboardInterrupt:
-        kill_all()
-        print('User interrupted, shutting down...')
+        # This block will be entered when SIGINT/SIGTERM is received.
+        print('KeyboardInterrupt caught, proceeding to final cleanup.')
     except Exception as e:
-        print(f'Exception occurs: {e}')
-        kill_all()
+        print(f'An unexpected exception occurred: {e}')
     finally:
+        # This is the single, authoritative place for cleanup.
         kill_all()

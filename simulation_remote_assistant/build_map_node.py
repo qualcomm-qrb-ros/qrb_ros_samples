@@ -73,10 +73,10 @@ class BuildMapNode(Node):
             self.send_slam_command(2)
         elif command_id == 2 and success:
             self.get_logger().info('Map saved successfully, shutting down the script.')
-            rclpy.shutdown()
+            self.destroy_node() # Signal spin to exit
         elif not success:
             self.get_logger().error(f'Command {command_id} execution failed!')
-            rclpy.shutdown()
+            self.destroy_node() # Signal spin to exit
 
     def odom_callback(self, msg):
         pos = msg.pose.pose.position
@@ -146,7 +146,26 @@ class BuildMapNode(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = BuildMapNode()
-    rclpy.spin(node)
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass # The finally block will handle shutdown
+    except Exception as e:
+        if node is not None:
+            node.get_logger().error(f'Unhandled exception in spin: {e}')
+    finally:
+        if node is not None:
+            if rclpy.ok():
+                node.get_logger().info('Shutting down build_map_node...')
+                try:
+                    # Attempt to stop the robot, but don't crash if context is already invalid
+                    node.cmd_vel_pub.publish(Twist())
+                except rclpy.exceptions.RCLError as e:
+                    node.get_logger().warn(f'Could not publish stop message during shutdown: {e}')
+            node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()
