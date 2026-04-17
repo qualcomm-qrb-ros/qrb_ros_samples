@@ -12,6 +12,8 @@ import threading
 import os
 import rclpy
 import signal
+import select
+import time
 
 
 class TaskManagerNode(Node):
@@ -47,7 +49,19 @@ class TaskManagerNode(Node):
         goal.pose.pose.orientation.w = p["orientation"]["w"]
         self.get_logger().info(f"Navigating to {location_name}: ({goal.pose.pose.position.x}, {goal.pose.pose.position.y})")
 
-        self.nav_action_client.wait_for_server()
+        # Non-blocking wait for the action server
+        server_wait_start_time = time.time()
+        while not self.nav_action_client.server_is_ready():
+            if shutdown_flag.is_set():
+                self.get_logger().warn("Shutdown requested while waiting for navigation server.")
+                done_cb(False)
+                return
+            if time.time() - server_wait_start_time > 10.0: # 10 second timeout
+                self.get_logger().error("Navigation server not available after 10 seconds.")
+                done_cb(False)
+                return
+            time.sleep(0.1)
+        
         send_goal_future = self.nav_action_client.send_goal_async(goal)
         send_goal_future.add_done_callback(
             lambda fut: self._goal_response_callback(fut, done_cb)
@@ -98,9 +112,21 @@ def spin_until_event(node, stop_event):
         except Exception:
             break
 
+
+shutdown_flag = threading.Event()
+
+
 def main(args=None):
     rclpy.init(args=args)
     node = TaskManagerNode()
+
+    def signal_handler(sig, frame):
+        print("\nReceived kill signal, shutting down...")
+        shutdown_flag.set()
+        stop_event.set()
+
+    signal.signal(signal.SIGINT, signal_handler)
+
     pkg_share = get_package_share_directory('simulation_remote_assistant')
     locations_path = os.path.join(pkg_share, 'config', 'locations.yaml')
     objects_path = os.path.join(pkg_share, 'config', 'objects.yaml')
@@ -126,17 +152,29 @@ def main(args=None):
     spin_thread = threading.Thread(target=spin_until_event, args=(node, stop_event))
     spin_thread.start()
 
+    def print_prompt():
+        print("\nWhat can I help you with?")
+        print(f"Supported locations: {', '.join(valid_locations)}")
+        print(f"Supported objects: {', '.join(valid_objects)}")
+        print('Example: Go to office to check person\n')
+        sys.stdout.flush()
+
     try:
-        while rclpy.ok():
-            print("\nWhat can I help you with?")
-            print(f"Supported locations: {', '.join(valid_locations)}")
-            print(f"Supported objects: {', '.join(valid_objects)}")
-            print('Example: Go to office to check person\n')
-            sys.stdout.flush()
-            user_cmd = sys.stdin.readline()
-            if not user_cmd:
+        print_prompt()
+        while rclpy.ok() and not shutdown_flag.is_set():
+            # Use select for non-blocking stdin read
+            rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
+            if rlist:
+                user_cmd = sys.stdin.readline()
+                if not user_cmd:
+                    break
+                user_cmd = user_cmd.strip().lower()
+            else:
+                # if no input, just continue the loop to check flags
+                continue
+
+            if shutdown_flag.is_set():
                 break
-            user_cmd = user_cmd.strip().lower()
             location = next((loc for loc in valid_locations if loc in user_cmd), None)
             obj = next((o for o in valid_objects if o in user_cmd), None)
 
@@ -144,6 +182,7 @@ def main(args=None):
                 print("Command must specify both a location and an object to run.\n"
                       f"Available locations: {', '.join(valid_locations)}\n"
                       f"Available objects: {', '.join(valid_objects)}")
+                print_prompt()
                 continue
 
             node.target_class = obj
@@ -160,21 +199,42 @@ def main(args=None):
             node.goto_location_action('locations.yaml', location, nav_done_cb)
             print(f"Navigation command sent to '{location}', waiting to arrive at destination...")
 
-            nav_done = nav_done_event.wait(timeout=180)
+            # Non-blocking wait for navigation
+            nav_start_time = time.time()
+            nav_done = False
+            while not shutdown_flag.is_set() and time.time() - nav_start_time < 180:
+                if nav_done_event.wait(timeout=0.1):
+                    nav_done = True
+                    break
+            
             if not nav_done or not nav_result_holder.get('success', False):
-                print("Navigation timed out or failed")
+                if not shutdown_flag.is_set():
+                    print("Navigation timed out or failed")
+                    print_prompt()
                 continue
 
+            # If shutdown was requested during navigation, exit gracefully
+            if shutdown_flag.is_set():
+                break
+
             print(f"Arrived at '{location}', waiting for detection of '{obj}'...")
-            detected = node.result_event.wait(timeout=10.0)
-            if not detected:
+            
+            # Non-blocking wait for detection
+            detect_start_time = time.time()
+            detected = False
+            while not shutdown_flag.is_set() and time.time() - detect_start_time < 10.0:
+                if node.result_event.wait(timeout=0.1):
+                    detected = True
+                    break
+
+            if not detected and not shutdown_flag.is_set():
                 print(f"Target '{obj}' not detected within 10 seconds!")
 
-            print("Task finished. You can input new command or Ctrl+C to quit.\n")
-    except KeyboardInterrupt:
-        print("\nReceived kill signal, shutting down...")
+            print("Task finished. You can input new command or Ctrl+C to quit.")
+            print_prompt()
     finally:
-        stop_event.set()
+        if not shutdown_flag.is_set():
+            stop_event.set() # Ensure spinner thread stops even on natural exit
         spin_thread.join()
         if node is not None:
             node.destroy_node()
