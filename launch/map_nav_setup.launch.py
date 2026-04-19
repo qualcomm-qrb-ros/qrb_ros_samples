@@ -11,7 +11,7 @@ def generate_launch_description():
     pkg_share = get_package_share_directory('simulation_remote_assistant')
     pipeline_script_path = os.path.join(pkg_share, 'scripts', 'map_nav_setup.py')
     run_pipeline = ExecuteProcess(
-        cmd=['python3', pipeline_script_path],
+        cmd=['python3', '-u', pipeline_script_path],
         output='screen',
     )
     return LaunchDescription([run_pipeline])

@@ -47,8 +47,7 @@ if __name__ == '__main__':
 
         print('Running build_map_node...')
         buildmap_proc = launch_ros_run('simulation_remote_assistant', 'build_map_node')
-        while buildmap_proc.poll() is None:
-            time.sleep(0.1)
+        buildmap_proc.wait()
         print('Mapping finished.')
 
         # Check if user interrupted during mapping
@@ -65,8 +64,7 @@ if __name__ == '__main__':
 
         print('Running nav_preparation_node...')
         navprep_proc = launch_ros_run('simulation_remote_assistant', 'nav_preparation_node')
-        while navprep_proc.poll() is None:
-            time.sleep(0.1)
+        navprep_proc.wait()
 
     except KeyboardInterrupt:
         # This block will be entered when SIGINT/SIGTERM is received.
