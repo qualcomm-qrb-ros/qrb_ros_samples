@@ -1,0 +1,30 @@
+# Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+
+grasp_perception_node:
+  ros__parameters:
+    rgb_topic: "/camera/color/image_raw"
+    depth_topic: "/camera/depth/image_raw"
+    mask_topic: ""
+    obj_id: 11 # bottle class id
+    num_points: 1000
+    iteration: 2
+    pose_onnx_path: ""
+    refine_onnx_path: ""
+    yolo_seg_onnx_path: ""
+    target_label: "bottle" # bottle object name
+    target_conf: 0.25
+    yolo_score_th: 0.25
+    yolo_mask_th: 0.5
+    cam_fx: 461.07720947265625
+    cam_fy: 461.29638671875
+    cam_cx: 318.0372009277344
+    cam_cy: 236.3270721435547
+    depth_scale: 1.0
+    input_h: 80
+    input_w: 80
+    save_vis: true
+    save_video: false
+    video_fps: 15.0
+    vis_output_dir: "grasp-perception-vis/ycb-objects"
+    save_vis_every_n: 5

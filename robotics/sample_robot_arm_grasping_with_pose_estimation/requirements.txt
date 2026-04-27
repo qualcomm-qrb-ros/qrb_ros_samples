@@ -1,0 +1,8 @@
+# Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+
+numpy==2.4.4
+onnxruntime==1.24.4
+opencv_python==4.13.0.92
+PyYAML==6.0.3
+scipy==1.17.1
