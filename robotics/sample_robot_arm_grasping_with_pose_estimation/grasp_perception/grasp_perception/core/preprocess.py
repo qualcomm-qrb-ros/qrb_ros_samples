@@ -51,12 +51,12 @@ def mask_to_bbox(mask: np.ndarray):
     return [x, y, w, h]
 
 
-def get_bbox(bbox):
+def get_bbox(bbox, img_h: int, img_w: int):
     bbx = [bbox[1], bbox[1] + bbox[3], bbox[0], bbox[0] + bbox[2]]
     bbx[0] = max(bbx[0], 0)
-    bbx[1] = min(bbx[1], 479)
+    bbx[1] = min(bbx[1], img_h - 1)
     bbx[2] = max(bbx[2], 0)
-    bbx[3] = min(bbx[3], 639)
+    bbx[3] = min(bbx[3], img_w - 1)
     rmin, rmax, cmin, cmax = bbx
     r_b = rmax - rmin
     c_b = cmax - cmin
@@ -79,12 +79,12 @@ def get_bbox(bbox):
     if cmin < 0:
         cmax += -cmin
         cmin = 0
-    if rmax > 480:
-        rmin -= rmax - 480
-        rmax = 480
-    if cmax > 640:
-        cmin -= cmax - 640
-        cmax = 640
+    if rmax > img_h:
+        rmin -= rmax - img_h
+        rmax = img_h
+    if cmax > img_w:
+        cmin -= cmax - img_w
+        cmax = img_w
     return rmin, rmax, cmin, cmax
 
 
@@ -325,7 +325,7 @@ def preprocess_rgbd(
         return None
 
     bbox = mask_to_bbox((mask != 0).astype(np.uint8))
-    rmin, rmax, cmin, cmax = get_bbox(bbox)
+    rmin, rmax, cmin, cmax = get_bbox(bbox, rgb.shape[0], rgb.shape[1])
     rgb_crop = rgb[rmin:rmax, cmin:cmax, :3]
     depth_crop = depth[rmin:rmax, cmin:cmax]
     mask_crop = (mask[rmin:rmax, cmin:cmax] != 0).astype(np.uint8)
@@ -379,6 +379,35 @@ def preprocess_rgbd(
         "img": rgb_norm[np.newaxis, :, :, :],
         "idx": np.array([obj_index], dtype=np.int64),
     }
+
+
+def resize_points_for_icp(points: np.ndarray, output_h: int = 128, output_w: int = 128) -> np.ndarray:
+    """Resize sampled point cloud to a fixed HxW grid then flatten.
+
+    DenseFusion points are sampled as (1, N, 3) or (N, 3). For ICP, we upsample
+    /downsample the point set to output_h * output_w points via index interpolation.
+    """
+    pts = np.asarray(points, dtype=np.float32)
+    if pts.ndim == 3 and pts.shape[0] == 1 and pts.shape[2] == 3:
+        pts = pts[0]
+    elif pts.ndim != 2 or pts.shape[1] != 3:
+        pts = pts.reshape(-1, 3)
+
+    if len(pts) == 0:
+        return np.empty((0, 3), dtype=np.float32)
+
+    target_n = int(output_h) * int(output_w)
+    if target_n <= 0:
+        raise ValueError("output_h and output_w must be positive")
+    if len(pts) == target_n:
+        return pts
+
+    src_idx = np.arange(len(pts), dtype=np.float32)
+    dst_idx = np.linspace(0.0, float(len(pts) - 1), target_n, dtype=np.float32)
+    resized = np.empty((target_n, 3), dtype=np.float32)
+    for c in range(3):
+        resized[:, c] = np.interp(dst_idx, src_idx, pts[:, c]).astype(np.float32)
+    return resized
 
 
 def infer_pose_onnx(runner: OnnxDenseFusion, data: Dict[str, np.ndarray], iteration: int, num_points: int):
