@@ -15,14 +15,16 @@ from geometry_msgs.msg import PoseStamped, Vector3Stamped
 from message_filters import ApproximateTimeSynchronizer, Subscriber
 from rclpy.node import Node
 from rclpy.qos import QoSHistoryPolicy, QoSProfile, QoSReliabilityPolicy
-from sensor_msgs.msg import Image
-from std_msgs.msg import Float64MultiArray
+from sensor_msgs.msg import Image, PointCloud2
+from sensor_msgs_py import point_cloud2
+from std_msgs.msg import Float64MultiArray, Header
 from grasp_perception_msgs.msg import PoseEstimationResult
 
 
 
-from .core.preprocess import CameraIntrinsics, OnnxDenseFusion, Yolo11SegOnnx, preprocess_rgbd, infer_pose_onnx
+from .core.preprocess import CameraIntrinsics, OnnxDenseFusion, Yolo11SegOnnx, preprocess_rgbd, infer_pose_onnx, resize_points_for_icp
 from .core.geometry import quaternion_matrix
+from .core.template_icp_refine import TemplateICPRefiner as TemplateICPPoseRefiner, PipelineConfig
 
 
 YCB_OBJ_IDS = tuple(range(1, 22))
@@ -148,6 +150,7 @@ class PoseEstimationNodeYcb(Node):
 
         self.obj_index = self.obj_id - 1
         self.runner = OnnxDenseFusion(self.pose_onnx_path, self.refine_onnx_path)
+        self.refiner = TemplateICPPoseRefiner(PipelineConfig())
         self.yolo_seg: Optional[Yolo11SegOnnx] = None
         if not self.mask_topic:
             if not os.path.exists(self.yolo_seg_onnx_path):
@@ -170,6 +173,7 @@ class PoseEstimationNodeYcb(Node):
         self.offset_pub = self.create_publisher(Vector3Stamped, "/pose_stamp_offset", 10)
         self.rot_mat_pub = self.create_publisher(Float64MultiArray, "/pose_stamp_rotation_matrix", 10)
         self.pose_result_pub = self.create_publisher(PoseEstimationResult, "/pose_estimation_result", 10)
+        self.icp_points_pub = self.create_publisher(PointCloud2, "/grasp_perception/icp_points", 10)
         self.pose_result_frame_id = 0
         self.debug_window = False
 
@@ -187,6 +191,63 @@ class PoseEstimationNodeYcb(Node):
             subs.append(self.mask_sub)
         self.sync = ApproximateTimeSynchronizer(subs, queue_size=1, slop=0.03)
         self.sync.registerCallback(self._on_sync)
+        self.depth_points_topic = "/camera/depth/points"
+        self.latest_depth_points_msg: Optional[PointCloud2] = None
+        self.depth_points_sub = self.create_subscription(
+            PointCloud2,
+            self.depth_points_topic,
+            self._on_depth_points,
+            sensor_qos,
+        )
+
+    def _on_depth_points(self, msg: PointCloud2):
+        self.latest_depth_points_msg = msg
+
+    def _extract_icp_points_from_depth_points(self, mask: np.ndarray) -> Optional[np.ndarray]:
+        msg = self.latest_depth_points_msg
+        if msg is None:
+            self.get_logger().warn("No depth points available; frame skipped.")
+            return None
+
+        try:
+            xyz = point_cloud2.read_points_numpy(msg, field_names=("x", "y", "z"))
+        except Exception:
+            return None
+        xyz = np.asarray(xyz, dtype=np.float32)
+        if xyz.size == 0:
+            return None
+        if xyz.ndim != 2 or xyz.shape[1] != 3:
+            xyz = xyz.reshape(-1, 3)
+
+        mask_2d = mask[:, :, 0] if mask.ndim == 3 else mask
+        if msg.height > 1 and msg.width > 1 and msg.height == mask_2d.shape[0] and msg.width == mask_2d.shape[1]:
+            xyz_img = xyz.reshape(msg.height, msg.width, 3)
+            points = xyz_img[mask_2d > 0]
+        else:
+            # Point cloud layout does not match mask resolution; skip to fallback path.
+            return None
+
+        if points.size == 0:
+            return None
+        finite = np.all(np.isfinite(points), axis=1)
+        points = points[finite]
+        if points.size == 0:
+            return None
+        # Keep points in a practical grasping range.
+        points = points[(points[:, 2] > 0.0) & (points[:, 2] < 2.0)]
+        if points.size == 0:
+            return None
+        return points.astype(np.float64)
+
+    def _publish_icp_points(self, points: np.ndarray, header) -> None:
+        if points.ndim != 2 or points.shape[1] != 3 or len(points) == 0:
+            return
+        points_f32 = np.asarray(points, dtype=np.float32)
+        msg_header = Header()
+        msg_header.stamp = header.stamp
+        msg_header.frame_id = header.frame_id
+        cloud_msg = point_cloud2.create_cloud_xyz32(msg_header, points_f32.tolist())
+        self.icp_points_pub.publish(cloud_msg)
 
     def _image_to_numpy(self, msg: Image) -> np.ndarray:
         dtype = {"rgb8": np.uint8, "bgr8": np.uint8, "mono8": np.uint8, "16UC1": np.uint16, "32FC1": np.float32}.get(msg.encoding)
@@ -281,19 +342,76 @@ class PoseEstimationNodeYcb(Node):
             return
 
         quat, trans, conf = infer_pose_onnx(self.runner, data, self.iteration, self.num_points)
-        rot = quaternion_matrix(quat)[:3, :3]
+        points = np.asarray(data.get("points"), dtype=np.float64)
+        trans = np.asarray(trans, dtype=np.float64).reshape(-1)
+        # check points and translation are valid
+        if points.ndim == 3 and points.shape[0] == 1 and points.shape[2] == 3:
+            points = points[0]
+        elif points.ndim != 2 and points.shape[-1] == 3:
+            points = points.reshape(-1, 3)
+        if points.ndim != 2 or points.shape[1] != 3 or len(points) == 0:
+            self.get_logger().warn("Invalid point cloud for pose refine; frame skipped.")
+            return
+        if not np.all(np.isfinite(points)):
+            self.get_logger().warn("Non-finite point cloud for pose refine; frame skipped.")
+            return
+        if trans.size < 3 or not np.all(np.isfinite(trans[:3])):
+            self.get_logger().warn("Invalid translation for pose refine; frame skipped.")
+            return
+        trans = trans[:3]
+        init_pose = quaternion_matrix(quat).astype(np.float64)
+        if init_pose.shape != (4, 4) or not np.all(np.isfinite(init_pose)):
+            self.get_logger().warn("Invalid rotation for pose refine; frame skipped.")
+            return
+        init_pose[:3, 3] = trans
+        # points_icp = self._extract_icp_points_from_depth_points(mask)
+        # if points_icp is None:
+        points_icp = resize_points_for_icp(points, output_h=128, output_w=128)
+        if points_icp.ndim != 2 or points_icp.shape[1] != 3 or len(points_icp) == 0:
+            self.get_logger().warn("Invalid resized point cloud for pose refine; frame skipped.")
+            return
+        self._publish_icp_points(points_icp, rgb_msg.header)
+        refined_trans = trans.copy()
+        try:
+            # TemplateICPRefiner requires template initialization once.
+            if len(points_icp) >= 50:
+                if not getattr(self.refiner, "initialized", False):
+                    self.refiner.init_template(points_icp, init_pose)
+                icp_pose, fitness, rmse = self.refiner.refine(points_icp, init_pose)
+                refined_trans = np.asarray(icp_pose[:3, 3], dtype=np.float64).reshape(-1)
+        except Exception as e:
+            self.get_logger().warn(f"ICP refine failed: {e}; fallback to original translation.")
+
+        if refined_trans.size < 3 or not np.all(np.isfinite(refined_trans[:3])):
+            self.get_logger().warn("ICP refine returned invalid translation; fallback to original translation.")
+            refined_trans = trans.copy()
+        elif np.linalg.norm(refined_trans - trans) > 0.30:
+            self.get_logger().warn("ICP refine translation jump is too large (>0.30m); fallback to original translation.")
+            refined_trans = trans.copy()
+        original_rot = init_pose[:3, :3]
+        refined_rot = icp_pose[:3, :3]
         if not self._check_pose(quat, trans, conf):
             return
-        self._publish_pose(rgb_msg, quat, trans, rot)
-        roll, pitch, yaw = self._rot_to_euler_deg(rot)
-        rot_str = np.array2string(rot, precision=4, suppress_small=True, separator=", ").replace("\n", "")
+        self._publish_pose(rgb_msg, quat, refined_trans, refined_rot)
+
+        # ==== Debug ====
+        roll_original, pitch_original, yaw_original = self._rot_to_euler_deg(original_rot)
+        roll_refined, pitch_refined, yaw_refined = self._rot_to_euler_deg(refined_rot)
+        original_rot_str = np.array2string(original_rot, precision=4, suppress_small=True, separator=", ").replace("\n", "")
+        refined_rot_str = np.array2string(refined_rot, precision=4, suppress_small=True, separator=", ").replace("\n", "")
         self.get_logger().info(
             f"Published pose | label={self.target_label} conf={conf:.4f} "
-            f"R={rot_str} "
-            f"euler_rpy_deg=(roll={roll:.2f}, pitch={pitch:.2f}, yaw={yaw:.2f}) "
-            f"T_xyz_m=({trans[0]:.4f}, {trans[1]:.4f}, {trans[2]:.4f})"
+            f"R_original={original_rot_str} "
+            f"R_refined={refined_rot_str} "
+            f"euler_rpy_deg=(roll_original={roll_original:.2f}, pitch_original={pitch_original:.2f}, yaw_original={yaw_original:.2f}) "
+            f"euler_rpy_deg=(roll_refined={roll_refined:.2f}, pitch_refined={pitch_refined:.2f}, yaw_refined={yaw_refined:.2f}) "
+            f"euler_rpy_deg_diff=(roll_diff={roll_refined - roll_original:.2f}, pitch_diff={pitch_refined - pitch_original:.2f}, yaw_diff={yaw_refined - yaw_original:.2f}) "
+            f"T_xyz_m_original=({trans[0]:.4f}, {trans[1]:.4f}, {trans[2]:.4f}) "
+            f"T_xyz_m_refined=({refined_trans[0]:.4f}, {refined_trans[1]:.4f}, {refined_trans[2]:.4f}) "
+            f"T_xyz_m_diff=({refined_trans[0] - trans[0]:.4f}, {refined_trans[1] - trans[1]:.4f}, {refined_trans[2] - trans[2]:.4f}) "
+
         )
-        self._save_visualization(rgb_msg, rgb, mask, rot, trans, conf, other_instances)
+        self._save_visualization(rgb_msg, rgb, mask, refined_rot, refined_trans, conf, other_instances)
 
     def _check_pose(self, quat: np.ndarray, trans: np.ndarray, conf: float):
         if not np.all(np.isfinite(quat)) or not np.all(np.isfinite(trans)):

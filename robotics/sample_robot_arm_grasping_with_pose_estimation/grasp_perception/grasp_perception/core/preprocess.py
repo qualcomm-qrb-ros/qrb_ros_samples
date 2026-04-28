@@ -381,6 +381,35 @@ def preprocess_rgbd(
     }
 
 
+def resize_points_for_icp(points: np.ndarray, output_h: int = 128, output_w: int = 128) -> np.ndarray:
+    """Resize sampled point cloud to a fixed HxW grid then flatten.
+
+    DenseFusion points are sampled as (1, N, 3) or (N, 3). For ICP, we upsample
+    /downsample the point set to output_h * output_w points via index interpolation.
+    """
+    pts = np.asarray(points, dtype=np.float32)
+    if pts.ndim == 3 and pts.shape[0] == 1 and pts.shape[2] == 3:
+        pts = pts[0]
+    elif pts.ndim != 2 or pts.shape[1] != 3:
+        pts = pts.reshape(-1, 3)
+
+    if len(pts) == 0:
+        return np.empty((0, 3), dtype=np.float32)
+
+    target_n = int(output_h) * int(output_w)
+    if target_n <= 0:
+        raise ValueError("output_h and output_w must be positive")
+    if len(pts) == target_n:
+        return pts
+
+    src_idx = np.arange(len(pts), dtype=np.float32)
+    dst_idx = np.linspace(0.0, float(len(pts) - 1), target_n, dtype=np.float32)
+    resized = np.empty((target_n, 3), dtype=np.float32)
+    for c in range(3):
+        resized[:, c] = np.interp(dst_idx, src_idx, pts[:, c]).astype(np.float32)
+    return resized
+
+
 def infer_pose_onnx(runner: OnnxDenseFusion, data: Dict[str, np.ndarray], iteration: int, num_points: int):
     pred_r, pred_t, pred_c, emb = runner.pose_sess.run(
         None,

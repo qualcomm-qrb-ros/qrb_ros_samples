@@ -163,7 +163,7 @@ class VisionGraspingSystem:
         self.rotation_matrix = np.array([[0.01206237, 0.99929647, 0.03551135],
                                         [-0.99988374, 0.01172294, 0.00975125],
                                         [0.00932809, -0.03562485, 0.9993217]])
-        self.translation_vector = np.array([-0.10039019, -0.05225555, -0.12256825])
+        self.translation_vector = np.array([-0.14039019, -0.05225555, -0.12256825])
 
         # Axis mapping: PoseEstimationResult -> end-effector frame.
         self.pose_result_to_ee_axes = np.array([
@@ -427,7 +427,7 @@ class VisionGraspingSystem:
 
         return True, "Self-collision check passed"
     
-    def movej(self, joint_angles, v=20, r=0, connect=0, block=1):
+    def movej(self, joint_angles, v=15, r=0, connect=0, block=1):
         """
         Joint-space move.
         
@@ -450,7 +450,7 @@ class VisionGraspingSystem:
         time.sleep(2)
         return ok
     
-    def movej_p(self, pose, v=20, r=0, connect=0, block=1):
+    def movej_p(self, pose, v=15, r=0, connect=0, block=1):
         """
         Cartesian move using joint interpolation.
         
@@ -479,7 +479,7 @@ class VisionGraspingSystem:
         time.sleep(2)
         return ok
     
-    def movel(self, pose, v=20, r=0, connect=0, block=1):
+    def movel(self, pose, v=15, r=0, connect=0, block=1):
         """
         Cartesian linear move.
         
@@ -772,7 +772,7 @@ class VisionGraspingSystem:
                 print("State: MOVE_TO_HOME - move to home pose")
                 print("="*60)
                 print("[Motion] Moving to home pose")
-                if not self.movej(self.home_joint_angles, v=20):
+                if not self.movej(self.home_joint_angles, v=15):
                     self._enter_failure("MOVE_TO_HOME", "Robot arm failed to reach home pose", recover_state="MOVE_TO_HOME")
                     return
                 self._mark_state_success("MOVE_TO_HOME")
@@ -791,7 +791,7 @@ class VisionGraspingSystem:
                 print("State: MOVE_TO_DETECTION_POSE - move to detection pose")
                 print("="*60)
                 print("[Motion] Moving to detection pose")
-                if not self.movej(self.detection_joint_angles, v=20):
+                if not self.movej(self.detection_joint_angles, v=15):
                     self._enter_failure(
                         "MOVE_TO_DETECTION_POSE",
                         "Robot arm failed to reach detection pose",
@@ -839,7 +839,7 @@ class VisionGraspingSystem:
                     print(f"[Motion] Moving to pre-grasp pose")
                     print(f"  Original pose: {self.object_pose_in_base[:3]}")
                     print(f"  Pre-grasp pose: {pre_grasp_pose[:3]}")
-                    if not self.movel(pre_grasp_pose, v=20):
+                    if not self.movel(pre_grasp_pose, v=15):
                         self._enter_failure(
                             "MOVE_TO_PRE_GRASP",
                             "Robot arm failed to reach pre-grasp pose",
@@ -868,7 +868,7 @@ class VisionGraspingSystem:
                 print("="*60)
                 if self.object_pose_in_base is not None:
                     print(f"[Motion] Moving to grasp pose: {self.object_pose_in_base[:3]}")
-                    if not self.movej_p(self.object_pose_in_base, v=10):
+                    if not self.movel(self.object_pose_in_base, v=10):
                         self._enter_failure("MOVE_TO_GRASP", "Robot arm failed to reach grasp pose", recover_state="MOVE_TO_PRE_GRASP")
                         return
                     self._mark_state_success("MOVE_TO_GRASP")
@@ -896,10 +896,10 @@ class VisionGraspingSystem:
                 if current_pose is not None:
                     place_pose = current_pose.copy()
                     # base frame coordinate system
-                    place_pose[0] += -0.05  # x -5 cm (forward)
-                    place_pose[1] += 0.3  # y +5 cm (right)
+                    # place_pose[0] += -0.05  # x -5 cm (forward)
+                    place_pose[1] += 0.3  # y +30 cm (right)
                     place_pose[2] += 0.2  # z +20 cm (up)
-                    if not self.movej_p(place_pose, v=20):
+                    if not self.movej_p(place_pose, v=15):
                         self._enter_failure("PLACE_OBJECT", "Failed to move to place pose", recover_state="MOVE_TO_DETECTION_POSE")
                         return
                     time.sleep(2)
@@ -923,7 +923,7 @@ class VisionGraspingSystem:
                 print("State: RETURN_TO_DETECTION_POSE - return to detection pose")
                 print("="*60)
                 print("[Motion] Returning to detection pose")
-                if not self.movej(self.detection_joint_angles, v=20):
+                if not self.movej(self.detection_joint_angles, v=15):
                     self._enter_failure(
                         "RETURN_TO_DETECTION_POSE",
                         "Failed to return to detection pose after grasp",
@@ -942,7 +942,7 @@ class VisionGraspingSystem:
                 print("State: RETURN_TO_HOME - return to home pose")
                 print("="*60)
                 print("[Motion] Returning to home pose")
-                if not self.movej(self.home_joint_angles, v=20):
+                if not self.movej(self.home_joint_angles, v=15):
                     self._enter_failure("RETURN_TO_HOME", "Failed to return to home pose", recover_state="RETURN_TO_HOME")
                     return
                 time.sleep(2)
@@ -958,7 +958,7 @@ class VisionGraspingSystem:
                 print("="*60)
                 print(f"[Recovery] Last error: {self.last_error}")
                 print("[Recovery] Attempting to return to detection pose first")
-                if self.movej(self.detection_joint_angles, v=20):
+                if self.movej(self.detection_joint_angles, v=15):
                     print(f"[Recovery] Recovery succeeded, returning to state: {self.recovery_target_state}")
                     self.current_state = self.recovery_target_state
                 else:
