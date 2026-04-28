@@ -28,3 +28,4 @@ grasp_perception_node:
     video_fps: 15.0
     vis_output_dir: "grasp-perception-vis/ycb-objects"
     save_vis_every_n: 5
+    use_icp_refine: false
