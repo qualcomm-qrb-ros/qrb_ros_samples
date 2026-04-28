@@ -27,6 +27,10 @@ install/
 log/
 build/
 
+# ONNX export
+trained_checkpoints/
+onnx_export/DenseFusion/
+
 # Project runtime outputs
 grasp-perception-vis/
 *.mp4

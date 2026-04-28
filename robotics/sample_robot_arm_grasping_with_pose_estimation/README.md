@@ -6,6 +6,7 @@
 <div>
   <h1>Sample Robot Arm Grasping with Pose Estimation</h1>
 </div>
+<img src="https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/robotics/sample_robot_arm_grasping_with_pose_estimation/resource/vision-grabx2.gif" style="zoom:100%;" />
 
 ---
 
@@ -85,27 +86,44 @@ Typical hardware: **Orbbec D335** (or compatible RGB-D) + **RML63** arm with ven
 > [!CAUTION]
 > This demo targets a **real manipulator**. Verify workspace limits, emergency stop, and personnel safety before enabling motion.
 
-- Prerequisites installation
-```bash
-cd robotics/sample_robot_arm_grasping_with_pose_estimation/scripts
-chmod +x install.bash && bash install.bah
-```
+1. Prerequisites installation
+    ```bash
+    cd robotics/sample_robot_arm_grasping_with_pose_estimation/scripts
+    chmod +x install.bash && bash install.bash
+    ```
 
-- (Optional)ONNX model export
+    - (Optional)ONNX model export
 
-If you need to regenerate ONNX assets instead of using the packaged files in `grasp_perception/models/`, use the `--onnx_export` to run `install.bash` as below:
-```bash
-bash install.bash --onnx_export
-```
+    If you need to regenerate ONNX assets instead of using the packaged files in `grasp_perception/models/`, please follow these steps as below,
 
-4. Download YOLO segmentation ONNX model from [Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/yolov11_seg?searchTerm=yolov) to `grasp_perception/models/yolo26n_seg_models/` path, then rename ONNX files to `yolo26n-seg.onnx` (or pass explicit launch arguments `pose_onnx_path`, `refine_onnx_path`, `yolo_seg_onnx_path`).
+    - Refer to [Densefusion official repository](https://github.com/j96w/DenseFusion#trained-checkpoints) to download the trained checkpoints with `YCB datasets`, and then using the `--onnx_export` to run `install.bash` as below:
+    ```bash
+    unzip <YOUR DOWNLOAD PATH>/trained_checkpoints.zip
+    export POSE_MODEL_PATH=<YOUR DCOMPRESSED PATH>/trained_checkpoints/trained_checkpoints/ycb/pose_model_26_0.012863246640872631.pth
+    export REFINE_MODEL_PATH=<YOUR DCOMPRESSED PATH>/trained_checkpoints/trained_checkpoints/ycb/pose_refine_model_69_0.009449292959118935.pth
+    bash install.bash --onnx_export
+    ```
 
-5. Please refer to [`Orbbec camera` official repository](https://github.com/orbbec/OrbbecSDK_v2) to install camera drive. Using test command to ensure `Orbbec camera` works well.
-```bash
-ros2 run orbbec_camera list_devices_node
-```
+2. Using test command to ensure `Orbbec camera` works well.
+    ```bash
+    ros2 run orbbec_camera list_devices_node
+    ```
 
-There is no separate Debian meta-package documented for this sample; build the ROS packages from source as below.
+  **Note**: There is no separate Debian meta-package documented for this sample; build the ROS packages from source as below.
+
+## 👨‍💻 Build from source
+
+1. **Build ROS 2 packages** (`grasp_perception_msgs` first as a dependency):
+
+    ```bash
+    cd <YOUR WORKSPACE>/sample_robot_arm_grasping_with_pose_estimation
+    source /opt/ros/jazzy/setup.bash
+    colcon build --symlink-install --packages-select grasp_perception_msgs grasp_perception
+    ```
+
+2. Continue with [🚀 Usage](#-usage).
+
+    **ONNX models:** YCB DenseFusion and YOLO weights ship under `grasp_perception/models/` (see `.gitignore` for any LFS or large-binary policy). If a weight is missing locally, place files so paths in launch or YAML resolve, or pass explicit `pose_onnx_path`, `refine_onnx_path`, and `yolo_seg_onnx_path` arguments.
 
 ## 🚀 Usage
 
@@ -139,7 +157,7 @@ export ROS_DOMAIN_ID=55 # optional; match your network
 python grasp_execution/grasp_execution/src/main.py --ip 192.168.1.18 --pose-topic /pose_estimation_result
 ```
 
-4. **Perception (offline scene folder)** — publishes synthetic `/camera/...` from files and runs the same node:
+4. **(Optional)Perception (offline scene folder)** — publishes synthetic `/camera/...` from files and runs the same node:
 
 ```bash
 source /path/to/your_ws/install/setup.bash
@@ -157,48 +175,6 @@ Adjust `scene_dir` to a directory that contains your recorded `rgb/` and `depth/
 - **File replay publisher:** `grasp_perception/config/file_input_publisher.yaml`.
 - **Launch arguments:** `grasp_perception/launch/inference_with_camera_stream.launch.py` and `inference_with_local_file.launch.py` (ONNX paths, topics, `scene_dir`, camera intrinsics overrides on local-file launch).
 - **Executor:** `grasp_execution` CLI flags `--ip`, `--port`, `--pose-topic` (see `grasp_execution/src/core/grasp_execution.py`).
-
-## 👨‍💻 Build from source
-
-1. **Create a workspace** and add this sample under `src/` (symlink or copy the folder that contains `grasp_perception_msgs/` and `grasp_perception/`).
-
-```bash
-mkdir -p ~/qrb_grasp_ws/src && cd ~/qrb_grasp_ws/src
-# Example: symlink from a full qrb_ros_samples (or qrb_ros_samples_external) checkout
-ln -sf /path/to/<repository>/robotics/sample_robot_arm_grasping_with_pose_estimation .
-```
-
-If you clone the upstream monorepo instead, the path is typically `src/qrb_ros_samples/robotics/sample_robot_arm_grasping_with_pose_estimation`—adjust `--from-paths` and `cd` paths to match your layout.
-
-2. **Install dependencies** from the sample path:
-
-```bash
-cd ~/qrb_grasp_ws
-source /opt/ros/jazzy/setup.bash
-sudo rosdep init 2>/dev/null || true
-rosdep update
-rosdep install -i --from-paths src/sample_robot_arm_grasping_with_pose_estimation --rosdistro jazzy -y
-```
-
-3. **Build ROS 2 packages** (`grasp_perception_msgs` first as a dependency):
-
-```bash
-cd ~/qrb_grasp_ws
-source /opt/ros/jazzy/setup.bash
-colcon build --packages-select grasp_perception_msgs grasp_perception
-```
-
-4. **Install execution package** (Python, uses `rclpy` and built messages):
-
-```bash
-cd ~/qrb_grasp_ws/src/sample_robot_arm_grasping_with_pose_estimation
-source ~/qrb_grasp_ws/install/setup.bash
-pip install -e grasp_execution/grasp_execution
-```
-
-5. Continue with [🚀 Usage](#-usage).
-
-**ONNX models:** YCB DenseFusion and YOLO weights ship under `grasp_perception/models/` (see `.gitignore` for any LFS or large-binary policy). If a weight is missing locally, place files so paths in launch or YAML resolve, or pass explicit `pose_onnx_path`, `refine_onnx_path`, and `yolo_seg_onnx_path` arguments.
 
 ## 🤝 Contributing
 
