@@ -1,0 +1,11 @@
+#AI model 
+model:
+model_label:
+
+# apt packages
+apt:
+  - python3-numpy
+  - ros-jazzy-qrb-ros-nn-inference
+
+# python packages
+pip:
