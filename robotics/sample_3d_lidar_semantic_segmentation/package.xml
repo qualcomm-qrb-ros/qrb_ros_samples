@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>sample_3d_lidar_semantic_segmentation</name>
+  <version>0.0.1</version>
+  <description>3D LiDAR Semantic Segmentation using SalsaNext model with QNN inference</description>
+  <maintainer email="guohmiao@qti.qualcomm.com">guohmiao</maintainer>
+  <license>BSD 3-Clause License</license>
+
+  <!-- Build tool -->
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+
+  <!-- Build dependencies -->
+  <build_depend>python3-numpy</build_depend>
+  <build_depend>ament_index_python</build_depend>
+  <build_depend>rclpy</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>sensor_msgs_py</build_depend>
+  <build_depend>qrb_ros_tensor_list_msgs</build_depend>
+
+  <!-- Execution dependencies -->
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>sensor_msgs_py</exec_depend>
+  <exec_depend>qrb_ros_nn_inference</exec_depend>
+  <exec_depend>qrb_ros_tensor_list_msgs</exec_depend>
+
+  <!-- Test dependencies -->  
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
