@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved. -->
+<!-- SPDX-License-Identifier: BSD-3-Clause-Clear -->
+<package format="3">
+  <name>grasp_perception_msgs</name>
+  <version>1.0.0</version>
+  <description>Message definitions for grasp_perception.</description>
+  <maintainer email="tengf@qti.qualcomm.com">Teng Fan</maintainer>
+  <license>BSD-3-Clause-Clear</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+
+  <depend>std_msgs</depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
