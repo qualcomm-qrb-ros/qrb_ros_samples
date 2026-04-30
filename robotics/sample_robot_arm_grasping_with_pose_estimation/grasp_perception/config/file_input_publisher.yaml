@@ -1,0 +1,12 @@
+# Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+
+file_input_publisher:
+  ros__parameters:
+    scene_dir: ""
+    rgb_path: ""
+    depth_path: ""
+    rgb_topic: "/camera/color/image_raw"
+    depth_topic: "/camera/depth/image_raw"
+    publish_hz: 5.0
+    loop: false
