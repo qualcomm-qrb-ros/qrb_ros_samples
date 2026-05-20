@@ -45,7 +45,7 @@ The `follow_me` is the ROS 2 package for person tracking and following using Re-
 | `/camera/depth/image_raw` | `sensor_msgs/msg/Image` | Depth image stream |
 | `/camera/color/camera_info` | `sensor_msgs/msg/CameraInfo` | Camera intrinsics |
 | `/yolo_detect_result` | `vision_msgs/msg/Detection2DArray` | Person detections from YOLO |
-| `/cmd_vel` | `geometry_msgs/msg/Twist` | Robot velocity commands |
+| `/cmd_vel` | `geometry_msgs/msg/TwistStamped` | Robot velocity commands |
 | `/target_visualization` | `sensor_msgs/msg/Image` | Debug visualization with bounding boxes |
 | `/follow_me/state_control` | `follow_me/srv/StateControl` | State control service (start/pause/resume/finish) |
 

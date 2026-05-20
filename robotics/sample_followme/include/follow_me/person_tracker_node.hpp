@@ -12,7 +12,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <cv_bridge/cv_bridge.hpp>
-#include <geometry_msgs/msg/twist.hpp>
+#include <geometry_msgs/msg/twist_stamped.hpp>
 #include <memory>
 #include <mutex>
 #include <qrb_ros_people_reid/srv/compute_similarity.hpp>
@@ -60,7 +60,7 @@ private:
   rclcpp::Client<qrb_ros_people_reid::srv::ComputeSimilarity>::SharedPtr compute_similarity_client_;
 
   // Publishers
-  rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
+  rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_vel_pub_;
   rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr vis_pub_;
 
   // Services
