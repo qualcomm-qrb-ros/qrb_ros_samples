@@ -56,7 +56,7 @@ PersonTrackerNode::PersonTrackerNode() : Node("person_tracker_node"), has_target
           std::bind(&PersonTrackerNode::cameraInfoCallback, this, std::placeholders::_1));
 
   // Create publishers
-  cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel", 10);
+  cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::TwistStamped>("/cmd_vel", 10);
   vis_pub_ = this->create_publisher<sensor_msgs::msg::Image>("/target_visualization", 10);
 
   // Create state control service
@@ -562,17 +562,19 @@ void PersonTrackerNode::computeAndPublishControl()
                           "STRAIGHT");
 
   // Publish control command
-  auto cmd = geometry_msgs::msg::Twist();
-  cmd.linear.x = linear_vel;
-  cmd.angular.z = angular_vel;
+  auto cmd = geometry_msgs::msg::TwistStamped();
+  cmd.header.stamp = this->now();
+  cmd.twist.linear.x = linear_vel;
+  cmd.twist.angular.z = angular_vel;
   cmd_vel_pub_->publish(cmd);
 }
 
 void PersonTrackerNode::stopRobot()
 {
-  auto cmd = geometry_msgs::msg::Twist();
-  cmd.linear.x = 0.0;
-  cmd.angular.z = 0.0;
+  auto cmd = geometry_msgs::msg::TwistStamped();
+  cmd.header.stamp = this->now();
+  cmd.twist.linear.x = 0.0;
+  cmd.twist.angular.z = 0.0;
   cmd_vel_pub_->publish(cmd);
 }
 
