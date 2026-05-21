@@ -1,0 +1,15 @@
+# Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+
+numpy==2.4.4
+onnxruntime==1.24.4
+opencv_python==4.13.0.92
+PyYAML==6.0.3
+scipy==1.17.1
+
+# Required by ROS 2 build toolchain
+jinja2       # generate-parameter-library-py: code generation via templates
+typeguard    # generate-parameter-library-py: runtime type checking in YAML parser
+empy==3.3.4  # rosidl_adapter: IDL/message file conversion (imports as 'em')
+catkin_pkg
+lark-parser

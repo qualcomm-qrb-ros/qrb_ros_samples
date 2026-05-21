@@ -1,0 +1,20 @@
+#AI model 
+model:
+  - whisper_tiny_en-whisperencoder.tflite,https://huggingface.co/qualcomm/Whisper-Tiny-En/resolve/main/WhisperEncoder.tflite?download=true
+  - whisper_tiny_en-whisperdecoder.tflite,https://huggingface.co/qualcomm/Whisper-Tiny-En/resolve/main/WhisperDecoder.tflite?download=true
+
+model_label:
+  - mel_filters.npz,https://raw.githubusercontent.com/openai/whisper/refs/heads/main/whisper/assets/mel_filters.npz
+  - gpt2.tiktoken,https://raw.githubusercontent.com/openai/whisper/refs/heads/main/whisper/assets/gpt2.tiktoken
+  - audio_service_test.py,https://raw.githubusercontent.com/qualcomm-qrb-ros/qrb_ros_audio_service/refs/heads/main/tests/audio_service_test.py
+# apt packages
+apt:
+  - libsamplerate0-dev
+  - python3-tiktoken
+  - python3-scipy
+  - ffmpeg
+# python packages
+pip:
+  - audio2numpy
+  - samplerate
+  - torch

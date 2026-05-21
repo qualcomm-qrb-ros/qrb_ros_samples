@@ -1,0 +1,16 @@
+#AI model 
+model:
+  - MediaPipeHandDetector.bin,https://huggingface.co/qualcomm/MediaPipe-Hand-Detection/resolve/7c266a43cf0328c5e00c96007a339ae41ddffa65/MediaPipeHandDetector.bin?download=true
+  - MediaPipeHandLandmarkDetector.bin,https://huggingface.co/qualcomm/MediaPipe-Hand-Detection/resolve/7c266a43cf0328c5e00c96007a339ae41ddffa65/MediaPipeHandLandmarkDetector.bin?download=true
+  - anchors_palm.npy,https://raw.githubusercontent.com/zmurez/MediaPipePyTorch/65f2549ba35cd61dfd29f402f6c21882a32fabb1/anchors_palm.npy
+
+model_label:
+
+# apt packages
+apt:
+  - ros-jazzy-cv-bridge
+  - ros-jazzy-image-publisher
+  - python3-opencv
+
+# python packages
+pip:

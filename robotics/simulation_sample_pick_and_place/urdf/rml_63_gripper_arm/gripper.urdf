@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+\# Copyright 2024 realman-robotics
+\#
+\# Licensed under the Apache License, Version 2.0 (the "License");
+\# you may not use this file except in compliance with the License.
+\# You may obtain a copy of the License at
+\#
+\#    http://www.apache.org/licenses/LICENSE-2.0
+\#
+\# Unless required by applicable law or agreed to in writing, software
+\# distributed under the License is distributed on an "AS IS" BASIS,
+\# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+\# See the License for the specific language governing permissions and
+\# limitations under the License.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rml_gripper_description">
+  <xacro:macro name="rml_gripper" params="ns:='' ">
+    <xacro:property name="namespace" value="${ns + '/' if ns != '' else ''}" />
+    <link
+      name="${namespace}link7">
+      <inertial>
+        <origin
+          xyz="0.04582 -2.3076E-07 -0.005454"
+          rpy="0 0 0" />
+        <mass
+          value="0.051307" />
+        <inertia
+          ixx="1.5914E-05"
+          ixy="4.818E-10"
+          ixz="1.4306E-07"
+          iyy="8.6532E-05"
+          iyz="-1.6535E-11"
+          izz="0.00010189" />
+      </inertial>
+      <visual>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 3.1416" />
+        <geometry>
+          <mesh filename="file://$(find simulation_sample_pick_and_place)/meshes/rml_63_gripper_arm/link7.STL" />
+        </geometry>
+        <material name="">
+          <color rgba="1 1 1 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin
+          xyz="0 0 0"
+          rpy="0 0 3.1416" />
+        <geometry>
+          <mesh filename="file://$(find simulation_sample_pick_and_place)/meshes/rml_63_gripper_arm/link7.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="${namespace}joint7" type="fixed">
+      <origin rpy="0 0 3.1416" xyz="0 0 0.008"/>
+      <parent link="${namespace}link6"/>
+      <child link="${namespace}link7"/>
+      <axis xyz="0 0 0"/>
+    </joint>
+    <link name="${namespace}link8"/>
+    <joint name="${namespace}joint8" type="fixed">
+      <origin rpy="0 0 0" xyz="-0.01 0 0.043"/>
+      <parent link="${namespace}link7"/>
+      <child link="${namespace}link8"/>
+      <axis xyz="0 0 0"/>
+    </joint>
+    <joint name="${namespace}joint00" type="fixed">
+      <parent link="${namespace}link8"/>
+      <child link="${namespace}Link00"/>
+      <origin rpy="0 -1.5708 0" xyz="0 0 0"/>
+    </joint>
+    <link name="${namespace}Link00">
+      <inertial>
+        <origin xyz="0.00339303654278191 -2.1205433560656E-05 -0.0099185365078758" rpy="0 0 0" />
+        <mass value="0.105853592307918" />
+        <inertia ixx="3.93795927851199E-05" ixy="-8.7395226509728E-08" ixz="5.91928672040786E-07" iyy="0.000106376720416166" iyz="-1.82858764303774E-10" izz="0.000125852616063213" />
+      </inertial>
+      <visual>
+	      <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="file://$(find simulation_sample_pick_and_place)/meshes/rml_63_gripper_arm/Link00.STL" />
+        </geometry>
+        <material name="">
+          <color rgba="0.1 0.1 0.1 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="file://$(find simulation_sample_pick_and_place)/meshes/rml_63_gripper_arm/Link00.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <link name="${namespace}Link01">
+      <inertial>
+        <origin xyz="0.0164149658242926 9.75754915755189E-09 0.00898193900447147" rpy="0 0 0" />
+        <mass value="0.00647716099397792" />
+        <inertia ixx="2.95068972140683E-07" ixy="8.63208170411155E-13" ixz="-1.92008628754607E-09" iyy="1.69979619476872E-06" iyz="-1.99232397395103E-13" izz="1.45016449434989E-06" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="file://$(find simulation_sample_pick_and_place)/meshes/rml_63_gripper_arm/Link01.STL" />
+        </geometry>
+        <material name="">
+          <color rgba="0.1 0.1 0.1 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="file://$(find simulation_sample_pick_and_place)/meshes/rml_63_gripper_arm/Link01.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="${namespace}joint01" type="revolute">
+      <origin xyz="0.036 -0.04 -0.019" rpy="-3.0158E-16 -7.1586E-16 -0.30719" />
+      <parent link="${namespace}Link00" />
+      <child link="${namespace}Link01" />
+      <dynamics damping="0.1" friction="0.1" />
+      <axis xyz="0 0 1" />
+      <limit lower="0" upper="1" effort="1" velocity="3.14" />
+    </joint>
+    <link name="${namespace}Link11">
+      <inertial>
+        <origin xyz="0.011366555972498 0.0118642725662323 0.0060000073930068" rpy="0 0 0" />
+        <mass value="0.0127543420299361" />
+        <inertia ixx="5.68538478020233E-07" ixy="-2.68012262729007E-07" ixz="9.34125984931838E-13" iyy="1.45145776457487E-06" iyz="9.34355360561326E-13" izz="1.50564598220449E-06" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="file://$(find simulation_sample_pick_and_place)/meshes/rml_63_gripper_arm/Link11.STL" />
+        </geometry>
+        <material name="">
+          <color rgba="0.1 0.1 0.1 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="file://$(find simulation_sample_pick_and_place)/meshes/rml_63_gripper_arm/Link11.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="${namespace}joint11" type="revolute">
+      <origin xyz="0.042 0 0.003" rpy="5.0393E-16 5.6225E-16 0.30719" />
+      <parent link="${namespace}Link01" />
+      <child link="${namespace}Link11" />
+      <dynamics damping="0.1" friction="0.1" />
+      <axis xyz="0 0 1" />
+      <limit lower="-1" upper="0" effort="1" velocity="3.14" />
+    </joint>
+    <link name="${namespace}Link02">
+      <inertial>
+        <origin xyz="0.0164149658242926 9.75754915755189E-09 0.00898193900447147" rpy="0 0 0" />
+        <mass value="0.00647716099397793" />
+        <inertia ixx="2.95068972140683E-07" ixy="8.63208169650113E-13" ixz="-1.92008628755341E-09" iyy="1.69979619476872E-06" iyz="-1.99232397320157E-13" izz="1.45016449434989E-06" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="file://$(find simulation_sample_pick_and_place)/meshes/rml_63_gripper_arm/Link02.STL" />
+        </geometry>
+        <material name="">
+          <color rgba="0.1 0.1 0.1 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="file://$(find simulation_sample_pick_and_place)/meshes/rml_63_gripper_arm/Link02.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="${namespace}joint02" type="revolute">
+      <origin xyz="0.036 0.04 -0.019" rpy="-2.6397E-16 3.7199E-16 0.30719" />
+      <parent link="${namespace}Link00" />
+      <child link="${namespace}Link02" />
+      <dynamics damping="0.1" friction="0.1" />
+      <axis xyz="0 0 1" />
+      <limit lower="-1" upper="0" effort="1" velocity="3.14" />
+    </joint>
+    <link name="${namespace}Link22">
+      <inertial>
+        <origin xyz="-0.011366555972498 0.0118642725662323 -0.0060000073930068" rpy="0 0 0" />
+        <mass value="0.0127543420299362" />
+        <inertia ixx="5.68538478020238E-07" ixy="2.6801226272901E-07" ixz="9.34125986250171E-13" iyy="1.45145776457489E-06" iyz="-9.34355361631596E-13" izz="1.5056459822045E-06" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="file://$(find simulation_sample_pick_and_place)/meshes/rml_63_gripper_arm/Link22.STL" />
+        </geometry>
+        <material name="">
+          <color rgba="0.1 0.1 0.1 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="file://$(find simulation_sample_pick_and_place)/meshes/rml_63_gripper_arm/Link22.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="${namespace}joint22" type="revolute">
+      <origin xyz="0.042 0 0.015" rpy="-3.641E-16 2.4584E-16 2.8344" />
+      <parent link="${namespace}Link02" />
+      <child link="${namespace}Link22" />
+      <dynamics damping="0.1" friction="0.1" />
+      <axis xyz="0 0 1" />
+      <limit lower="0" upper="1" effort="1" velocity="3.14" />
+    </joint>
+  </xacro:macro>
+</robot>

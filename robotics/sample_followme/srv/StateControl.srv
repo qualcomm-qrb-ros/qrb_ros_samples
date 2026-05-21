@@ -1,0 +1,13 @@
+# Request
+# 0x01: start, 0x02: pause, 0x03: resume, 0x04: finish
+uint8 set_state
+
+uint8 STATE_START=1
+uint8 STATE_PAUSE=2
+uint8 STATE_RESUME=3
+uint8 STATE_FINISH=4
+
+---
+# Response
+bool success
+string message

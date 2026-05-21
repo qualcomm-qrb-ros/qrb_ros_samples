@@ -1,0 +1,20 @@
+#AI model
+model:
+  - face_detection_yunet_2023mar.onnx,https://media.githubusercontent.com/media/opencv/opencv_zoo/refs/heads/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx?download=true
+  - face_detection_yunet_2021dec.onnx,https://media.githubusercontent.com/media/opencv/opencv_zoo/42802fb13aecbf59542f2cb1125a6306da882bf2/models/face_detection_yunet/face_detection_yunet_2021dec.onnx?download=true
+  - face_recognition_sface_2021dec.onnx,https://media.githubusercontent.com/media/opencv/opencv_zoo/refs/heads/main/models/face_recognition_sface/face_recognition_sface_2021dec.onnx?download=true
+
+# apt packages
+apt:
+  - ros-jazzy-cv-bridge
+  - ros-jazzy-image-publisher
+  - ros-jazzy-sensor-msgs
+  - ros-jazzy-vision-opencv
+  - ros-jazzy-usb-cam
+  - ros-jazzy-image-transport
+  - ros-jazzy-image-transport-plugins
+  - python3-opencv
+  - libopencv-dev
+
+# python packages
+pip:
