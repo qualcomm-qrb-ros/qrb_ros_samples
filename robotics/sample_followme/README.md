@@ -21,7 +21,7 @@ The `follow_me` is the ROS 2 package for person tracking and following using Re-
 
 <br>
 
-- The pipeline accepts RGB images from `/camera/color/image_raw`, depth images from `/camera/depth/image_raw`, and person detections from `/yolo_detect_result`.
+- The pipeline accepts RGB images from `/color/preview/image`, depth images from `/stereo/depth`, and person detections from `/yolo_detect_result`.
 - Target initialization occurs when exactly one person is detected in the image center within the specified distance range (1.5m - 3.0m).
 - Re-ID matching uses external services: `ExtractFeature` for feature extraction and `ComputeSimilarity` for similarity computation.
 - Matching logic: similarity < match_threshold means same person; similarity < template_update_threshold triggers template update.
@@ -41,8 +41,8 @@ The `follow_me` is the ROS 2 package for person tracking and following using Re-
 
 | ROS Topic                       | Type                                          | Description                    |
 | ------------------------------- | --------------------------------------------- | ------------------------------ |
-| `/camera/color/image_raw` | `sensor_msgs/msg/Image` | RGB camera stream |
-| `/camera/depth/image_raw` | `sensor_msgs/msg/Image` | Depth image stream |
+| `/color/preview/image` | `sensor_msgs/msg/Image` | RGB camera stream |
+| `/stereo/depth` | `sensor_msgs/msg/Image` | Depth image stream |
 | `/camera/color/camera_info` | `sensor_msgs/msg/CameraInfo` | Camera intrinsics |
 | `/yolo_detect_result` | `vision_msgs/msg/Detection2DArray` | Person detections from YOLO |
 | `/cmd_vel` | `geometry_msgs/msg/TwistStamped` | Robot velocity commands |

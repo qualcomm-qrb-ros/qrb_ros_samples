@@ -32,9 +32,9 @@ PersonTrackerNode::PersonTrackerNode() : Node("person_tracker_node"), has_target
       this->create_client<qrb_ros_people_reid::srv::ComputeSimilarity>("/compute_similarity");
 
   rgb_sub_ = std::make_shared<message_filters::Subscriber<sensor_msgs::msg::Image>>(
-      this, "/camera/color/image_raw");
+      this, "/color/preview/image");
   depth_sub_ = std::make_shared<message_filters::Subscriber<sensor_msgs::msg::Image>>(
-      this, "/camera/depth/image_raw");
+      this, "/stereo/depth");
   detection_sub_ =
       std::make_shared<message_filters::Subscriber<vision_msgs::msg::Detection2DArray>>(
           this, "/yolo_detect_result");
