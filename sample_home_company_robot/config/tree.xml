@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4">
+  <BehaviorTree ID="MainTree">
+    <Sequence name="root_sequence">
+
+      <!-- Node 1: Subscribe /whisper_out, store to blackboard -->
+      <ReceiveWhisperText whisper_text="{whisper_text}" />
+
+      <!-- Fallback: follow-me branch OR LLM branch -->
+      <Fallback name="dispatch_fallback">
+
+        <!-- Branch A: "follow me" detected -->
+        <Sequence name="follow_me_sequence">
+          <CheckFollowMe      whisper_text="{whisper_text}" />
+          <SendFollowMeService />
+          <StartFallDetection />
+        </Sequence>
+
+        <!-- Branch B: LLM fallback -->
+        <Sequence name="llm_sequence">
+          <SendToLLM   whisper_text="{whisper_text}" llm_text="{llm_text}" />
+          <SendToTTS   llm_text="{llm_text}" />
+        </Sequence>
+
+      </Fallback>
+    </Sequence>
+  </BehaviorTree>
+</root>
