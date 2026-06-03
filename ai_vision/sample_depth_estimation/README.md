@@ -21,6 +21,7 @@
 | --------- | -------- |
 | [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
 | image publisher | Publishes image data to a ROS topic—can be camera frames, local files, or processed outputs. |
+| [usb_cam](https://github.com/ros-drivers/usb_cam) | A ROS Driver for V4L2 USB cameras, can publish video stream from a USB webcam. |
 | sample depth estimation | Subscribes to input images for preprocessing, then performs postprocessing on the output tensor published by the qrb ros nn interface node. |
 | [qrb ros nn interface](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results. |
 
@@ -109,6 +110,11 @@ ros2 launch sample_depth_estimation launch_with_image_publisher.py image_path:=<
 ros2 launch sample_depth_estimation launch_with_qrb_ros_camera.py
 ```
 
+- You can launch with `usb_cam` if you connect a USB webcam:
+```bash
+ros2 launch sample_depth_estimation launch_with_usb_cam.py
+```
+
 ## 👨‍💻 Visualization
 
 - You can then check the ROS topic `/sample_container/depth_map` in rqt. 
@@ -136,7 +142,7 @@ sudo apt update
 
 - Install QRB ROS packages:
 ```bash
-sudo apt install -y ros-jazzy-qrb-ros-camera ros-jazzy-qrb-ros-nn-inference ros-jazzy-qrb-ros-tensor-list-msgs
+sudo apt install -y ros-jazzy-qrb-ros-camera ros-jazzy-qrb-ros-nn-inference ros-jazzy-qrb-ros-tensor-list-msgs ros-jazzy-usb-cam
 sudo apt install -y ros-dev-tools
 sudo rosdep init
 rosdep update
@@ -174,6 +180,11 @@ ros2 launch sample_depth_estimation launch_with_image_publisher.py image_path:=<
 - You can also launch with `qrb_ros_camera` if you connect a GMSL camera:
 ```bash
 ros2 launch sample_depth_estimation launch_with_qrb_ros_camera.py
+```
+
+- You can launch with `usb_cam` if you connect a USB webcam:
+```bash
+ros2 launch sample_depth_estimation launch_with_usb_cam.py
 ```
 
 - When using this launch script, it uses the default parameters; it will send the local `input_image.jpg` file at a publishing rate of 10 Hz. 

@@ -19,6 +19,7 @@ Ultralytics YOLOv8 is a machine learning model that predicts bounding boxes, seg
 | Node Name                                                    | Function                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
+| [usb_cam](https://github.com/ros-drivers/usb_cam) | A ROS Driver for V4L2 USB cameras, can publish video stream from a USB webcam. |
 | [yolo preprocess](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) | Subscribes to image data, reshapes/resizes it, and republishes it to a downstream topic. |
 | [qrb ros nn interface](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results. |
 | [yolo postprocess](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) | Matches inference output with yolo label files               |
@@ -40,6 +41,7 @@ Ultralytics YOLOv8 is a machine learning model that predicts bounding boxes, seg
 
 | ROS Topic                      | Type                                          | Published By                       |
 | ------------------------------ | --------------------------------------------- | ---------------------------------- |
+| `/image_raw `                  | `< sensor_msgs.msg.Image> `                   | `usb_cam_node`                     |
 | `/camera/color/image_raw `     | `< sensor_msgs.msg.Image> `                   | `qrb_ros_camera `                  |
 | `/qrb_inference_input_tensor ` | `< qrb_ros_tensor_list_msgs/msg/TensorList> ` | `yolo_preprocess_node `            |
 | `/yolo_detect_result `         | `<vision_msgs/msg/Detection2DArray> `         | `nn_inference_node `               |
@@ -130,6 +132,9 @@ mv coco.ymal /opt/
 
 source /opt/ros/jazzy/setup.bash
 ros2 launch sample_object_detection launch_with_qrb_ros_camera.py model:=/opt/model/yolov8_det_qcs9075.bin
+
+# Or use usb_cam (USB webcam)
+ros2 launch sample_object_detection launch_with_usb_cam.py model:=/opt/model/yolov8_det_qcs9075.bin
 ```
 
 The output for these commands:

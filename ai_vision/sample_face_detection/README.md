@@ -24,6 +24,7 @@ For model information, please refer to [MediaPipe-Face-Detection - Qualcomm AI H
 | [qrb_ros_nn_inference](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | qrb_ros_nn_inference is a ROS2 package for performing neural network model, providing AI-based perception for robotics applications. |
 | [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
 | [image_publisher_node](https://github.com/ros-perception/image_pipeline) | image_publisher is  a ros jazzy packages, can publish image ros topic with local path. |
+| [usb_cam](https://github.com/ros-drivers/usb_cam) | A ROS Driver for V4L2 USB cameras, can publish video stream from a USB webcam. |
 
 
 ## 🔎 Table of contents
@@ -56,7 +57,7 @@ For model information, please refer to [MediaPipe-Face-Detection - Qualcomm AI H
 | ROS Topic | Type                         | Published By     |
 | --------- | ---------------------------- | ---------------- |
 | `/mediaface_det_image`  | `< sensor_msgs.msg.Image > ` | `qrb_ros_face_detector` |
-| `/image_raw`                   | `<sensor_msgs.msg.Image> `  | `image_publisher_node, camera_node` |
+| `/image_raw`                   | `<sensor_msgs.msg.Image> `  | `image_publisher_node, camera_node, usb_cam_node` |
 | `/face_detector_input_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_face_detector`     |
 | `/face_detector_output_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_nn_inference`     |
 | `/face_landmark_input_tensor ` | `<qrb_ros_tensor_list_msgs.msg.TensorList> ` | `qrb_ros_face_detector`     |
@@ -113,6 +114,8 @@ ros2 launch sample_face_detection launch_with_image_publisher.py model_path:=/op
 ros2 launch sample_face_detection launch_with_image_publisher.py image_path:=/opt/resource/xxx.jpg model_path:=/opt/model/
 or # You can launch with qrb_ros_camera lacunch file
 ros2 launch sample_face_detection launch_with_qrb_ros_camera.py  model_path:=/opt/model/
+or # You can launch with usb_cam (USB webcam)
+ros2 launch sample_face_detection launch_with_usb_cam.py  model_path:=/opt/model/
 ```
 
 When using this launch script, it will use the default parameters:
@@ -215,7 +218,8 @@ sudo apt install ros-jazzy-rclpy \
   python3-numpy \
   ros-jazzy-image-publisher \
   ros-jazzy-qrb-ros-nn-inference \
-  ros-jazzy-qrb-ros-camera
+  ros-jazzy-qrb-ros-camera \
+  ros-jazzy-usb-cam
 ```
 
 ### Build Steps
@@ -256,6 +260,9 @@ ros2 launch sample_face_detection launch_with_image_publisher.py image_path:=/op
 
 # You can launch with qrb ros camera
 ros2 launch sample_face_detection launch_with_qrb_ros_camera.py  model_path:=/opt/model/
+
+# You can launch with usb_cam (USB webcam)
+ros2 launch sample_face_detection launch_with_usb_cam.py  model_path:=/opt/model/
 ```
 
 ## 🤝 Contributing

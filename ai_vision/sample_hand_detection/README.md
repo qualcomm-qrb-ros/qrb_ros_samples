@@ -19,6 +19,7 @@ The model is sourced from [**MediaPipe Hand Landmark Detector**](https://aihub.q
 | Node Name                                                    | Function                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
+| [usb_cam](https://github.com/ros-drivers/usb_cam) | A ROS Driver for V4L2 USB cameras, can publish video stream from a USB webcam. |
 | [qrb ros nn interface](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results. |
 | `qrb_ros_hand_detector`                                      | Subscribes to image topic, performs pre/post-processing, and publishes detection results. |
 | `palm_preprocessor`                                      | The palm_preprocessor module is responsible for preparing input image data for palm detection. It performs image resizing, normalization, and format conversion to match the input requirements of the palm detection model. |
@@ -47,7 +48,7 @@ The model is sourced from [**MediaPipe Hand Landmark Detector**](https://aihub.q
 | `/palm_detector_output_tensor`    | `<qrb_ros_tensor_list_msgs/msg/TensorList>`  | `qrb_ros_nn_inference`  |
 | `/landmark_detector_input_tensor` | `<qrb_ros_tensor_list_msgs/msg/TensorList>`  | `qrb_ros_hand_detector` |
 | `/landmark_detector_output_tensor`| `<qrb_ros_tensor_list_msgs/msg/TensorList>`  | `qrb_ros_nn_inference`  |
-| `/image_raw`                      | `<sensor_msgs.msg.Image>`                    | `qrb_ros_camera` |
+| `/image_raw`                      | `<sensor_msgs.msg.Image>`                    | `qrb_ros_camera, usb_cam_node` |
 
 ---
 
@@ -112,6 +113,9 @@ ros2 launch sample_hand_detection launch_with_image_publisher.py image_path:=<pa
 
 # Launch the sample hand detection node with qrb_ros_camera ros node.
 ros2 launch sample_hand_detection launch_with_qrb_ros_camera.py model_path:=/opt/model/
+
+# Launch the sample hand detection node with usb_cam (USB webcam)
+ros2 launch sample_hand_detection launch_with_usb_cam.py model_path:=/opt/model/
 ```
 
 **Note**  
@@ -136,7 +140,8 @@ sudo apt install ros-jazzy-rclpy \
   python3-numpy \
   ros-jazzy-image-publisher \
   ros-jazzy-qrb-ros-nn-inference \
-  ros-jazzy-qrb-ros-camera
+  ros-jazzy-qrb-ros-camera \
+  ros-jazzy-usb-cam
 ```
 
 Download AI models
@@ -159,6 +164,8 @@ Run
 ```bash
 source install/setup.bash
 ros2 launch sample_hand_detection launch_with_qrb_ros_camera.py model_path:=/opt/model/
+# Or launch with usb_cam (USB webcam)
+ros2 launch sample_hand_detection launch_with_usb_cam.py model_path:=/opt/model/
 ```
 </details>
 

@@ -26,6 +26,7 @@ For model information, please refer to [HRNetPose - Qualcomm AI Hub](https://aih
 | `image_publisher_node` | image_publisher is a ros jazzy packages, can publish image ros topic with local path. For more detail, Please refer to [image_publisher](https://github.com/ros-perception/image_pipeline). |
 |`qrb_ros_camera`| The QRB ROS Camera is a ROS package to publish the images from Qualcomm CSI and GMSL cameras. For more detail, Please refer to [QRB ROS CAMERA](https://github.com/qualcomm-qrb-ros/qrb_ros_camera).|
 |`qrb_ros_nn_inference`| QRB_ROS_NN_inference is a ROS2 package for performing neural network model, providing AI-based perception for robotics applications. For more detail, Please refer to [QRB ROS NN Inference](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference). |
+|`usb_cam`| A ROS Driver for V4L2 USB cameras, can publish video stream from a USB webcam. For more detail, refer to [usb_cam](https://github.com/ros-drivers/usb_cam). |
 
 
 ## 🔎 Table of contents
@@ -118,6 +119,8 @@ export ROS_DOMAIN_ID=124
 ros2 launch sample_hrnet_pose_estimation launch_with_image_publisher.py image_path:=/opt/ros/jazzy/share/sample_hrnet_pose_estimation/input_image.jpg
 # Launch the sample with qrb ros camera.
 ros2 launch sample_hrnet_pose_estimation launch_with_qrb_ros_camera.py
+# Launch the sample with usb_cam (USB webcam)
+ros2 launch sample_hrnet_pose_estimation launch_with_usb_cam.py
 ```
 
 Open a new terminal and use rqt to view topic `/pose_estimation_results`.
@@ -146,7 +149,7 @@ sudo apt update
 
 - Install QRB ROS packages:
 ```bash
-sudo apt install -y ros-jazzy-qrb-ros-camera ros-jazzy-qrb-ros-nn-inference ros-jazzy-qrb-ros-tensor-list-msgs
+sudo apt install -y ros-jazzy-qrb-ros-camera ros-jazzy-qrb-ros-nn-inference ros-jazzy-qrb-ros-tensor-list-msgs ros-jazzy-usb-cam
 sudo apt install -y ros-dev-tools
 sudo rosdep init
 rosdep update
