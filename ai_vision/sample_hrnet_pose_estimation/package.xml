@@ -29,6 +29,7 @@
   <exec_depend>python3-numpy</exec_depend>
   <exec_depend>image_publisher</exec_depend>
   <exec_depend>qrb_ros_camera</exec_depend>
+  <exec_depend>usb_cam</exec_depend>
   <exec_depend>qrb_ros_nn_inference</exec_depend>
   <exec_depend>qrb_ros_tensor_list_msgs</exec_depend>
   <exec_depend>cv_bridge</exec_depend>

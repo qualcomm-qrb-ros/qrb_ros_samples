@@ -17,6 +17,7 @@
   <exec_depend>qrb_ros_tensor_list_msgs</exec_depend>
   <exec_depend>qrb_ros_nn_inference</exec_depend>
   <exec_depend>qrb_ros_camera</exec_depend>
+  <exec_depend>usb_cam</exec_depend>
   <exec_depend>qrb_ros_yolo_process</exec_depend>
   <exec_depend>qrb_ros_vision_msgs</exec_depend>
 
