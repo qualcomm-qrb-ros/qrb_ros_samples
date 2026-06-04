@@ -61,7 +61,6 @@ def generate_launch_description():
         package='usb_cam',
         executable='usb_cam_node_exe',
         name='usb_cam_node',
-        namespace=namespace,
         output='screen',
         parameters=[{
             'video_device': video_device,
