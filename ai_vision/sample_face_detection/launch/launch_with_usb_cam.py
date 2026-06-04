@@ -102,6 +102,12 @@ def generate_launch_description():
             'image_height': image_height,
             'io_method': 'mmap',
             'frame_id': 'camera',
+            'brightness': -1,
+            'contrast': -1,
+            'saturation': -1,
+            'sharpness': -1,
+            'gain': -1,
+            'focus': -1,
         }]
     )
 
