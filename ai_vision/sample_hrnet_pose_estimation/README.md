@@ -123,6 +123,8 @@ ros2 launch sample_hrnet_pose_estimation launch_with_qrb_ros_camera.py
 ros2 launch sample_hrnet_pose_estimation launch_with_usb_cam.py
 ```
 
+> **Note:** For `usb_cam`, image quality parameters (`brightness`, `contrast`, `saturation`, `sharpness`, `gain`, and `focus`) are hardware-dependent and must be adjusted manually for your USB camera.
+
 Open a new terminal and use rqt to view topic `/pose_estimation_results`.
 
 Open a new terminal and run the following command to view the `/pose_estimation_points` topic.

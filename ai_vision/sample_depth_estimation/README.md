@@ -115,6 +115,8 @@ ros2 launch sample_depth_estimation launch_with_qrb_ros_camera.py
 ros2 launch sample_depth_estimation launch_with_usb_cam.py
 ```
 
+> **Note:** For `usb_cam`, image quality parameters (`brightness`, `contrast`, `saturation`, `sharpness`, `gain`, and `focus`) are hardware-dependent and must be adjusted manually for your USB camera.
+
 ## 👨‍💻 Visualization
 
 - You can then check the ROS topic `/sample_container/depth_map` in rqt. 
@@ -186,6 +188,8 @@ ros2 launch sample_depth_estimation launch_with_qrb_ros_camera.py
 ```bash
 ros2 launch sample_depth_estimation launch_with_usb_cam.py
 ```
+
+> **Note:** For `usb_cam`, image quality parameters (`brightness`, `contrast`, `saturation`, `sharpness`, `gain`, and `focus`) are hardware-dependent and must be adjusted manually for your USB camera.
 
 - When using this launch script, it uses the default parameters; it will send the local `input_image.jpg` file at a publishing rate of 10 Hz. 
 

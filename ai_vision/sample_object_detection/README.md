@@ -137,6 +137,8 @@ ros2 launch sample_object_detection launch_with_qrb_ros_camera.py model:=/opt/mo
 ros2 launch sample_object_detection launch_with_usb_cam.py model:=/opt/model/yolov8_det_qcs9075.bin
 ```
 
+> **Note:** For `usb_cam`, image quality parameters (`brightness`, `contrast`, `saturation`, `sharpness`, `gain`, and `focus`) are hardware-dependent and must be adjusted manually for your USB camera.
+
 The output for these commands:
 
 ```

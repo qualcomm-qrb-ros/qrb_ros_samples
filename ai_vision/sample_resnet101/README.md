@@ -104,6 +104,8 @@ or # You can launch with usb_cam (USB webcam)
 ros2 launch sample_resnet101 launch_with_usb_cam.py
 ```
 
+> **Note:** For `usb_cam`, image quality parameters (`brightness`, `contrast`, `saturation`, `sharpness`, `gain`, and `focus`) are hardware-dependent and must be adjusted manually for your USB camera.
+
 When using this launch script, it will use the default parameters:
 
 ```py

@@ -118,6 +118,8 @@ ros2 launch sample_hand_detection launch_with_qrb_ros_camera.py model_path:=/opt
 ros2 launch sample_hand_detection launch_with_usb_cam.py model_path:=/opt/model/
 ```
 
+> **Note:** For `usb_cam`, image quality parameters (`brightness`, `contrast`, `saturation`, `sharpness`, `gain`, and `focus`) are hardware-dependent and must be adjusted manually for your USB camera.
+
 **Note**  
 > This sample demonstrates how to build a pipeline using our ROS nodes. Due to the large data transmission of AI model inputs and outputs within ROS, prolonged operation may lead to reduced frame rates. If this happens, please relaunch the ROS nodes to restore normal performance.
 
@@ -167,6 +169,8 @@ ros2 launch sample_hand_detection launch_with_qrb_ros_camera.py model_path:=/opt
 # Or launch with usb_cam (USB webcam)
 ros2 launch sample_hand_detection launch_with_usb_cam.py model_path:=/opt/model/
 ```
+
+> **Note:** For `usb_cam`, image quality parameters (`brightness`, `contrast`, `saturation`, `sharpness`, `gain`, and `focus`) are hardware-dependent and must be adjusted manually for your USB camera.
 </details>
 
 ## 🤝 Contributing
