@@ -141,7 +141,10 @@ ros2 launch sample_object_segmentation launch_with_qrb_ros_camera.py model:=/opt
 ros2 launch sample_object_segmentation launch_with_usb_cam.py model:=/opt/model/yolov8_seg.tflite
 ```
 
-> **Note:** For `usb_cam`, image quality parameters (`brightness`, `contrast`, `saturation`, `sharpness`, `gain`, and `focus`) are hardware-dependent and must be adjusted manually for your USB camera.
+> **Note:** For `usb_cam`, image quality parameters (`brightness`, `contrast`, `saturation`, `sharpness`, `gain`, and `focus`) default to `-1` (camera driver defaults). Override them as launch arguments to tune for your USB camera, for example:
+> ```bash
+> ros2 launch sample_object_segmentation launch_with_usb_cam.py model:=/opt/model/yolov8_seg.tflite brightness:=128 contrast:=64 saturation:=80 sharpness:=50 gain:=0 focus:=0
+> ```
 
 The output for these commands:
 

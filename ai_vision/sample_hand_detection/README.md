@@ -118,7 +118,10 @@ ros2 launch sample_hand_detection launch_with_qrb_ros_camera.py model_path:=/opt
 ros2 launch sample_hand_detection launch_with_usb_cam.py model_path:=/opt/model/
 ```
 
-> **Note:** For `usb_cam`, image quality parameters (`brightness`, `contrast`, `saturation`, `sharpness`, `gain`, and `focus`) are hardware-dependent and must be adjusted manually for your USB camera.
+> **Note:** For `usb_cam`, image quality parameters (`brightness`, `contrast`, `saturation`, `sharpness`, `gain`, and `focus`) default to `-1` (camera driver defaults). Override them as launch arguments to tune for your USB camera, for example:
+> ```bash
+> ros2 launch sample_hand_detection launch_with_usb_cam.py model_path:=/opt/model/ brightness:=128 contrast:=64 saturation:=80 sharpness:=50 gain:=0 focus:=0
+> ```
 
 **Note**  
 > This sample demonstrates how to build a pipeline using our ROS nodes. Due to the large data transmission of AI model inputs and outputs within ROS, prolonged operation may lead to reduced frame rates. If this happens, please relaunch the ROS nodes to restore normal performance.
@@ -170,7 +173,10 @@ ros2 launch sample_hand_detection launch_with_qrb_ros_camera.py model_path:=/opt
 ros2 launch sample_hand_detection launch_with_usb_cam.py model_path:=/opt/model/
 ```
 
-> **Note:** For `usb_cam`, image quality parameters (`brightness`, `contrast`, `saturation`, `sharpness`, `gain`, and `focus`) are hardware-dependent and must be adjusted manually for your USB camera.
+> **Note:** For `usb_cam`, image quality parameters (`brightness`, `contrast`, `saturation`, `sharpness`, `gain`, and `focus`) default to `-1` (camera driver defaults). Override them as launch arguments to tune for your USB camera, for example:
+> ```bash
+> ros2 launch sample_hand_detection launch_with_usb_cam.py model_path:=/opt/model/ brightness:=128 contrast:=64 saturation:=80 sharpness:=50 gain:=0 focus:=0
+> ```
 </details>
 
 ## 🤝 Contributing
