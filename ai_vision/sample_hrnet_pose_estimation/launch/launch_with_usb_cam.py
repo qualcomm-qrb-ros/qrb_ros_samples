@@ -46,12 +46,54 @@ def generate_launch_description():
         description='USB camera image height'
     )
 
+    brightness_arg = DeclareLaunchArgument(
+        'brightness',
+        default_value='-1',
+        description='USB camera brightness (-1 to disable)'
+    )
+
+    contrast_arg = DeclareLaunchArgument(
+        'contrast',
+        default_value='-1',
+        description='USB camera contrast (-1 to disable)'
+    )
+
+    saturation_arg = DeclareLaunchArgument(
+        'saturation',
+        default_value='-1',
+        description='USB camera saturation (-1 to disable)'
+    )
+
+    sharpness_arg = DeclareLaunchArgument(
+        'sharpness',
+        default_value='-1',
+        description='USB camera sharpness (-1 to disable)'
+    )
+
+    gain_arg = DeclareLaunchArgument(
+        'gain',
+        default_value='-1',
+        description='USB camera gain (-1 to disable)'
+    )
+
+    focus_arg = DeclareLaunchArgument(
+        'focus',
+        default_value='-1',
+        description='USB camera focus (-1 to disable)'
+    )
+
     model_path = LaunchConfiguration('model_path')
     video_device = LaunchConfiguration('video_device')
     pixel_format = LaunchConfiguration('pixel_format')
     framerate = LaunchConfiguration('framerate')
     image_width = LaunchConfiguration('image_width')
     image_height = LaunchConfiguration('image_height')
+    brightness = LaunchConfiguration('brightness')
+    contrast = LaunchConfiguration('contrast')
+    saturation = LaunchConfiguration('saturation')
+    sharpness = LaunchConfiguration('sharpness')
+    gain = LaunchConfiguration('gain')
+    focus = LaunchConfiguration('focus')
 
     hr_pose_estimation_node = Node(
         package='sample_hrnet_pose_estimation',
@@ -72,12 +114,12 @@ def generate_launch_description():
             'image_height': image_height,
             'io_method': 'mmap',
             'frame_id': 'camera',
-            'brightness': -1,
-            'contrast': -1,
-            'saturation': -1,
-            'sharpness': -1,
-            'gain': -1,
-            'focus': -1,
+            'brightness': brightness,
+            'contrast': contrast,
+            'saturation': saturation,
+            'sharpness': sharpness,
+            'gain': gain,
+            'focus': focus,
         }]
     )
 
@@ -107,6 +149,12 @@ def generate_launch_description():
         framerate_arg,
         image_width_arg,
         image_height_arg,
+        brightness_arg,
+        contrast_arg,
+        saturation_arg,
+        sharpness_arg,
+        gain_arg,
+        focus_arg,
         usb_cam_node,
         nn_inference_container,
         hr_pose_estimation_node

@@ -41,6 +41,36 @@ def generate_launch_description():
             default_value='480',
             description='USB camera image height'
         ),
+        DeclareLaunchArgument(
+            'brightness',
+            default_value='-1',
+            description='USB camera brightness (-1 to disable)'
+        ),
+        DeclareLaunchArgument(
+            'contrast',
+            default_value='-1',
+            description='USB camera contrast (-1 to disable)'
+        ),
+        DeclareLaunchArgument(
+            'saturation',
+            default_value='-1',
+            description='USB camera saturation (-1 to disable)'
+        ),
+        DeclareLaunchArgument(
+            'sharpness',
+            default_value='-1',
+            description='USB camera sharpness (-1 to disable)'
+        ),
+        DeclareLaunchArgument(
+            'gain',
+            default_value='-1',
+            description='USB camera gain (-1 to disable)'
+        ),
+        DeclareLaunchArgument(
+            'focus',
+            default_value='-1',
+            description='USB camera focus (-1 to disable)'
+        ),
     ]
 
     model_path = LaunchConfiguration('model_path')
@@ -49,6 +79,12 @@ def generate_launch_description():
     framerate = LaunchConfiguration('framerate')
     image_width = LaunchConfiguration('image_width')
     image_height = LaunchConfiguration('image_height')
+    brightness = LaunchConfiguration('brightness')
+    contrast = LaunchConfiguration('contrast')
+    saturation = LaunchConfiguration('saturation')
+    sharpness = LaunchConfiguration('sharpness')
+    gain = LaunchConfiguration('gain')
+    focus = LaunchConfiguration('focus')
 
     namespace = ""
 
@@ -66,12 +102,12 @@ def generate_launch_description():
             'image_height': image_height,
             'io_method': 'mmap',
             'frame_id': 'camera',
-            'brightness': -1,
-            'contrast': -1,
-            'saturation': -1,
-            'sharpness': -1,
-            'gain': -1,
-            'focus': -1,
+            'brightness': brightness,
+            'contrast': contrast,
+            'saturation': saturation,
+            'sharpness': sharpness,
+            'gain': gain,
+            'focus': focus,
         }]
     )
 
