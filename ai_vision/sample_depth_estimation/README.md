@@ -15,7 +15,7 @@
 - This sample allows you to input an RGB image named `input_image.jpg` or subscribe to the ROS topic `/cam0_stream1` from the QRB ROS Camera (`qrb_ros_camera`). It then uses QNN to perform model inference and publishes the result on the `/depth_map` ROS topic containing per-pixel depth values.
 - The model is sourced from [Depth Anything V2](https://aihub.qualcomm.com/iot/models/depth_anything_v2?searchTerm=depth&domain=Computer+Vision), a deep convolutional neural network model for depth estimation.
 
-![image-20250723181610392](./resource/depth_estimation_architecture.jpg)
+  ![image-20250723181610392](./resource/sample_depth_estimation_pipeline.png)
 
 | Node Name | Function |
 | --------- | -------- |

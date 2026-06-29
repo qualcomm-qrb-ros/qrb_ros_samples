@@ -12,7 +12,7 @@
 
 - The RML-63 Robotic Arm pick-and-place demo is a C++-based ROS 2 node that demonstrates autonomous pick-and-place operations using MoveIt 2 for motion planning and Gazebo for physics simulation.
 
-![image-20250723181610392](./resource/pick_and_place_architecture.jpg)
+  ![image-20250723181610392](./resource/pick_and_place_architecture.png)
 
 | Node Name                                                    | Function                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
