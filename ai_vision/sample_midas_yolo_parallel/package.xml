@@ -14,7 +14,6 @@
   <exec_depend>image_publisher</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
-  <exec_depend>numpy</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
   <exec_depend>qrb_ros_camera</exec_depend>
   <exec_depend>qrb_ros_nn_inference</exec_depend>
