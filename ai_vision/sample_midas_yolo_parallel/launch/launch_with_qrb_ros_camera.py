@@ -1,8 +1,6 @@
 # Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
 # SPDX-License-Identifier: BSD-3-Clause-Clear
 
-from pathlib import Path
-
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
@@ -11,52 +9,21 @@ from launch_ros.descriptions import ComposableNode
 from ament_index_python.packages import get_package_share_directory
 
 
-def _read_target_model() -> str:
-    for path in ('/proc/device-tree/model', '/sys/firmware/devicetree/base/model'):
-        p = Path(path)
-        if p.exists():
-            return p.read_text(errors='ignore').lower().replace('\x00', ' ').strip()
-    return ''
-
-
-def _resolve_default_yolo_model_path() -> str:
-    model_dir = Path('/opt/model')
-    target_model = _read_target_model()
-
-    iq8_candidate = model_dir / 'yolo11n-seg-w8a16-qcs8275-proxy.bin'
-    iq9_candidate = model_dir / 'yolo11n-seg-w8a16-qcs9075.bin'
-
-    if '8275' in target_model and iq8_candidate.exists():
-        return str(iq8_candidate)
-    if '9075' in target_model and iq9_candidate.exists():
-        return str(iq9_candidate)
-
-    for candidate in (
-        iq8_candidate,
-        iq9_candidate,
-        model_dir / 'yolo11n-seg.bin',
-        model_dir / 'yolov11_seg.bin',
-    ):
-        if candidate.exists():
-            return str(candidate)
-
-    discovered = sorted(model_dir.glob('*yolo*seg*.bin')) if model_dir.exists() else []
-    if discovered:
-        return str(discovered[0])
-
-    return '/opt/model/yolo11n-seg.bin'
-
-
 def generate_launch_description():
-    midas_model_arg = DeclareLaunchArgument(
-        'midas_model_path',
-        default_value='/opt/model/midas_256.bin',
-        description='MiDaS QNN context binary path',
+    combined_model_arg = DeclareLaunchArgument(
+        'combined_model_path',
+        default_value='/opt/model/midas_yolo_combined.bin',
+        description='Combined multi-graph QNN context binary containing MiDaS and YOLO graphs',
     )
-    yolo_model_arg = DeclareLaunchArgument(
-        'yolo_model_path',
-        default_value=_resolve_default_yolo_model_path(),
-        description='YOLO segmentation QNN context binary path',
+    midas_graph_name_arg = DeclareLaunchArgument(
+        'midas_graph_name',
+        default_value='midas',
+        description='Graph name for MiDaS depth estimation within the combined context binary',
+    )
+    yolo_graph_name_arg = DeclareLaunchArgument(
+        'yolo_graph_name',
+        default_value='yolov11_seg',
+        description='Graph name for YOLO segmentation within the combined context binary',
     )
 
     camera_info_path = PathJoinSubstitution([
@@ -83,32 +50,23 @@ def generate_launch_description():
         }],
     )
 
-    midas_inference = ComposableNode(
+    shared_inference = ComposableNode(
         package='qrb_ros_nn_inference',
-        plugin='qrb_ros::nn_inference::QrbRosInferenceNode',
-        name='midas_inference_node',
+        plugin='qrb_ros::nn_inference::QrbRosSharedInferenceNode',
+        name='shared_inference_node',
         parameters=[{
             'backend_option': '/usr/lib/libQnnHtp.so',
-            'model_path': LaunchConfiguration('midas_model_path'),
+            'model_path': LaunchConfiguration('combined_model_path'),
+            'graph_name_0': LaunchConfiguration('midas_graph_name'),
+            'graph_name_1': LaunchConfiguration('yolo_graph_name'),
         }],
         remappings=[
-            ('qrb_inference_input_tensor', 'midas_inference_input_tensor'),
-            ('qrb_inference_output_tensor', 'midas_inference_output_tensor'),
-        ],
-    )
-
-    yolo_inference = ComposableNode(
-        package='qrb_ros_nn_inference',
-        plugin='qrb_ros::nn_inference::QrbRosInferenceNode',
-        name='yolo_seg_inference_node',
-        parameters=[{
-            'backend_option': '/usr/lib/libQnnHtp.so',
-            'model_path': LaunchConfiguration('yolo_model_path'),
-            'graph_name': 'yolov11_seg',
-        }],
-        remappings=[
-            ('qrb_inference_input_tensor', 'yolo_seg_inference_input_tensor'),
-            ('qrb_inference_output_tensor', 'yolo_seg_inference_output_tensor'),
+            # graph 0 = MiDaS
+            ('qrb_inference_input_tensor_0',  'midas_inference_input_tensor'),
+            ('qrb_inference_output_tensor_0', 'midas_inference_output_tensor'),
+            # graph 1 = YOLO
+            ('qrb_inference_input_tensor_1',  'yolo_seg_inference_input_tensor'),
+            ('qrb_inference_output_tensor_1', 'yolo_seg_inference_output_tensor'),
         ],
     )
 
@@ -116,8 +74,8 @@ def generate_launch_description():
         name='parallel_inference_camera_container',
         namespace='',
         package='rclcpp_components',
-        executable='component_container',
-        composable_node_descriptions=[camera_node, midas_inference, yolo_inference],
+        executable='component_container_mt',
+        composable_node_descriptions=[camera_node, shared_inference],
         output='screen',
     )
 
@@ -138,8 +96,9 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        midas_model_arg,
-        yolo_model_arg,
+        combined_model_arg,
+        midas_graph_name_arg,
+        yolo_graph_name_arg,
         container,
         fusion_node,
     ])

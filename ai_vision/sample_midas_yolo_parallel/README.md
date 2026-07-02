@@ -12,8 +12,7 @@ The `sample_midas_yolo_parallel` sample runs MiDaS depth estimation and YOLO seg
 | --------- | -------- |
 | image publisher / qrb ros camera | Provides input images from local file stream or camera topics. |
 | sample midas yolo parallel | Sends each frame to two inference branches and fuses output tensors. |
-| qrb ros nn interface (MiDaS) | Runs MiDaS depth inference with QNN. |
-| qrb ros nn interface (YOLO Seg) | Runs YOLO segmentation inference with QNN. |
+| QrbRosSharedInferenceNode | Loads a single combined QNN context binary and runs both MiDaS and YOLO graphs concurrently within the shared context. Exposes one pub/sub pair per graph. |
 
 The sample publishes:
 - `/midas_depth_map` (`sensor_msgs/msg/Image`, `bgr8`)
@@ -44,8 +43,12 @@ The sample publishes:
 
 ## 🎯 Supported targets
 
-- Qualcomm Dragonwing IQ-9075 EVK (`/opt/model/yolo11n-seg-w8a16-qcs9075.bin`)
-- Qualcomm Dragonwing IQ-8275 EVK (`/opt/model/yolo11n-seg-w8a16-qcs8275-proxy.bin`)
+- Qualcomm Dragonwing IQ-9075 EVK
+- Qualcomm Dragonwing IQ-8275 EVK
+
+A combined multi-graph QNN context binary (`midas_yolo_combined.bin`) containing both the MiDaS
+and YOLO segmentation graphs is required. Produce it offline using the QNN SDK's
+`qnn-context-binary-utility` to merge the individual per-model context binaries.
 
 ## ✨ Installation
 
@@ -72,34 +75,16 @@ sudo apt install -y \
 <details>
   <summary>Model preparation</summary>
 
-Create the default model directory and place both model binaries there:
+Create the default model directory and place the combined context binary there:
 
 ```bash
 sudo mkdir -p /opt/model
 ```
 
-Download YOLO segmentation model:
-
-```bash
-#for IQ-8275
-python3 -m qai_hub_models.models.yolov8_det.export --target-runtime qnn_context_binary  --device "QCS8275 (Proxy)" --quantize w8a16 --output-dir /opt/model/
-
-
-#for IQ-9075
-python3 -m qai_hub_models.models.yolov11_seg.export --target-runtime qnn_context_binary  --device "QCS9075 (Proxy) --quantize w8a16 --output-dir /opt/model/
-```
-
-Copy MiDaS binary into the same folder:
-
-```bash
-sudo cp <path_to_midas_256.bin>/midas_256.bin /opt/model/
-```
-
-Expected defaults after preparation:
+Place the combined multi-graph context binary (containing both MiDaS and YOLO graphs) at:
 
 ```text
-/opt/model/midas_256.bin
-/opt/model/yolo11n-seg.bin
+/opt/model/midas_yolo_combined.bin
 ```
 
 </details>
@@ -113,21 +98,13 @@ source install/local_setup.bash
 ros2 launch sample_midas_yolo_parallel launch_with_image_publisher.py
 ```
 
-Optional model and image arguments:
+Optional model and graph name arguments:
 
 ```bash
 ros2 launch sample_midas_yolo_parallel launch_with_image_publisher.py \
-  midas_model_path:=/opt/model/midas_256.bin \
-  yolo_model_path:=/opt/model/yolo11n-seg-w8a16-qcs9075.bin \
-  image_path:=/path/to/input.jpg
-```
-
-IQ8 example:
-
-```bash
-ros2 launch sample_midas_yolo_parallel launch_with_image_publisher.py \
-  midas_model_path:=/opt/model/midas_256.bin \
-  yolo_model_path:=/opt/model/yolo11n-seg-w8a16-qcs8275-proxy.bin \
+  combined_model_path:=/opt/model/midas_yolo_combined.bin \
+  midas_graph_name:=midas \
+  yolo_graph_name:=yolov11_seg \
   image_path:=/path/to/input.jpg
 ```
 
@@ -145,9 +122,8 @@ ros2 launch sample_midas_yolo_parallel launch_with_qrb_ros_camera.py
 </details>
 
 Notes:
-- The launch files always use `/opt/model/midas_256.bin` for MiDaS.
-- The launch files auto-select the YOLO model from `/opt/model` based on target/model availability (IQ8, IQ9, then generic fallback).
-- You can still override explicitly with `yolo_model_path:=...`.
+- Both graphs must be compiled into a single combined context binary (`midas_yolo_combined.bin`).
+- The default graph names are `midas` (MiDaS) and `yolov11_seg` (YOLO). Override with `midas_graph_name` and `yolo_graph_name` if your binary uses different names.
 - YOLO input is configured for `uint16` (`yolo_tensor_data_type:=4`, `yolo_pack_uint16_input:=true`).
 - If you are validating with a patched `qrb_ros_nn_inference`, source that workspace before `install/local_setup.bash`.
 

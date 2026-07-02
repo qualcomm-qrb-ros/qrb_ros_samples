@@ -2,9 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause-Clear
 
 model:
-  - midas_256.bin,file:///home/ubuntu/midas_256.bin
-  - yolo11n-seg-w8a16-qcs9075.bin,file:///home/ubuntu/yolo11n-seg-w8a16-qcs9075.bin
-  - yolo11n-seg-w8a16-qcs8275-proxy.bin,file:///home/ubuntu/yolo11n-seg-w8a16-qcs8275-proxy.bin
+  - midas_yolo_combined.bin,file:///home/ubuntu/midas_yolo_combined.bin
 
 apt:
   - ros-jazzy-qrb-ros-camera

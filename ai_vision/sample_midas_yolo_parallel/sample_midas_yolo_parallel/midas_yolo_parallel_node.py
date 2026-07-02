@@ -1,9 +1,11 @@
 # Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
 # SPDX-License-Identifier: BSD-3-Clause-Clear
 
+import ctypes
+import concurrent.futures
 import threading
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 
 import cv2
@@ -11,8 +13,106 @@ import numpy as np
 import rclpy
 from cv_bridge import CvBridge
 from qrb_ros_tensor_list_msgs.msg import Tensor, TensorList
+from rclpy.callback_groups import ReentrantCallbackGroup
+from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 from sensor_msgs.msg import Image
+
+
+# ---------------------------------------------------------------------------
+# RpcMem pool — pre-allocated ION buffers for zero-copy DMA-BUF tensor send.
+# Falls back gracefully if libcdsprpc is unavailable.
+# ---------------------------------------------------------------------------
+
+class _RpcMemLib:
+    """Thin ctypes wrapper around libcdsprpc rpcmem_alloc / rpcmem_to_fd / rpcmem_free."""
+    HEAP_ID_SYSTEM = 25
+    FLAGS_DEFAULT  = 1
+
+    def __init__(self):
+        try:
+            self._lib = ctypes.CDLL('libcdsprpc.so', use_errno=True)
+            self._lib.rpcmem_alloc.restype  = ctypes.c_void_p
+            self._lib.rpcmem_alloc.argtypes = [ctypes.c_int, ctypes.c_uint32, ctypes.c_int]
+            self._lib.rpcmem_to_fd.restype  = ctypes.c_int
+            self._lib.rpcmem_to_fd.argtypes = [ctypes.c_void_p]
+            self._lib.rpcmem_free.restype   = None
+            self._lib.rpcmem_free.argtypes  = [ctypes.c_void_p]
+            self.available = True
+        except OSError:
+            self.available = False
+
+    def alloc(self, size: int):
+        """Returns (ptr: c_void_p, fd: int) or (None, -1) on failure."""
+        if not self.available:
+            return None, -1
+        ptr = self._lib.rpcmem_alloc(self.HEAP_ID_SYSTEM, self.FLAGS_DEFAULT, size)
+        if not ptr:
+            return None, -1
+        fd = self._lib.rpcmem_to_fd(ptr)
+        if fd < 0:
+            self._lib.rpcmem_free(ptr)
+            return None, -1
+        return ptr, fd
+
+    def free(self, ptr):
+        if self.available and ptr:
+            self._lib.rpcmem_free(ptr)
+
+
+_rpcmem = _RpcMemLib()
+
+
+@dataclass
+class _RpcBuf:
+    """One pre-allocated rpcmem buffer."""
+    ptr:  int    # c_void_p value
+    fd:   int
+    size: int
+    in_use: bool = False
+
+    def write(self, data: np.ndarray) -> None:
+        """Copy numpy array into the ION buffer via ctypes memmove."""
+        raw = data.tobytes()
+        ctypes.memmove(self.ptr, raw, len(raw))
+
+
+class RpcMemPool:
+    """
+    Fixed pool of rpcmem ION buffers for a single tensor slot.
+    Provides acquire() / release(fd) so frames can be in-flight concurrently.
+    Falls back to returning fd=-1 when rpcmem is unavailable.
+    """
+    def __init__(self, size: int, slots: int):
+        self._lock   = threading.Lock()
+        self._size   = size
+        self._bufs: List[_RpcBuf] = []
+        if _rpcmem.available:
+            for _ in range(slots):
+                ptr, fd = _rpcmem.alloc(size)
+                if ptr and fd >= 0:
+                    self._bufs.append(_RpcBuf(ptr=ptr, fd=fd, size=size))
+
+    def acquire(self) -> Optional[_RpcBuf]:
+        """Return a free buffer, or None if none available (caller falls back to data copy)."""
+        with self._lock:
+            for b in self._bufs:
+                if not b.in_use:
+                    b.in_use = True
+                    return b
+        return None
+
+    def release(self, fd: int) -> None:
+        with self._lock:
+            for b in self._bufs:
+                if b.fd == fd:
+                    b.in_use = False
+                    return
+
+    def __del__(self):
+        for b in self._bufs:
+            _rpcmem.free(ctypes.c_void_p(b.ptr))
+        self._bufs.clear()
 
 
 COCO_CLASSES = (
@@ -58,6 +158,9 @@ class PendingFrame:
     midas_tensors: Optional[List[Tensor]] = None
     yolo_tensors: Optional[List[Tensor]] = None
     created_at: float = 0.0
+    # DMA-BUF fds in use for this frame — released after fusion
+    midas_dmabuf_fd: int = -1
+    yolo_dmabuf_fd: int = -1
 
 
 def _to_float01(data: np.ndarray) -> np.ndarray:
@@ -140,11 +243,17 @@ class MidasYoloParallelNode(Node):
         self.max_pending_frames = int(self.get_parameter('max_pending_frames').value)
 
         self.image_sub = self.create_subscription(Image, self.input_topic, self.image_callback, 10)
+
+        # Reentrant group so midas and yolo output callbacks can fire concurrently
+        # under MultiThreadedExecutor when both results arrive at the same time.
+        self._output_cb_group = ReentrantCallbackGroup()
         self.midas_out_sub = self.create_subscription(
-            TensorList, 'midas_inference_output_tensor', self.midas_output_callback, 10
+            TensorList, 'midas_inference_output_tensor', self.midas_output_callback, 10,
+            callback_group=self._output_cb_group,
         )
         self.yolo_out_sub = self.create_subscription(
-            TensorList, 'yolo_seg_inference_output_tensor', self.yolo_output_callback, 10
+            TensorList, 'yolo_seg_inference_output_tensor', self.yolo_output_callback, 10,
+            callback_group=self._output_cb_group,
         )
 
         self.midas_in_pub = self.create_publisher(TensorList, 'midas_inference_input_tensor', 10)
@@ -155,6 +264,34 @@ class MidasYoloParallelNode(Node):
 
         self.last_log = time.time()
         self.processed_count = 0
+
+        # Thread pool for fusion post-processing — keeps output callbacks non-blocking
+        # so the next inference result can be received immediately.
+        self._fuse_pool = concurrent.futures.ThreadPoolExecutor(max_workers=2,
+                                                                thread_name_prefix='fuse')
+
+        # Pre-allocate rpcmem ION buffer pools for zero-copy DMA-BUF tensor send.
+        # Pool size = max_pending_frames so all in-flight frames can hold buffers simultaneously.
+        midas_bytes = int(np.prod(self.midas_size)) * 3  # HxWx3 uint8
+        yolo_h, yolo_w = self.yolo_size
+        if self.yolo_pack_uint16_input:
+            yolo_bytes = yolo_h * yolo_w * 3 * 2  # uint16
+        elif self.yolo_tensor_data_type == 2:
+            yolo_bytes = yolo_h * yolo_w * 3 * 4  # float32
+        else:
+            yolo_bytes = yolo_h * yolo_w * 3      # uint8
+        self._midas_pool = RpcMemPool(midas_bytes, self.max_pending_frames)
+        self._yolo_pool  = RpcMemPool(yolo_bytes,  self.max_pending_frames)
+        if _rpcmem.available and self._midas_pool._bufs and self._yolo_pool._bufs:
+            self.get_logger().info(
+                f'DMA-BUF pools ready: midas={len(self._midas_pool._bufs)}x{midas_bytes}B '
+                f'yolo={len(self._yolo_pool._bufs)}x{yolo_bytes}B'
+            )
+        else:
+            self.get_logger().warn(
+                'rpcmem unavailable or pool alloc failed — falling back to data-copy tensors'
+            )
+
         self.get_logger().info(
             f'midas_yolo_parallel_node started (yolo_pack_uint16_input={self.yolo_pack_uint16_input})'
         )
@@ -187,6 +324,7 @@ class MidasYoloParallelNode(Node):
         return None
 
     def _make_tensor(self, name: str, data: np.ndarray, data_type: int) -> TensorList:
+        """Build a TensorList using data-copy (fallback path)."""
         msg = TensorList()
         t = Tensor()
         t.name = name
@@ -195,6 +333,34 @@ class MidasYoloParallelNode(Node):
         t.data = data.tobytes()
         msg.tensor_list.append(t)
         return msg
+
+    def _make_dmabuf_tensor(
+        self,
+        name: str,
+        data: np.ndarray,
+        data_type: int,
+        pool: RpcMemPool,
+    ) -> Tuple[TensorList, int]:
+        """
+        Build a TensorList backed by a DMA-BUF ION buffer from pool.
+        Returns (msg, dmabuf_fd). fd=-1 means data-copy fallback was used.
+        Caller must call pool.release(fd) after the inference result arrives.
+        """
+        buf = pool.acquire()
+        if buf is not None:
+            buf.write(data)
+            msg = TensorList()
+            t = Tensor()
+            t.name = name
+            t.data_type = data_type
+            t.shape = [int(v) for v in data.shape]
+            t.dmabuf_fd   = buf.fd
+            t.dmabuf_size = buf.size
+            t.dmabuf_offset = 0
+            msg.tensor_list.append(t)
+            return msg, buf.fd
+        # Fallback: no free buffer — use data copy
+        return self._make_tensor(name, data, data_type), -1
 
     def _prep_midas(self, bgr: np.ndarray) -> np.ndarray:
         h, w = self.midas_size
@@ -259,6 +425,30 @@ class MidasYoloParallelNode(Node):
         if not shape:
             return np.array([], dtype=np.float32)
         elem_count = int(np.prod(shape))
+
+        # DMA-BUF output path: read directly from the ION buffer via mmap.
+        if hasattr(tensor, 'dmabuf_fd') and tensor.dmabuf_fd >= 0 and tensor.dmabuf_size > 0:
+            import mmap
+            byte_count = tensor.dmabuf_size
+            dtype = np.float32
+            if byte_count == elem_count:
+                dtype = np.uint8
+            elif byte_count == elem_count * 2:
+                dtype = np.uint16
+            elif byte_count == elem_count * 4:
+                dtype = np.float32
+            elif byte_count == elem_count * 8:
+                dtype = np.float64
+            try:
+                with mmap.mmap(tensor.dmabuf_fd, byte_count,
+                               access=mmap.ACCESS_READ,
+                               offset=int(tensor.dmabuf_offset)) as mm:
+                    arr = np.frombuffer(mm, dtype=dtype, count=elem_count).copy()
+                return arr.reshape(shape)
+            except Exception as e:
+                self.get_logger().warn(f'dmabuf mmap failed ({e}), falling back to data copy')
+
+        # Data-copy path (fallback or non-dmabuf output).
         data = bytes(tensor.data)
         byte_count = len(data)
 
@@ -298,7 +488,7 @@ class MidasYoloParallelNode(Node):
             frame.midas_tensors = list(msg.tensor_list)
             frame_ready = frame.yolo_tensors is not None
         if frame_ready:
-            self._fuse_and_publish(key)
+            self._fuse_pool.submit(self._fuse_and_publish, key)
 
     def yolo_output_callback(self, msg: TensorList):
         key = self._match_pending_key(msg)
@@ -312,7 +502,7 @@ class MidasYoloParallelNode(Node):
             frame.yolo_tensors = list(msg.tensor_list)
             frame_ready = frame.midas_tensors is not None
         if frame_ready:
-            self._fuse_and_publish(key)
+            self._fuse_pool.submit(self._fuse_and_publish, key)
 
     def _decode_midas_depth(self, tensor: Tensor, out_w: int, out_h: int) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         raw = self._tensor_to_numpy(tensor)
@@ -615,11 +805,17 @@ class MidasYoloParallelNode(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = MidasYoloParallelNode()
+    # 3 threads: one for image_callback, one for midas_output_callback,
+    # one for yolo_output_callback — all can be in-flight simultaneously.
+    executor = MultiThreadedExecutor(num_threads=6)
+    executor.add_node(node)
     try:
-        rclpy.spin(node)
+        executor.spin()
     except KeyboardInterrupt:
         pass
     finally:
+        executor.shutdown()
+        node._fuse_pool.shutdown(wait=False)
         node.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()
