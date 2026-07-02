@@ -66,20 +66,13 @@ def generate_launch_description():
         ],
     )
 
-    inference_container = ComposableNodeContainer(
-        name='parallel_inference_container',
-        namespace='',
-        package='rclcpp_components',
-        executable='component_container_mt',
-        composable_node_descriptions=[shared_inference],
-        output='screen',
-    )
-
-    fusion_node = Node(
-        package='sample_midas_yolo_parallel',
-        executable='midas_yolo_parallel_node',
-        name='midas_yolo_parallel_node',
-        output='screen',
+    # C++ fusion node loaded into the SAME container as the inference node.
+    # This enables intra-process zero-copy for all tensor messages — no
+    # serialization overhead between inference outputs and fusion inputs.
+    fusion_cpp = ComposableNode(
+        package='sample_midas_yolo_parallel_cpp',
+        plugin='sample_midas_yolo_parallel_cpp::MidasYoloFusionNode',
+        name='midas_yolo_fusion_node',
         parameters=[{
             'input_topic': '/image_raw',
             'yolo_tensor_data_type': 0,
@@ -91,6 +84,17 @@ def generate_launch_description():
         }],
     )
 
+    # All three nodes in one container: inference + fusion share the same process.
+    # component_container_mt gives each node its own thread for concurrent execution.
+    inference_container = ComposableNodeContainer(
+        name='parallel_inference_container',
+        namespace='',
+        package='rclcpp_components',
+        executable='component_container_mt',
+        composable_node_descriptions=[shared_inference, fusion_cpp],
+        output='screen',
+    )
+
     return LaunchDescription([
         image_path_arg,
         combined_model_arg,
@@ -99,5 +103,4 @@ def generate_launch_description():
         pub_rate_arg,
         image_pub,
         inference_container,
-        fusion_node,
     ])

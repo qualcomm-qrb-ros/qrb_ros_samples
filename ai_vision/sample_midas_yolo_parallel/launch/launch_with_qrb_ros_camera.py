@@ -4,7 +4,7 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
-from launch_ros.actions import ComposableNodeContainer, Node
+from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 from ament_index_python.packages import get_package_share_directory
 
@@ -70,24 +70,14 @@ def generate_launch_description():
         ],
     )
 
-    container = ComposableNodeContainer(
-        name='parallel_inference_camera_container',
-        namespace='',
-        package='rclcpp_components',
-        executable='component_container_mt',
-        composable_node_descriptions=[camera_node, shared_inference],
-        output='screen',
-    )
-
-    fusion_node = Node(
-        package='sample_midas_yolo_parallel',
-        executable='midas_yolo_parallel_node',
-        name='midas_yolo_parallel_node',
-        output='screen',
+    fusion_cpp = ComposableNode(
+        package='sample_midas_yolo_parallel_cpp',
+        plugin='sample_midas_yolo_parallel_cpp::MidasYoloFusionNode',
+        name='midas_yolo_fusion_node',
         parameters=[{
             'input_topic': '/cam0_stream1',
-            'yolo_tensor_data_type': 4,
-            'yolo_pack_uint16_input': True,
+            'yolo_tensor_data_type': 0,
+            'yolo_pack_uint16_input': False,
             'midas_input_size': [256, 256],
             'yolo_input_size': [640, 640],
             'score_thresh': 0.25,
@@ -95,10 +85,18 @@ def generate_launch_description():
         }],
     )
 
+    container = ComposableNodeContainer(
+        name='parallel_inference_camera_container',
+        namespace='',
+        package='rclcpp_components',
+        executable='component_container_mt',
+        composable_node_descriptions=[camera_node, shared_inference, fusion_cpp],
+        output='screen',
+    )
+
     return LaunchDescription([
         combined_model_arg,
         midas_graph_name_arg,
         yolo_graph_name_arg,
         container,
-        fusion_node,
     ])
