@@ -4,7 +4,7 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import ComposableNodeContainer, Node
+from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 
 
@@ -35,17 +35,6 @@ def generate_launch_description():
         description='image_publisher rate',
     )
 
-    image_pub = Node(
-        package='image_publisher',
-        executable='image_publisher_node',
-        name='image_publisher_node',
-        output='screen',
-        parameters=[
-            {'filename': LaunchConfiguration('image_path')},
-            {'rate': LaunchConfiguration('publish_rate')},
-        ],
-    )
-
     shared_inference = ComposableNode(
         package='qrb_ros_nn_inference',
         plugin='qrb_ros::nn_inference::QrbRosSharedInferenceNode',
@@ -66,6 +55,19 @@ def generate_launch_description():
         ],
     )
 
+    # FastImagePublisherNode: pre-loads the image once, publishes at full rate
+    # without per-frame JPEG decode. Loaded into the same container for
+    # intra-process zero-copy delivery to the fusion node's image_callback.
+    fast_image_pub = ComposableNode(
+        package='sample_midas_yolo_parallel_cpp',
+        plugin='sample_midas_yolo_parallel_cpp::FastImagePublisherNode',
+        name='fast_image_publisher_node',
+        parameters=[{
+            'filename': LaunchConfiguration('image_path'),
+            'rate': LaunchConfiguration('publish_rate'),
+        }],
+    )
+
     # C++ fusion node loaded into the SAME container as the inference node.
     # This enables intra-process zero-copy for all tensor messages — no
     # serialization overhead between inference outputs and fusion inputs.
@@ -84,14 +86,14 @@ def generate_launch_description():
         }],
     )
 
-    # All three nodes in one container: inference + fusion share the same process.
-    # component_container_mt gives each node its own thread for concurrent execution.
+    # All nodes in one container: image publisher + inference + fusion.
+    # Intra-process zero-copy for image_raw, tensor inputs, and tensor outputs.
     inference_container = ComposableNodeContainer(
         name='parallel_inference_container',
         namespace='',
         package='rclcpp_components',
         executable='component_container_mt',
-        composable_node_descriptions=[shared_inference, fusion_cpp],
+        composable_node_descriptions=[fast_image_pub, shared_inference, fusion_cpp],
         output='screen',
     )
 
@@ -101,6 +103,5 @@ def generate_launch_description():
         midas_graph_name_arg,
         yolo_graph_name_arg,
         pub_rate_arg,
-        image_pub,
         inference_container,
     ])

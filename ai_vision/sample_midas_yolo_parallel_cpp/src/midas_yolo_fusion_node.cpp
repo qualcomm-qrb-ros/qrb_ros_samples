@@ -7,6 +7,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstring>
+#include <future>
 #include <numeric>
 #include <stdexcept>
 
@@ -15,6 +16,9 @@
 
 namespace sample_midas_yolo_parallel_cpp
 {
+
+using clk = std::chrono::steady_clock;
+using ms  = std::chrono::duration<double, std::milli>;
 
 // ── COCO class names ─────────────────────────────────────────────────────────
 
@@ -70,6 +74,7 @@ MidasYoloFusionNode::MidasYoloFusionNode(const rclcpp::NodeOptions & options)
   auto output_cbg = create_callback_group(rclcpp::CallbackGroupType::Reentrant);
   rclcpp::SubscriptionOptions out_opts;
   out_opts.callback_group = output_cbg;
+  out_opts.use_intra_process_comm = rclcpp::IntraProcessSetting::Enable;
 
   // Publishers — enable intra-process for tensor topics
   rclcpp::PublisherOptions ipc_opts;
@@ -231,18 +236,24 @@ custom_msg::TensorList MidasYoloFusionNode::make_tensor_msg(
 
 void MidasYoloFusionNode::image_callback(sensor_msgs::msg::Image::ConstSharedPtr msg)
 {
+  auto t_start = clk::now();
   cv::Mat bgr = decode_image(msg);
   if (bgr.empty()) return;
+  auto t_decode = clk::now();
 
   auto key = extract_key(msg->header);
 
+  // Prep both inputs sequentially — each takes ~2ms, total ~4ms.
+  // std::async was tried but caused thread oversubscription with the executor pool.
   cv::Mat midas_in = prep_midas(bgr);
   cv::Mat yolo_in  = prep_yolo(bgr);
+  auto t_prep = clk::now();
 
   auto midas_msg = std::make_unique<custom_msg::TensorList>(
       make_tensor_msg(midas_input_name_, midas_in, midas_data_type_, msg->header));
   auto yolo_msg = std::make_unique<custom_msg::TensorList>(
       make_tensor_msg(yolo_input_name_,  yolo_in,  yolo_data_type_,  msg->header));
+  auto t_make = clk::now();
 
   {
     std::lock_guard<std::mutex> lk(pending_mutex_);
@@ -266,6 +277,25 @@ void MidasYoloFusionNode::image_callback(sensor_msgs::msg::Image::ConstSharedPtr
 
   midas_in_pub_->publish(std::move(midas_msg));
   yolo_in_pub_->publish(std::move(yolo_msg));
+  auto t_pub = clk::now();
+
+  // Log image callback timing every 2s
+  static std::atomic<uint64_t> img_count{0};
+  static clk::time_point last_img_log = clk::now();
+  if (++img_count % 20 == 0) {
+    auto now = clk::now();
+    if (ms(now - last_img_log).count() > 2000) {
+      RCLCPP_INFO(get_logger(),
+          "image_cb: decode=%.2fms prep=%.2fms make=%.2fms pub=%.2fms total=%.2fms pending=%zu",
+          ms(t_decode - t_start).count(),
+          ms(t_prep   - t_decode).count(),
+          ms(t_make   - t_prep).count(),
+          ms(t_pub    - t_make).count(),
+          ms(t_pub    - t_start).count(),
+          pending_.size());
+      last_img_log = now;
+    }
+  }
 }
 
 // ── output callbacks ─────────────────────────────────────────────────────────
@@ -736,6 +766,7 @@ sensor_msgs::msg::Image MidasYoloFusionNode::mat_to_image_msg(
 
 void MidasYoloFusionNode::fuse_and_publish(FrameKey key)
 {
+  auto t0 = clk::now();
   PendingFrame frame;
   {
     std::lock_guard<std::mutex> lk(pending_mutex_);
@@ -749,24 +780,25 @@ void MidasYoloFusionNode::fuse_and_publish(FrameKey key)
       frame.yolo_tensors->tensor_list.empty()) return;
 
   try {
-    // Decode MiDaS depth
+    // Decode MiDaS depth and parse YOLO outputs sequentially.
+    // std::async caused thread oversubscription with the executor pool.
     cv::Mat depth_f32, depth_gray, depth_color;
     decode_midas_depth(
         frame.midas_tensors->tensor_list[0],
         frame.image_bgr.cols, frame.image_bgr.rows,
         depth_f32, depth_gray, depth_color);
-
-    // Parse YOLO outputs
     std::vector<Detection> dets;
     cv::Mat proto_hwc;
     parse_yolo_outputs(
         *frame.yolo_tensors, frame.yolo_input_w, frame.yolo_input_h,
         dets, proto_hwc);
+    auto t1 = clk::now();
 
     // Draw overlay on depth_color
     cv::Mat overlay = depth_color.clone();
     draw_overlay(overlay, depth_f32, dets, proto_hwc,
         frame.yolo_input_w, frame.yolo_input_h);
+    auto t2 = clk::now();
 
     // Build header
     std_msgs::msg::Header hdr;
@@ -776,13 +808,15 @@ void MidasYoloFusionNode::fuse_and_publish(FrameKey key)
     overlay_pub_->publish(mat_to_image_msg(overlay,     "bgr8",  hdr));
     depth_color_pub_->publish(mat_to_image_msg(depth_color, "bgr8",  hdr));
     depth_gray_pub_->publish(mat_to_image_msg(depth_gray,  "mono8", hdr));
+    auto t3 = clk::now();
 
     uint64_t cnt = ++processed_count_;
     auto now = this->now();
     if ((now - last_log_time_).seconds() > 2.0) {
       RCLCPP_INFO(get_logger(),
-          "processed=%lu pending=%zu detections=%zu",
-          cnt, pending_.size(), dets.size());
+          "processed=%lu pending=%zu dets=%zu | decode+parse=%.2fms overlay=%.2fms pub=%.2fms total=%.2fms",
+          cnt, pending_.size(), dets.size(),
+          ms(t1-t0).count(), ms(t2-t1).count(), ms(t3-t2).count(), ms(t3-t0).count());
       last_log_time_ = now;
     }
   } catch (const std::exception & e) {

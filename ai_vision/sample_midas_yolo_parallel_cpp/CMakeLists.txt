@@ -15,7 +15,8 @@ ament_auto_find_build_dependencies()
 find_package(OpenCV REQUIRED COMPONENTS core imgproc)
 
 ament_auto_add_library(midas_yolo_fusion_node SHARED
-  src/midas_yolo_fusion_node.cpp)
+  src/midas_yolo_fusion_node.cpp
+  src/fast_image_publisher_node.cpp)
 
 target_include_directories(midas_yolo_fusion_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -28,6 +29,11 @@ rclcpp_components_register_node(
   midas_yolo_fusion_node
   PLUGIN "sample_midas_yolo_parallel_cpp::MidasYoloFusionNode"
   EXECUTABLE midas_yolo_fusion_node_exe)
+
+rclcpp_components_register_node(
+  midas_yolo_fusion_node
+  PLUGIN "sample_midas_yolo_parallel_cpp::FastImagePublisherNode"
+  EXECUTABLE fast_image_publisher_node_exe)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
