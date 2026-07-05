@@ -1,7 +1,6 @@
 <div align="center">
   <h1>QRB ROS Speech Recognition ROS Node</h1>
   <p align="center">
-   <img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3gen2-dev-kits-hero-7" alt="Qualcomm QRB ROS" title="Qualcomm QRB ROS" />
 
   </p>
   <p>QRB ROS Speech Recognition ROS Node on Qualcomm Robotics Platforms</p>
@@ -73,11 +72,9 @@ The QRB ROS Speech Recognition Node is a real-time speech-to-text solution desig
 <table >
   <tr>
     <th>Development Hardware</th>
-    <td>Qualcomm Dragonwing™ RB3 Gen2</td>    
   </tr>
   <tr>
     <th>Hardware Overview</th>
-    <th><a href="https://www.qualcomm.com/developer/hardware/rb3-gen-2-development-kit"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3-gen2-carousel?fmt=webp-alpha&qlt=85" width="180"/></a></th>
   </tr>
   <tr>
     <th>System</th>
@@ -112,16 +109,15 @@ source ~/venv_ros/bin/activate
 4. Install dependencies (All operations are in venv_ros)
 ```bash
 cd ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode
-source ./test/install_packages_rb3gen2.sh
 ```
 
-5. Prepare AI-HUB model (only support for rb5gen2)
+5. Prepare AI-HUB model
 ```bash
 cd ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode
 mkdir model
 ```
 
-6. Download relate model files (only support for rb5gen2)
+6. Download relate model files
 ```bash
 # Download MEL FILTER FILE to ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode/model.
 wget https://qaihub-public-assets.s3.us-west-2.amazonaws.com/qai-hub-models/models/whisper_asr_shared/v1/openai_assets/mel_filters.npz
@@ -140,7 +136,7 @@ cd ./qrb_ros_samples/ai_audio/sample_speech_recognition_rt_rosnode
 python3 -m colcon build
 ```
 
-2. set model path (only support for rb5gen2)
+2. set model path
 ```bash
 export WHISPER_MODEL_PATH="<path of your model>"
 ```

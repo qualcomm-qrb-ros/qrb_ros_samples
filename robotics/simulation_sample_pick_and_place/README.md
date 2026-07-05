@@ -61,14 +61,6 @@
       </a>
     </td>
   </tr>
-  <tr>
-    <td>Qualcomm Dragonwing™ RB3 Gen2</td>
-    <td>
-      <a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/rb3-series/rb3-gen2">
-        <img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3-vision-kit-1" width="160">
-      </a>
-    </td>
-  </tr>
     <tr>
     <td>Qualcomm Dragonwing™ IQ-8275</td>
     <td>
