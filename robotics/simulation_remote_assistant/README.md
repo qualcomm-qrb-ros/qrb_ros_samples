@@ -73,14 +73,6 @@ The `simulation_remote_assistant` sample application is the ROS package that uti
     </td>
   </tr>
   <tr>
-    <td>Qualcomm Robotics RB3 Gen2 Vision Kit</td>
-    <td>
-      <a href="https://www.qualcomm.com/products/robotics/robotics-rb3-platform">
-        <img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3-vision-kit-1" width="160">
-      </a>
-    </td>
-  </tr>
-  <tr>
     <td>Qualcomm Dragonwing™ IQ-8300</td>
     <td>
       <span>coming soon...</span>
@@ -126,7 +118,7 @@ Reference the [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_r
 #Prepare the model and move to default model path
 sudo chmod -R 777 /opt/
 mkdir /opt/model/
-mv coco8.yaml yolov8_det_qcs9075.bin yolov8_det_qcs6490.tflite /opt/model/
+mv coco8.yaml yolov8_det_qcs9075.bin /opt/model/
 ```
 ### Step2: Run the simulation sample env on host
 
@@ -158,9 +150,6 @@ ros2 launch simulation_remote_assistant map_nav_setup.launch.py
 
 #Qualcomm Dragonwing™ IQ-9075 EVK 
 ros2 launch simulation_remote_assistant yolo_detectcion.launch.py model:=/opt/model/yolov8_det_qcs9075.bin backend_option:=libQnnHtp.so
-
-#Qualcomm Robotics RB3 Gen2 Vision Kit
-ros2 launch simulation_remote_assistant  yolo_detectcion.launch.py model:=/opt/model/yolov8_det_qcs6490.tflite label_file:=/opt/model/coco8.yaml
 
 #Run the task manager to parse the location and object
 ros2 run simulation_remote_assistant task_manager_node
