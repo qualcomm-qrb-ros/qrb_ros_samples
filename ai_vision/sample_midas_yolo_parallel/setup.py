@@ -3,7 +3,7 @@
 
 import os
 from glob import glob
-from setuptools import find_packages, setup
+from setuptools import setup
 
 
 package_name = 'sample_midas_yolo_parallel'
@@ -12,14 +12,12 @@ package_name = 'sample_midas_yolo_parallel'
 setup(
     name=package_name,
     version='1.0.0',
-    packages=find_packages(where='.', exclude=['test']),
-    package_dir={'': '.'},
+    packages=[],
     data_files=[
         ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
         (os.path.join('share', package_name), ['package.xml']),
         (os.path.join('share', package_name, 'launch'), glob(os.path.join('launch', '*.py'))),
         (os.path.join('share', package_name, 'config'), glob(os.path.join('config', '*.yaml'))),
-        (os.path.join('lib', package_name, package_name), glob(os.path.join(package_name, '*.py'))),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -29,8 +27,6 @@ setup(
     license='BSD-3-Clause-Clear',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': [
-            'midas_yolo_parallel_node = sample_midas_yolo_parallel.midas_yolo_parallel_node:main',
-        ],
+        'console_scripts': [],
     },
 )
