@@ -115,7 +115,8 @@ private:
 
   custom_msg::TensorList make_tensor_msg(
       const std::string & name, const cv::Mat & data, int data_type,
-      const std_msgs::msg::Header & hdr);
+      const std_msgs::msg::Header & hdr,
+      const std::vector<uint32_t> & explicit_shape = {});
 
   // ── post-processing ──
   void fuse_and_publish(FrameKey key);
@@ -128,9 +129,11 @@ private:
   // yolo
   cv::Mat tensor_to_mat(const custom_msg::Tensor & tensor);
   cv::Mat proto_to_hwc(const cv::Mat & proto);
-  std::vector<Detection> decode_yolo_split(
-      const cv::Mat & boxes, const cv::Mat & scores,
-      const cv::Mat & class_idx, const cv::Mat & coeffs,
+  // Split-output decoder for the INT8-fixed binary: boxes (1,4,N), all_scores (1,80,N),
+  // coeffs (1,32,N), proto (1,32,H,W).  Performs per-anchor argmax over 80 classes.
+  std::vector<Detection> decode_yolo_split_all_scores(
+      const cv::Mat & boxes, const cv::Mat & all_scores,
+      const cv::Mat & coeffs,
       int input_w, int input_h);
   std::vector<Detection> nms(std::vector<Detection> dets);
   void parse_yolo_outputs(

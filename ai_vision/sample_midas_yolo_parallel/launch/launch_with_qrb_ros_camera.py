@@ -12,7 +12,7 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     combined_model_arg = DeclareLaunchArgument(
         'combined_model_path',
-        default_value='/opt/model/midas_yolo_combined.bin',
+        default_value='/opt/model/midas_yolo_combined_int8_split.bin',
         description='Combined multi-graph QNN context binary containing MiDaS and YOLO graphs',
     )
     midas_graph_name_arg = DeclareLaunchArgument(
@@ -76,7 +76,7 @@ def generate_launch_description():
         name='midas_yolo_fusion_node',
         parameters=[{
             'input_topic': '/cam0_stream1',
-            'yolo_tensor_data_type': 0,
+            'yolo_tensor_data_type': 2,
             'yolo_pack_uint16_input': False,
             'midas_input_size': [256, 256],
             'yolo_input_size': [640, 640],

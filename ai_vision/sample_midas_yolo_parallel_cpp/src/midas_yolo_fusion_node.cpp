@@ -169,17 +169,14 @@ cv::Mat MidasYoloFusionNode::prep_midas(const cv::Mat & bgr)
   cv::resize(bgr, resized, {midas_w_, midas_h_}, 0, 0, cv::INTER_LINEAR);
   cv::cvtColor(resized, rgb, cv::COLOR_BGR2RGB);
 
-  if (midas_data_type_ == 2) {
-    // float32 normalised with ImageNet mean/std
-    cv::Mat f32;
-    rgb.convertTo(f32, CV_32FC3, 1.0 / 255.0);
-    const cv::Scalar mean(0.485f, 0.456f, 0.406f);
-    const cv::Scalar std (0.229f, 0.224f, 0.225f);
-    cv::subtract(f32, mean, f32);
-    cv::divide(f32, std, f32);
-    return f32;  // HxWx3 float32
-  }
-  return rgb;  // HxWx3 uint8
+  // The QNN MiDaS model input is UFIXED_POINT_8 (quantized uint8) in NCHW layout.
+  // Split the interleaved HWC uint8 image into three separate H×W planes and
+  // concatenate them to produce a contiguous NCHW buffer: [R-plane | G-plane | B-plane].
+  std::vector<cv::Mat> planes(3);
+  cv::split(rgb, planes);                    // planes[i] is H×W CV_8U
+  cv::Mat nchw;
+  cv::vconcat(planes, nchw);                 // (3H)×W CV_8U — contiguous NCHW
+  return nchw.reshape(1, 1);                 // 1×(3*H*W) flat, same data
 }
 
 cv::Mat MidasYoloFusionNode::prep_yolo(const cv::Mat & bgr)
@@ -188,6 +185,14 @@ cv::Mat MidasYoloFusionNode::prep_yolo(const cv::Mat & bgr)
   cv::resize(bgr, resized, {yolo_w_, yolo_h_}, 0, 0, cv::INTER_LINEAR);
   cv::cvtColor(resized, rgb, cv::COLOR_BGR2RGB);
 
+  // The QNN YOLO model input has declared shape [1, 3, H, W] (NCHW), same as
+  // MiDaS.  cv::Mat channel-conversion above produces interleaved HWC data
+  // (R,G,B,R,G,B,...); it must be split into three separate H×W planes and
+  // concatenated into a contiguous NCHW buffer before being sent to the
+  // inference node, exactly like prep_midas() does. Without this conversion
+  // the model receives spatially-scrambled channel data: box/mask outputs
+  // still look superficially plausible (they are more tolerant of bad
+  // input), but the class-score branch (Sigmoid) collapses to all-zero.
   if (yolo_pack_uint16_) {
     // Quantise to uint16: q = round(pixel/255 / 1.5259e-5)
     cv::Mat f32;
@@ -195,21 +200,35 @@ cv::Mat MidasYoloFusionNode::prep_yolo(const cv::Mat & bgr)
     f32 *= (1.0f / 0.000015259021893143654f);
     cv::Mat u16;
     f32.convertTo(u16, CV_16UC3);
-    return u16;
+    std::vector<cv::Mat> planes(3);
+    cv::split(u16, planes);
+    cv::Mat nchw;
+    cv::vconcat(planes, nchw);
+    return nchw.reshape(1, 1);
   }
   if (yolo_data_type_ == 2) {
     cv::Mat f32;
     rgb.convertTo(f32, CV_32FC3, 1.0 / 255.0);
-    return f32;
+    std::vector<cv::Mat> planes(3);
+    cv::split(f32, planes);
+    cv::Mat nchw;
+    cv::vconcat(planes, nchw);
+    return nchw.reshape(1, 1);
   }
-  return rgb;  // uint8
+  // uint8
+  std::vector<cv::Mat> planes(3);
+  cv::split(rgb, planes);
+  cv::Mat nchw;
+  cv::vconcat(planes, nchw);
+  return nchw.reshape(1, 1);
 }
 
 // ── tensor message builder ───────────────────────────────────────────────────
 
 custom_msg::TensorList MidasYoloFusionNode::make_tensor_msg(
     const std::string & name, const cv::Mat & data, int data_type,
-    const std_msgs::msg::Header & hdr)
+    const std_msgs::msg::Header & hdr,
+    const std::vector<uint32_t> & explicit_shape)
 {
   custom_msg::TensorList msg;
   msg.header = hdr;
@@ -218,11 +237,15 @@ custom_msg::TensorList MidasYoloFusionNode::make_tensor_msg(
   t.name      = name;
   t.data_type = data_type;
 
-  // Shape: [1, H, W, C]
-  t.shape = {1,
-      static_cast<uint32_t>(data.rows),
-      static_cast<uint32_t>(data.cols),
-      static_cast<uint32_t>(data.channels())};
+  if (!explicit_shape.empty()) {
+    t.shape = explicit_shape;
+  } else {
+    // Default: infer [1, H, W, C] from mat dimensions
+    t.shape = {1,
+        static_cast<uint32_t>(data.rows),
+        static_cast<uint32_t>(data.cols),
+        static_cast<uint32_t>(data.channels())};
+  }
 
   const size_t nbytes = data.total() * data.elemSize();
   t.data.resize(nbytes);
@@ -249,10 +272,14 @@ void MidasYoloFusionNode::image_callback(sensor_msgs::msg::Image::ConstSharedPtr
   cv::Mat yolo_in  = prep_yolo(bgr);
   auto t_prep = clk::now();
 
+  // MiDaS input is NCHW uint8: shape [1, 3, H, W]
   auto midas_msg = std::make_unique<custom_msg::TensorList>(
-      make_tensor_msg(midas_input_name_, midas_in, midas_data_type_, msg->header));
+      make_tensor_msg(midas_input_name_, midas_in, midas_data_type_, msg->header,
+          {1, 3, static_cast<uint32_t>(midas_h_), static_cast<uint32_t>(midas_w_)}));
+  // YOLO input is NCHW: shape [1, 3, H, W] (same layout convention as MiDaS).
   auto yolo_msg = std::make_unique<custom_msg::TensorList>(
-      make_tensor_msg(yolo_input_name_,  yolo_in,  yolo_data_type_,  msg->header));
+      make_tensor_msg(yolo_input_name_,  yolo_in,  yolo_data_type_,  msg->header,
+          {1, 3, static_cast<uint32_t>(yolo_h_), static_cast<uint32_t>(yolo_w_)}));
   auto t_make = clk::now();
 
   {
@@ -406,7 +433,6 @@ void MidasYoloFusionNode::decode_midas_depth(
   // Squeeze to 2D: shape is typically [1,1,H,W] or [1,H,W] or [H,W]
   const auto & shape = tensor.shape;
   int h = 1, w = 1;
-  (void)w;
   // Find the last two non-1 dims
   std::vector<int> non1;
   for (auto d : shape) if (d > 1) non1.push_back(static_cast<int>(d));
@@ -418,6 +444,10 @@ void MidasYoloFusionNode::decode_midas_depth(
   }
 
   cv::Mat depth2d = raw.reshape(1, h);
+  if (depth2d.cols != w) {
+    RCLCPP_WARN(get_logger(), "decode_midas_depth: shape mismatch cols=%d expected w=%d",
+        depth2d.cols, w);
+  }
   if (depth2d.type() != CV_32F) depth2d.convertTo(depth2d, CV_32F);
 
   cv::resize(depth2d, depth_f32, {out_w, out_h}, 0, 0, cv::INTER_LINEAR);
@@ -465,85 +495,122 @@ std::vector<Detection> MidasYoloFusionNode::nms(std::vector<Detection> dets)
   return kept;
 }
 
-// ── YOLO split-output decode ─────────────────────────────────────────────────
+// ── YOLO split-output decode (INT8-fixed binary: full 80-class scores) ───────
+//
+// The INT8 split binary exposes four separate output tensors:
+//   boxes  (1, 4,  N) — cx, cy, w, h in pixel space
+//   scores (1, 80, N) — sigmoid class scores in [0,1] for all 80 COCO classes
+//   coeffs (1, 32, N) — mask prototype coefficients
+//   proto  (1, 32, H, W) — mask prototypes (handled in parse_yolo_outputs)
+//
+// This function performs per-anchor argmax over the 80 class scores to obtain
+// the best class and its confidence, then applies score threshold and NMS.
 
-std::vector<Detection> MidasYoloFusionNode::decode_yolo_split(
-    const cv::Mat & boxes_flat, const cv::Mat & scores_flat,
-    const cv::Mat & class_idx_flat, const cv::Mat & coeffs_flat,
+std::vector<Detection> MidasYoloFusionNode::decode_yolo_split_all_scores(
+    const cv::Mat & boxes_flat, const cv::Mat & all_scores_flat,
+    const cv::Mat & coeffs_flat,
     int input_w, int input_h)
 {
-  // boxes_flat:     N*4 floats  → Nx4
-  // scores_flat:    N floats
-  // class_idx_flat: N floats
-  // coeffs_flat:    N*32 floats → Nx32
+  // all_scores_flat: 80*N floats (from tensor shape [1,80,N])
+  // boxes_flat:       4*N floats (from tensor shape [1, 4,N])
+  // coeffs_flat:     32*N floats (from tensor shape [1,32,N])
 
-  int n = static_cast<int>(scores_flat.total());
-  if (n == 0) return {};
+  int total_score_elems = static_cast<int>(all_scores_flat.total());
+  if (total_score_elems == 0) return {};
 
-  // Normalise scores to [0,1] if needed
-  cv::Mat scores_f32;
-  if (scores_flat.type() != CV_32F) scores_flat.convertTo(scores_f32, CV_32F);
-  else scores_f32 = scores_flat;
-
-  float s_max = *std::max_element(scores_f32.begin<float>(), scores_f32.end<float>());
-  if (s_max > 1.0f) {
-    // Likely raw logits or uint8 — normalise
-    scores_f32 /= (s_max > 255.0f ? s_max : 255.0f);
+  // Number of anchors
+  int n = total_score_elems / NUM_COCO_CLASSES;
+  if (n == 0 || total_score_elems % NUM_COCO_CLASSES != 0) {
+    RCLCPP_WARN(get_logger(),
+        "decode_yolo_split_all_scores: unexpected scores size %d (expected multiple of %d)",
+        total_score_elems, NUM_COCO_CLASSES);
+    return {};
   }
+
+  cv::Mat scores_f32;
+  if (all_scores_flat.type() != CV_32F)
+    all_scores_flat.convertTo(scores_f32, CV_32F);
+  else
+    scores_f32 = all_scores_flat;
 
   cv::Mat boxes_f32;
   if (boxes_flat.type() != CV_32F) boxes_flat.convertTo(boxes_f32, CV_32F);
   else boxes_f32 = boxes_flat;
 
-  cv::Mat cidx_f32;
-  if (class_idx_flat.type() != CV_32F) class_idx_flat.convertTo(cidx_f32, CV_32F);
-  else cidx_f32 = class_idx_flat;
-
   cv::Mat coeffs_f32;
   if (coeffs_flat.type() != CV_32F) coeffs_flat.convertTo(coeffs_f32, CV_32F);
   else coeffs_f32 = coeffs_flat;
 
-  // Reshape
-  cv::Mat b = boxes_f32.reshape(1, n);   // Nx4
-  cv::Mat m = coeffs_f32.reshape(1, n);  // Nx32
+  // Reshape to [NUM_COCO_CLASSES, N] then transpose to [N, NUM_COCO_CLASSES]
+  cv::Mat s = scores_f32.reshape(1, NUM_COCO_CLASSES);  // 80 x N
+  cv::Mat st;
+  cv::transpose(s, st);                                  // N x 80
 
-  // Transpose if needed
-  if (b.cols != 4 && b.rows == 4) cv::transpose(b, b);
-  if (m.cols != 32 && m.rows == 32) cv::transpose(m, m);
-  if (b.cols != 4 || m.cols != 32) return {};
+  // Reshape boxes to [4, N] then transpose to [N, 4]
+  cv::Mat b = boxes_f32.reshape(1, 4);  // 4 x N
+  cv::Mat bt;
+  cv::transpose(b, bt);                 // N x 4
+
+  // Reshape coeffs to [32, N] then transpose to [N, 32]
+  cv::Mat m = coeffs_f32.reshape(1, 32);  // 32 x N
+  cv::Mat mt;
+  cv::transpose(m, mt);                   // N x 32
+
+  if (bt.cols != 4 || mt.cols != 32 || st.cols != NUM_COCO_CLASSES) {
+    RCLCPP_WARN(get_logger(),
+        "decode_yolo_split_all_scores: shape mismatch after reshape/transpose");
+    return {};
+  }
 
   std::vector<Detection> dets;
   for (int i = 0; i < n; ++i) {
-    float score = scores_f32.at<float>(i);
-    if (score < score_thresh_) continue;
+    // Argmax over 80 class scores for this anchor
+    const float * row = st.ptr<float>(i);
+    int best_cls = 0;
+    float best_score = row[0];
+    for (int c = 1; c < NUM_COCO_CLASSES; ++c) {
+      if (row[c] > best_score) { best_score = row[c]; best_cls = c; }
+    }
+    if (best_score < score_thresh_) continue;
 
-    int cls = static_cast<int>(std::round(cidx_f32.at<float>(i)));
-    float x1 = b.at<float>(i, 0), y1 = b.at<float>(i, 1);
-    float x2 = b.at<float>(i, 2), y2 = b.at<float>(i, 3);
+    float cx = bt.at<float>(i, 0), cy = bt.at<float>(i, 1);
+    float bw = bt.at<float>(i, 2), bh = bt.at<float>(i, 3);
 
-    // Scale from normalised [0,1] if needed
-    float max_coord = std::max({std::abs(x1), std::abs(y1), std::abs(x2), std::abs(y2)});
-    if (max_coord <= 2.0f) {
+    // Convert cx,cy,w,h → x1,y1,x2,y2
+    float x1 = cx - bw * 0.5f, y1 = cy - bh * 0.5f;
+    float x2 = cx + bw * 0.5f, y2 = cy + bh * 0.5f;
+
+    // Scale from normalised [0,1] if needed (heuristic: cx > 2.0 → pixel space)
+    if (cx <= 2.0f) {
       x1 *= input_w; x2 *= input_w;
       y1 *= input_h; y2 *= input_h;
     }
-    x1 = std::max(0.0f, std::min(static_cast<float>(input_w), x1));
-    x2 = std::max(0.0f, std::min(static_cast<float>(input_w), x2));
+    x1 = std::max(0.0f, std::min(static_cast<float>(input_w),  x1));
+    x2 = std::max(0.0f, std::min(static_cast<float>(input_w),  x2));
     y1 = std::max(0.0f, std::min(static_cast<float>(input_h), y1));
     y2 = std::max(0.0f, std::min(static_cast<float>(input_h), y2));
     if (x2 <= x1 || y2 <= y1) continue;
 
     Detection d;
-    d.cls = cls; d.score = score;
+    d.cls = best_cls; d.score = best_score;
     d.x1 = x1; d.y1 = y1; d.x2 = x2; d.y2 = y2;
     d.coeff.resize(32);
-    for (int k = 0; k < 32; ++k) d.coeff[k] = m.at<float>(i, k);
+    for (int k = 0; k < 32; ++k) d.coeff[k] = mt.at<float>(i, k);
     dets.push_back(std::move(d));
   }
   return nms(std::move(dets));
 }
 
 // ── parse YOLO outputs ───────────────────────────────────────────────────────
+//
+// Supports the INT8-fixed split binary which emits four named tensors:
+//   boxes  (1,  4, 8400) — box coords (cx,cy,w,h) in pixel space
+//   scores (1, 80, 8400) — sigmoid class scores for all 80 COCO classes
+//   coeffs (1, 32, 8400) — mask prototype coefficients
+//   proto  (1, 32, 160, 160) — mask prototypes
+//
+// Tensor identification is done by shape alone so it works regardless of
+// the order in which the inference backend returns the tensors.
 
 void MidasYoloFusionNode::parse_yolo_outputs(
     const custom_msg::TensorList & tensors, int input_w, int input_h,
@@ -553,24 +620,37 @@ void MidasYoloFusionNode::parse_yolo_outputs(
   proto_out = cv::Mat();
 
   // Collect all tensors as flat mats with their shapes
-  struct TensorInfo { cv::Mat flat; std::vector<uint32_t> shape; };
+  struct TensorInfo { cv::Mat flat; std::vector<uint32_t> shape; std::string name; };
   std::vector<TensorInfo> infos;
   for (const auto & t : tensors.tensor_list) {
-    infos.push_back({tensor_to_mat(t), t.shape});
+    infos.push_back({tensor_to_mat(t), t.shape, t.name});
   }
 
-  // Identify proto (4D with last or second dim == 32)
-  // and detection outputs (boxes, scores, class_idx, coeffs)
+  // One-time log of the detected output tensor layout, useful for verifying
+  // that the loaded model binary matches the expected split-output format.
+  static std::once_flag shape_dump_flag;
+  std::call_once(shape_dump_flag, [&]() {
+    RCLCPP_INFO(get_logger(), "YOLO output tensors (%zu):", infos.size());
+    for (const auto & info : infos) {
+      std::string sh_str;
+      for (size_t i = 0; i < info.shape.size(); ++i) {
+        sh_str += (i ? "," : "[");
+        sh_str += std::to_string(info.shape[i]);
+      }
+      sh_str += "]";
+      RCLCPP_INFO(get_logger(), "  name='%s' shape=%s elems=%zu",
+          info.name.c_str(), sh_str.c_str(), info.flat.total());
+    }
+  });
+
   cv::Mat proto_flat;
   std::vector<uint32_t> proto_shape;
-  cv::Mat boxes_flat, scores_flat, cidx_flat, coeffs_flat;
+  cv::Mat boxes_flat, all_scores_flat, coeffs_flat;
 
   for (auto & info : infos) {
     const auto & sh = info.shape;
-    size_t total = 1;
-    for (auto d : sh) total *= d;
 
-    // Proto: 4D tensor with a dim == 32 (mask prototypes)
+    // Proto: 4D tensor with a dim == 32 (mask prototypes, shape [1,32,H,W])
     if (sh.size() == 4) {
       if (sh[1] == 32 || sh[3] == 32) {
         proto_flat  = info.flat;
@@ -578,63 +658,60 @@ void MidasYoloFusionNode::parse_yolo_outputs(
         continue;
       }
     }
-    // 3D: could be boxes [1,4,N] or coeffs [1,32,N]
+
+    // 3D tensors: boxes [1,4,N], all_scores [1,80,N], coeffs [1,32,N]
     if (sh.size() == 3) {
       uint32_t d1 = sh[1], d2 = sh[2];
       if ((d1 == 4 || d2 == 4) && boxes_flat.empty()) {
         boxes_flat = info.flat; continue;
       }
+      if ((d1 == static_cast<uint32_t>(NUM_COCO_CLASSES) ||
+           d2 == static_cast<uint32_t>(NUM_COCO_CLASSES)) &&
+          all_scores_flat.empty()) {
+        all_scores_flat = info.flat; continue;
+      }
       if ((d1 == 32 || d2 == 32) && coeffs_flat.empty()) {
         coeffs_flat = info.flat; continue;
       }
     }
-    // 2D: scores [1,N] or class_idx [1,N]
-    if (sh.size() == 2) {
-      uint32_t d1 = sh[0], d2 = sh[1];
-      uint32_t n = std::max(d1, d2);
-      if (n >= 1000 && scores_flat.empty()) {
-        scores_flat = info.flat; continue;
-      }
-      if (!scores_flat.empty() && cidx_flat.empty()) {
-        uint32_t sn = static_cast<uint32_t>(scores_flat.total());
-        if (n == sn) { cidx_flat = info.flat; continue; }
-      }
-    }
   }
 
-  if (proto_flat.empty()) return;
+  if (proto_flat.empty()) {
+    RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 5000,
+        "parse_yolo_outputs: proto tensor not found in %zu tensors",
+        tensors.tensor_list.size());
+    return;
+  }
+  if (boxes_flat.empty() || all_scores_flat.empty() || coeffs_flat.empty()) {
+    RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 5000,
+        "parse_yolo_outputs: missing tensors — boxes=%s scores=%s coeffs=%s",
+        boxes_flat.empty() ? "missing" : "ok",
+        all_scores_flat.empty() ? "missing" : "ok",
+        coeffs_flat.empty() ? "missing" : "ok");
+    return;
+  }
 
-  // Reshape proto to HxWx32
-  // proto_shape is [1, 32, H, W] or [1, H, W, 32]
+  // Reshape proto to 3D cv::Mat [ph, pw, 32] (HWC)
   int ph = 1, pw = 1;
   if (proto_shape.size() == 4) {
     if (proto_shape[1] == 32) { ph = proto_shape[2]; pw = proto_shape[3]; }
     else                       { ph = proto_shape[1]; pw = proto_shape[2]; }
   }
-  // Reshape flat to [32, ph*pw] then transpose to [ph*pw, 32] then reshape to [ph, pw, 32]
   if (proto_shape.size() == 4 && proto_shape[1] == 32) {
-    // CHW → HWC
+    // Layout [1, 32, H, W] → transpose to [H, W, 32]
     cv::Mat chw = proto_flat.reshape(1, 32);  // 32 x (ph*pw)
     cv::Mat hwc;
     cv::transpose(chw, hwc);                  // (ph*pw) x 32
-    proto_out = hwc.reshape(1, ph);           // ph x (pw*32) — we'll treat as ph rows
-    // Actually reshape to ph*pw rows of 32 cols, then interpret as ph x pw x 32
-    // For the mask decode we need proto[y,x,:] = 32 coeffs
-    // Store as (ph*pw) x 32 and use ph, pw for indexing
-    proto_out = hwc;  // (ph*pw) x 32
-    // Tag the mat with ph, pw via extra member — use a 3D mat
     int sizes[3] = {ph, pw, 32};
-    proto_out = hwc.reshape(1, 3, sizes);  // ph x pw x 32 (3D)
+    proto_out = hwc.reshape(1, 3, sizes);     // ph x pw x 32 (3D)
   } else {
-    // Already HWC
-    proto_out = proto_flat.reshape(1, ph);
+    // Already [1, H, W, 32] — just reshape
+    int sizes[3] = {ph, pw, 32};
+    proto_out = proto_flat.reshape(1, 3, sizes);
   }
 
-  if (!boxes_flat.empty() && !scores_flat.empty() &&
-      !cidx_flat.empty()  && !coeffs_flat.empty()) {
-    dets_out = decode_yolo_split(
-        boxes_flat, scores_flat, cidx_flat, coeffs_flat, input_w, input_h);
-  }
+  dets_out = decode_yolo_split_all_scores(
+      boxes_flat, all_scores_flat, coeffs_flat, input_w, input_h);
 }
 
 // ── depth p85 ────────────────────────────────────────────────────────────────
