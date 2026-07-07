@@ -12,7 +12,7 @@
 
 - The RML-63 Robotic Arm pick-and-place demo is a C++-based ROS 2 node that demonstrates autonomous pick-and-place operations using MoveIt 2 for motion planning and Gazebo for physics simulation.
 
-![image-20250723181610392](./resource/pick_and_place_architecture.jpg)
+  ![image-20250723181610392](./resource/pick_and_place_architecture.png)
 
 | Node Name                                                    | Function                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -58,14 +58,6 @@
     <td>
       <a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075">
         <img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160">
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td>Qualcomm Dragonwing™ RB3 Gen2</td>
-    <td>
-      <a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/rb3-series/rb3-gen2">
-        <img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3-vision-kit-1" width="160">
       </a>
     </td>
   </tr>

@@ -52,7 +52,7 @@ def generate_launch_description():
         }]
     )
 
-    # Node fir qnn inference
+    # Node for qnn inference
     nn_inference_node = ComposableNode(
         package = "qrb_ros_nn_inference",
         namespace=namespace,
