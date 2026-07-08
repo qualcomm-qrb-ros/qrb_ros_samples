@@ -142,7 +142,7 @@ ros2 launch sample_midas_yolo_parallel launch_with_usb_cam.py
 Notes:
 - Both graphs must be compiled into a single combined context binary (`midas_yolo_combined.bin`).
 - The default graph names are `midas` (MiDaS) and `yolov11_seg` (YOLO). Override with `midas_graph_name` and `yolo_graph_name` if your binary uses different names.
-- YOLO input is configured for `uint16` (`yolo_tensor_data_type:=4`, `yolo_pack_uint16_input:=true`).
+- YOLO input defaults to `float32` (`yolo_tensor_data_type:=2`, `yolo_pack_uint16_input:=false`). If your model binary expects a `uint16` input, override with `yolo_tensor_data_type:=4 yolo_pack_uint16_input:=true`.
 - If you are validating with a patched `qrb_ros_nn_inference`, source that workspace before `install/local_setup.bash`.
 
 ## 👨‍💻 Build from source

@@ -123,14 +123,11 @@ FrameKey MidasYoloFusionNode::match_pending_key(const std_msgs::msg::Header & hd
   auto key = extract_key(hdr);
   std::lock_guard<std::mutex> lk(pending_mutex_);
   if (pending_.count(key)) return key;
-  if (pending_.size() == 1) return pending_.begin()->first;
-  if (pending_.size() > 1) {
-    // Return oldest
-    return std::min_element(pending_.begin(), pending_.end(),
-        [](const auto & a, const auto & b) {
-          return a.second.created_at < b.second.created_at;
-        })->first;
-  }
+  // No exact match: the frame this output belongs to is no longer pending
+  // (already fused, evicted under load, or the source never stamped
+  // header.stamp so keys can't be correlated). Do NOT guess a pending frame
+  // here — pairing an output with the wrong frame silently fuses depth and
+  // detection results from different images.
   return {-2, 0};  // sentinel: not found
 }
 
@@ -330,7 +327,13 @@ void MidasYoloFusionNode::image_callback(sensor_msgs::msg::Image::ConstSharedPtr
 void MidasYoloFusionNode::midas_output_callback(custom_msg::TensorList::ConstSharedPtr msg)
 {
   auto key = match_pending_key(msg->header);
-  if (key.first == -2) return;
+  if (key.first == -2) {
+    RCLCPP_WARN(get_logger(),
+        "midas_output_callback: no pending frame matches header stamp %d.%09u — "
+        "dropping output (frame likely evicted or unstamped source)",
+        msg->header.stamp.sec, msg->header.stamp.nanosec);
+    return;
+  }
 
   bool ready = false;
   {
@@ -346,7 +349,13 @@ void MidasYoloFusionNode::midas_output_callback(custom_msg::TensorList::ConstSha
 void MidasYoloFusionNode::yolo_output_callback(custom_msg::TensorList::ConstSharedPtr msg)
 {
   auto key = match_pending_key(msg->header);
-  if (key.first == -2) return;
+  if (key.first == -2) {
+    RCLCPP_WARN(get_logger(),
+        "yolo_output_callback: no pending frame matches header stamp %d.%09u — "
+        "dropping output (frame likely evicted or unstamped source)",
+        msg->header.stamp.sec, msg->header.stamp.nanosec);
+    return;
+  }
 
   bool ready = false;
   {
