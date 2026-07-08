@@ -10,7 +10,7 @@ The `sample_midas_yolo_parallel` sample runs MiDaS depth estimation and YOLO seg
 
 | Node Name | Function |
 | --------- | -------- |
-| image publisher / qrb ros camera | Provides input images from local file stream or camera topics. |
+| image publisher / qrb ros camera / usb_cam | Provides input images from local file stream, on-board camera, or USB webcam. |
 | sample midas yolo parallel | Sends each frame to two inference branches and fuses output tensors. |
 | QrbRosSharedInferenceNode | Loads a single combined QNN context binary and runs both MiDaS and YOLO graphs concurrently within the shared context. Exposes one pub/sub pair per graph. |
 
@@ -33,7 +33,7 @@ The sample publishes:
 
 | ROS Topic | Type | Description |
 | --------- | ---- | ----------- |
-| `/image_raw` | `<sensor_msgs.msg.Image>` | Input image topic for `launch_with_image_publisher.py`. |
+| `/image_raw` | `<sensor_msgs.msg.Image>` | Input image topic for `launch_with_image_publisher.py` and `launch_with_usb_cam.py`. |
 | `/cam0_stream1` | `<sensor_msgs.msg.Image>` | Input image topic for `launch_with_qrb_ros_camera.py`. |
 | `/midas_inference_input_tensor` | `<qrb_ros_tensor_list_msgs.msg.TensorList>` | MiDaS inference input tensor. |
 | `/yolo_seg_inference_input_tensor` | `<qrb_ros_tensor_list_msgs.msg.TensorList>` | YOLO segmentation inference input tensor. |
@@ -67,6 +67,7 @@ sudo apt install -y \
   ros-jazzy-qrb-ros-tensor-list-msgs \
   ros-jazzy-image-publisher \
   ros-jazzy-cv-bridge \
+  ros-jazzy-usb-cam \
   python3-numpy
 ```
 
@@ -118,6 +119,23 @@ source /opt/ros/jazzy/setup.bash
 source install/local_setup.bash
 ros2 launch sample_midas_yolo_parallel launch_with_qrb_ros_camera.py
 ```
+
+</details>
+
+<details>
+  <summary>Run with USB camera</summary>
+
+```bash
+source /opt/ros/jazzy/setup.bash
+source install/local_setup.bash
+ros2 launch sample_midas_yolo_parallel launch_with_usb_cam.py
+```
+
+> **Note:** For `usb_cam`, image quality parameters (`brightness`, `contrast`, `saturation`, `sharpness`, `gain`, and `focus`) default to `-1` (camera driver defaults). Override them as launch arguments to tune for your USB camera, for example:
+>
+> ```bash
+> ros2 launch sample_midas_yolo_parallel launch_with_usb_cam.py brightness:=128 contrast:=64 saturation:=80 sharpness:=50 gain:=0 focus:=0
+> ```
 
 </details>
 

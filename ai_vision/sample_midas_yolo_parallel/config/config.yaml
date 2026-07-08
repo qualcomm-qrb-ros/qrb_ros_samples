@@ -10,6 +10,7 @@ apt:
   - ros-jazzy-qrb-ros-tensor-list-msgs
   - ros-jazzy-image-publisher
   - ros-jazzy-cv-bridge
+  - ros-jazzy-usb-cam
   - python3-numpy
 
 pip:
