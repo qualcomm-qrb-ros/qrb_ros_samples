@@ -465,19 +465,6 @@ void MidasYoloFusionNode::decode_midas_depth(
   cv::applyColorMap(depth_gray, depth_color, cv::COLORMAP_INFERNO);
 }
 
-// ── proto tensor → HxWx32 ────────────────────────────────────────────────────
-
-cv::Mat MidasYoloFusionNode::proto_to_hwc(const cv::Mat & proto_flat)
-{
-  // proto_flat is a 1D mat of total_elements floats
-  // Expected shapes: [1,32,H,W] or [1,H,W,32]
-  // We need to return HxWx32 float32
-  // Since we don't have the original shape here, we infer from the tensor shape
-  // stored in the caller — this function receives the already-shaped mat.
-  // For now just return as-is; caller handles reshaping.
-  return proto_flat;
-}
-
 // ── NMS ──────────────────────────────────────────────────────────────────────
 
 std::vector<Detection> MidasYoloFusionNode::nms(std::vector<Detection> dets)

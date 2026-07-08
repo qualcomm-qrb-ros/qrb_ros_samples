@@ -128,7 +128,6 @@ private:
 
   // yolo
   cv::Mat tensor_to_mat(const custom_msg::Tensor & tensor);
-  cv::Mat proto_to_hwc(const cv::Mat & proto);
   // Split-output decoder for the INT8-fixed binary: boxes (1,4,N), all_scores (1,80,N),
   // coeffs (1,32,N), proto (1,32,H,W).  Performs per-anchor argmax over 80 classes.
   std::vector<Detection> decode_yolo_split_all_scores(
