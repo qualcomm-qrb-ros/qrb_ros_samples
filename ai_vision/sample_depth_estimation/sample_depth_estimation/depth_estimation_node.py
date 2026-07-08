@@ -72,7 +72,7 @@ class DepthEstimationNode(Node):
         if msg.encoding == 'nv12':
             nv12_data = np.frombuffer(msg.data, dtype=np.uint8)
             image = self.nv12_to_bgr(nv12_data, msg.width, msg.height)
-        elif msg.encoding == 'bgr8':
+        elif msg.encoding in ('bgr8', 'rgb8'):
             image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
         else:
             self.get_logger().error(f'Unsupported image encoding: {msg.encoding}')

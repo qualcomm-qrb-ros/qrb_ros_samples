@@ -192,7 +192,7 @@ class HandLandmarkDetector(Node):
             if msg.encoding == "nv12":  # Check the encoding of the image
                 nv12_data = np.frombuffer(msg.data, dtype=np.uint8)
                 self.latest_image = nv12_to_bgr(nv12_data, msg.width, msg.height)  # Call the function to convert from NV12 to BGR
-            elif msg.encoding == "bgr8":
+            elif msg.encoding in ("bgr8", "rgb8"):
                 self.latest_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
             else:
                 self.get_logger().error(f"Unsupported image encoding: {msg.encoding}")

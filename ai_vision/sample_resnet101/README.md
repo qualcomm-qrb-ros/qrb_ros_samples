@@ -21,6 +21,7 @@ The `sample_resnet101` is a Python-based ROS node that performs image classifica
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
 | image publisher                                              | Publishes image data to a ROS topic—can be camera frames, local files, or processed outputs. |
+| [usb_cam](https://github.com/ros-drivers/usb_cam) | A ROS Driver for V4L2 USB cameras, can publish video stream from a USB webcam. |
 | image classification preprocess                              | Subscribes to image data, reshapes/resizes it, and republishes it to a downstream topic. |
 | [qrb ros nn interface](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | Loads a trained AI model, receives preprocessed images, performs inference, and publishes results. |
 | image classification postprocess                             | Matches inference output with label files and converts results into human-readable form. |
@@ -99,7 +100,14 @@ or # You can also replace this with a custom image file
 ros2 launch sample_resnet101 launch_with_image_publisher.py image_path:=<your image path>
 or # You can launch with qrb ros camera
 ros2 launch sample_resnet101 launch_with_qrb_ros_camera.py
+or # You can launch with usb_cam (USB webcam)
+ros2 launch sample_resnet101 launch_with_usb_cam.py
 ```
+
+> **Note:** For `usb_cam`, image quality parameters (`brightness`, `contrast`, `saturation`, `sharpness`, `gain`, and `focus`) default to `-1` (camera driver defaults). Override them as launch arguments to tune for your USB camera, for example:
+> ```bash
+> ros2 launch sample_resnet101 launch_with_usb_cam.py brightness:=128 contrast:=64 saturation:=80 sharpness:=50 gain:=0 focus:=0
+> ```
 
 When using this launch script, it will use the default parameters:
 
@@ -205,7 +213,7 @@ sudo apt install ros-jazzy-rclpy \
   ros-jazzy-image-publisher \
   ros-jazzy-qrb-ros-nn-inference \
   ros-jazzy-qrb-ros-camera \
-  ros-jazzy-image-publisher
+  ros-jazzy-usb-cam
 ```
 
 Download the source code and build with colcon
