@@ -12,7 +12,7 @@ endif()
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-find_package(OpenCV REQUIRED COMPONENTS core imgproc)
+find_package(OpenCV REQUIRED COMPONENTS core imgproc imgcodecs)
 
 ament_auto_add_library(midas_yolo_fusion_node SHARED
   src/midas_yolo_fusion_node.cpp
