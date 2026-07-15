@@ -11,6 +11,7 @@
 #include <numeric>
 #include <stdexcept>
 
+#include <image_transport/image_transport.hpp>
 #include <opencv2/imgproc.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
 
@@ -84,11 +85,31 @@ MidasYoloFusionNode::MidasYoloFusionNode(const rclcpp::NodeOptions & options)
       "midas_inference_input_tensor",     10, ipc_opts);
   yolo_in_pub_    = create_publisher<custom_msg::TensorList>(
       "yolo_seg_inference_input_tensor",  10, ipc_opts);
-  overlay_pub_    = create_publisher<sensor_msgs::msg::Image>("midas_yolo_overlay", 10);
-  depth_color_pub_= create_publisher<sensor_msgs::msg::Image>("midas_depth_map",    10);
-  depth_gray_pub_ = create_publisher<sensor_msgs::msg::Image>("midas_depth_gray",   10);
+
+  // Camera-stream outputs: use image_transport (auto-advertises compressed/theora/
+  // zstd variants alongside the raw topic) with SensorDataQoS (best-effort,
+  // keep-last-5). Raw bgr8/mono8 frames at 1280x720+ are multi-MB each; RELIABLE
+  // QoS on messages this large causes FastDDS fragment retransmission storms
+  // that can stall the publisher itself under any slow/lossy subscriber
+  // (including foxglove_bridge or a remote client over Wi-Fi). BEST_EFFORT lets
+  // the publisher drop stale frames instead of blocking.
+  const auto image_qos = rclcpp::SensorDataQoS().get_rmw_qos_profile();
+  overlay_pub_    = image_transport::create_publisher(this, "midas_yolo_overlay", image_qos);
+  depth_color_pub_= image_transport::create_publisher(this, "midas_depth_map",    image_qos);
+  depth_gray_pub_ = image_transport::create_publisher(this, "midas_depth_gray",   image_qos);
 
   // Subscriptions
+  //
+  // NOTE: image_sub_ intentionally stays on the default RELIABLE QoS (matching
+  // usb_cam's hardcoded rclcpp::QoS{100} publisher). Switching this subscription
+  // to SensorDataQoS/BEST_EFFORT was tried and measured to cause near-total loss
+  // of /image_raw frames: at 1280x720 each raw bgr8/rgb8 frame is ~2.76MB, and a
+  // BEST_EFFORT reader does not participate in the RELIABLE writer's ACKNACK/
+  // fragment-recovery protocol, so on this device's small (208KB) kernel UDP
+  // recv buffers almost every large fragmented frame was dropped, collapsing
+  // throughput from ~30fps to well under 1fps. The retransmission-storm problem
+  // that BEST_EFFORT solves for our own *publishers* below does not apply here
+  // since we don't control usb_cam's publisher reliability anyway.
   image_sub_ = create_subscription<sensor_msgs::msg::Image>(
       input_topic_, 10,
       [this](sensor_msgs::msg::Image::ConstSharedPtr msg) { image_callback(msg); });
@@ -878,9 +899,9 @@ void MidasYoloFusionNode::fuse_and_publish(FrameKey key)
     hdr.stamp.sec    = frame.header_sec;
     hdr.stamp.nanosec = frame.header_nsec;
 
-    overlay_pub_->publish(mat_to_image_msg(overlay,     "bgr8",  hdr));
-    depth_color_pub_->publish(mat_to_image_msg(depth_color, "bgr8",  hdr));
-    depth_gray_pub_->publish(mat_to_image_msg(depth_gray,  "mono8", hdr));
+    overlay_pub_.publish(mat_to_image_msg(overlay,     "bgr8",  hdr));
+    depth_color_pub_.publish(mat_to_image_msg(depth_color, "bgr8",  hdr));
+    depth_gray_pub_.publish(mat_to_image_msg(depth_gray,  "mono8", hdr));
     auto t3 = clk::now();
 
     uint64_t cnt = ++processed_count_;

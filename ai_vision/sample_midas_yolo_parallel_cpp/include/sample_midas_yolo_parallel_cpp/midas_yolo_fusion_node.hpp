@@ -13,6 +13,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
+#include <image_transport/publisher.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/header.hpp>
 #include <sensor_msgs/msg/image.hpp>
@@ -87,9 +88,9 @@ private:
   rclcpp::Subscription<custom_msg::TensorList>::SharedPtr         yolo_out_sub_;
   rclcpp::Publisher<custom_msg::TensorList>::SharedPtr            midas_in_pub_;
   rclcpp::Publisher<custom_msg::TensorList>::SharedPtr            yolo_in_pub_;
-  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr           overlay_pub_;
-  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr           depth_color_pub_;
-  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr           depth_gray_pub_;
+  image_transport::Publisher                                     overlay_pub_;
+  image_transport::Publisher                                     depth_color_pub_;
+  image_transport::Publisher                                     depth_gray_pub_;
 
   // ── pending frame map ──
   std::mutex pending_mutex_;
