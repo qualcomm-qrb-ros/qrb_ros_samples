@@ -46,7 +46,7 @@ The sample publishes:
 - Qualcomm Dragonwing IQ-9075 EVK
 - Qualcomm Dragonwing IQ-8275 EVK
 
-A combined multi-graph QNN context binary (`midas_yolo_combined.bin`) containing both the MiDaS
+A combined multi-graph QNN context binary (`midas_yolo_combined_int8_split.bin`) containing both the MiDaS
 and YOLO segmentation graphs is required. Produce it offline using the QNN SDK's
 `qnn-context-binary-utility` to merge the individual per-model context binaries.
 
@@ -85,7 +85,7 @@ sudo mkdir -p /opt/model
 Place the combined multi-graph context binary (containing both MiDaS and YOLO graphs) at:
 
 ```text
-/opt/model/midas_yolo_combined.bin
+/opt/model/midas_yolo_combined_int8_split.bin
 ```
 
 </details>
@@ -103,7 +103,7 @@ Optional model and graph name arguments:
 
 ```bash
 ros2 launch sample_midas_yolo_parallel launch_with_image_publisher.py \
-  combined_model_path:=/opt/model/midas_yolo_combined.bin \
+  combined_model_path:=/opt/model/midas_yolo_combined_int8_split.bin \
   midas_graph_name:=midas \
   yolo_graph_name:=yolov11_seg \
   image_path:=/path/to/input.jpg
@@ -140,7 +140,7 @@ ros2 launch sample_midas_yolo_parallel launch_with_usb_cam.py
 </details>
 
 Notes:
-- Both graphs must be compiled into a single combined context binary (`midas_yolo_combined.bin`).
+- Both graphs must be compiled into a single combined context binary (`midas_yolo_combined_int8_split.bin`).
 - The default graph names are `midas` (MiDaS) and `yolov11_seg` (YOLO). Override with `midas_graph_name` and `yolo_graph_name` if your binary uses different names.
 - YOLO input defaults to `float32` (`yolo_tensor_data_type:=2`, `yolo_pack_uint16_input:=false`). If your model binary expects a `uint16` input, override with `yolo_tensor_data_type:=4 yolo_pack_uint16_input:=true`.
 - If you are validating with a patched `qrb_ros_nn_inference`, source that workspace before `install/local_setup.bash`.
