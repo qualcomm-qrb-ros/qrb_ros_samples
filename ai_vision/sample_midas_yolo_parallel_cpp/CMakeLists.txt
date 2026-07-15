@@ -5,8 +5,17 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
 endif()
 
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  # Real-time depth/detection fusion is perf-sensitive; default to optimized
+  # builds unless the user explicitly requests Debug.
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
+endif()
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic -Wno-unused-parameter -O3)
+  add_compile_options(-Wall -Wextra -Wpedantic -Wno-unused-parameter)
+  if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_options(-O3)
+  endif()
 endif()
 
 find_package(ament_cmake_auto REQUIRED)
