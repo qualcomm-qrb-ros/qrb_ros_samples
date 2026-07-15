@@ -6,13 +6,12 @@
 
 #include <chrono>
 #include <memory>
-#include <string>
-
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include <string>
 
 namespace sample_midas_yolo_parallel_cpp
 {
@@ -21,10 +20,10 @@ class FastImagePublisherNode : public rclcpp::Node
 {
 public:
   explicit FastImagePublisherNode(const rclcpp::NodeOptions & options)
-  : Node("fast_image_publisher_node", options)
+    : Node("fast_image_publisher_node", options)
   {
     const std::string filename = declare_parameter("filename", "");
-    const double rate_hz       = declare_parameter("rate",     30.0);
+    const double rate_hz = declare_parameter("rate", 30.0);
 
     if (filename.empty()) {
       RCLCPP_ERROR(get_logger(), "filename parameter is required");
@@ -39,10 +38,10 @@ public:
 
     // Pre-build the Image message once — reuse on every publish
     msg_.header.frame_id = "camera";
-    msg_.height   = static_cast<uint32_t>(img.rows);
-    msg_.width    = static_cast<uint32_t>(img.cols);
+    msg_.height = static_cast<uint32_t>(img.rows);
+    msg_.width = static_cast<uint32_t>(img.cols);
     msg_.encoding = "bgr8";
-    msg_.step     = static_cast<uint32_t>(img.step);
+    msg_.step = static_cast<uint32_t>(img.step);
     msg_.is_bigendian = false;
     const size_t nbytes = img.total() * img.elemSize();
     msg_.data.resize(nbytes);
@@ -54,9 +53,8 @@ public:
         std::chrono::duration<double>(1.0 / rate_hz));
     timer_ = create_wall_timer(period, [this]() { publish(); });
 
-    RCLCPP_INFO(get_logger(),
-        "FastImagePublisher: %s (%ux%u) at %.1f Hz",
-        filename.c_str(), msg_.width, msg_.height, rate_hz);
+    RCLCPP_INFO(get_logger(), "FastImagePublisher: %s (%ux%u) at %.1f Hz", filename.c_str(),
+        msg_.width, msg_.height, rate_hz);
   }
 
 private:
@@ -73,5 +71,4 @@ private:
 
 }  // namespace sample_midas_yolo_parallel_cpp
 
-RCLCPP_COMPONENTS_REGISTER_NODE(
-    sample_midas_yolo_parallel_cpp::FastImagePublisherNode)
+RCLCPP_COMPONENTS_REGISTER_NODE(sample_midas_yolo_parallel_cpp::FastImagePublisherNode)
