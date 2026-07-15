@@ -23,8 +23,9 @@
   <exec_depend>image_transport_plugins</exec_depend>
 
   <build_depend>libopencv-dev</build_depend>
-  <exec_depend>libopencv-core406t64</exec_depend>
-  <exec_depend>libopencv-imgproc406t64</exec_depend>
+  <exec_depend>libopencv-core</exec_depend>
+  <exec_depend>libopencv-imgproc</exec_depend>
+  <exec_depend>libopencv-imgcodecs</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
