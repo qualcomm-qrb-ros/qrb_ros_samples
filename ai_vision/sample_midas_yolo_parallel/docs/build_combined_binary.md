@@ -275,20 +275,6 @@ link_job = qai_hub.submit_link_job(
 Download the linked binary and save it locally as
 `midas_yolo_combined_int8_split.bin`.
 
-### Verification (on-device, native binary)
-
-```bash
-cd ~/midas/build-native
-LD_LIBRARY_PATH=. ./midas_depth bus.jpg out.jpg \
-    midas_yolo_combined_int8_split.bin \
-    midas_yolo_combined_int8_split.bin \
-    --midas-graph midas --seg-graph yolov11_seg
-```
-
-Confirm the run reports non-trivial detections with confidences well above
-the confidence threshold — near-zero scores across all classes indicate a
-calibration or quantization issue (see "Compile options reference" below).
-
 ## Compile options reference
 
 | Model | Option | Reason |
