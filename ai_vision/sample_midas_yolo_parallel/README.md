@@ -47,8 +47,11 @@ The sample publishes:
 - Qualcomm Dragonwing IQ-8275 EVK
 
 A combined multi-graph QNN context binary (`midas_yolo_combined_int8_split.bin`) containing both the MiDaS
-and YOLO segmentation graphs is required. Produce it offline using the QNN SDK's
-`qnn-context-binary-utility` to merge the individual per-model context binaries.
+and YOLO segmentation graphs is required. Produce it offline via Qualcomm AI Hub:
+compile each model to a QNN DLC with `qai_hub.submit_compile_job`, then merge the
+two DLCs into one shared-context binary with `qai_hub.submit_link_job`. See
+[docs/build_combined_binary.md](docs/build_combined_binary.md) for the full process,
+including how the source ONNX files and calibration datasets are created.
 
 ## ✨ Installation
 
