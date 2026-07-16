@@ -34,6 +34,11 @@ def generate_launch_description():
         default_value='5.0',
         description='image_publisher rate',
     )
+    score_thresh_arg = DeclareLaunchArgument(
+        'score_thresh',
+        default_value='0.25',
+        description='YOLO detection score threshold',
+    )
 
     shared_inference = ComposableNode(
         package='qrb_ros_nn_inference',
@@ -81,7 +86,7 @@ def generate_launch_description():
             'yolo_pack_uint16_input': False,
             'midas_input_size': [256, 256],
             'yolo_input_size': [640, 640],
-            'score_thresh': 0.25,
+            'score_thresh': LaunchConfiguration('score_thresh'),
             'iou_thresh': 0.45,
         }],
     )
@@ -103,5 +108,6 @@ def generate_launch_description():
         midas_graph_name_arg,
         yolo_graph_name_arg,
         pub_rate_arg,
+        score_thresh_arg,
         inference_container,
     ])

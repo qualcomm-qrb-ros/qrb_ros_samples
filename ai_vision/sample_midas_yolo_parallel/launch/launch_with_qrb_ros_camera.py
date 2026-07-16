@@ -25,6 +25,11 @@ def generate_launch_description():
         default_value='yolov11_seg',
         description='Graph name for YOLO segmentation within the combined context binary',
     )
+    score_thresh_arg = DeclareLaunchArgument(
+        'score_thresh',
+        default_value='0.25',
+        description='YOLO detection score threshold',
+    )
 
     camera_info_path = PathJoinSubstitution([
         get_package_share_directory('qrb_ros_camera'),
@@ -80,7 +85,7 @@ def generate_launch_description():
             'yolo_pack_uint16_input': False,
             'midas_input_size': [256, 256],
             'yolo_input_size': [640, 640],
-            'score_thresh': 0.25,
+            'score_thresh': LaunchConfiguration('score_thresh'),
             'iou_thresh': 0.45,
         }],
     )
@@ -98,5 +103,6 @@ def generate_launch_description():
         combined_model_arg,
         midas_graph_name_arg,
         yolo_graph_name_arg,
+        score_thresh_arg,
         container,
     ])
