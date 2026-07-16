@@ -10,7 +10,7 @@ The combined binary contains two named QNN graphs in a single shared context:
 
 | Graph name    | Model                  | Input                    | Output                                                    |
 |---------------|------------------------|---------------------------|-----------------------------------------------------------|
-| `midas`       | MiDaS depth estimation | `image` float32 1×3×256×256 | `output_0` (depth map, 1×256×256)                       |
+| `midas`       | MiDaS depth estimation | `image` float32 1×3×256×256 | `depth` (depth map, 1×256×256)                          |
 | `yolov11_seg` | YOLO11n-seg detection  | `images` float32 1×3×640×640 | `boxes`, `scores`, `coeffs`, `proto` (separate outputs) |
 
 The YOLO graph uses a **split-output ONNX** (`yolo11n-seg-split.onnx`) — the
