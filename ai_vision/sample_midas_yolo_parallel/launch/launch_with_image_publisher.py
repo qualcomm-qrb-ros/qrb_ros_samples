@@ -59,8 +59,8 @@ def generate_launch_description():
     # without per-frame JPEG decode. Loaded into the same container for
     # intra-process zero-copy delivery to the fusion node's image_callback.
     fast_image_pub = ComposableNode(
-        package='sample_midas_yolo_parallel_cpp',
-        plugin='sample_midas_yolo_parallel_cpp::FastImagePublisherNode',
+        package='sample_midas_yolo_parallel',
+        plugin='sample_midas_yolo_parallel::FastImagePublisherNode',
         name='fast_image_publisher_node',
         parameters=[{
             'filename': LaunchConfiguration('image_path'),
@@ -72,8 +72,8 @@ def generate_launch_description():
     # This enables intra-process zero-copy for all tensor messages — no
     # serialization overhead between inference outputs and fusion inputs.
     fusion_cpp = ComposableNode(
-        package='sample_midas_yolo_parallel_cpp',
-        plugin='sample_midas_yolo_parallel_cpp::MidasYoloFusionNode',
+        package='sample_midas_yolo_parallel',
+        plugin='sample_midas_yolo_parallel::MidasYoloFusionNode',
         name='midas_yolo_fusion_node',
         parameters=[{
             'input_topic': '/image_raw',

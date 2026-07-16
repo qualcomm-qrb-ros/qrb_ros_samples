@@ -13,7 +13,7 @@
 #include <sensor_msgs/msg/image.hpp>
 #include <string>
 
-namespace sample_midas_yolo_parallel_cpp
+namespace sample_midas_yolo_parallel
 {
 
 class FastImagePublisherNode : public rclcpp::Node
@@ -69,6 +69,6 @@ private:
   rclcpp::TimerBase::SharedPtr timer_;
 };
 
-}  // namespace sample_midas_yolo_parallel_cpp
+}  // namespace sample_midas_yolo_parallel
 
-RCLCPP_COMPONENTS_REGISTER_NODE(sample_midas_yolo_parallel_cpp::FastImagePublisherNode)
+RCLCPP_COMPONENTS_REGISTER_NODE(sample_midas_yolo_parallel::FastImagePublisherNode)

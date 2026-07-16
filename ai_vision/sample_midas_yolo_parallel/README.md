@@ -153,6 +153,11 @@ colcon build --packages-select sample_midas_yolo_parallel --executor sequential
 source install/local_setup.bash
 ```
 
+> **Note:** This package now ships both the launch files and the C++
+> `MidasYoloFusionNode` / `FastImagePublisherNode` composable nodes in a
+> single `ament_cmake` package (previously these were split across
+> `sample_midas_yolo_parallel` and `sample_midas_yolo_parallel_cpp`).
+
 ## 🤝 Contributing
 
 We love community contributions. Please read [CONTRIBUTING.md](../../CONTRIBUTING.md).

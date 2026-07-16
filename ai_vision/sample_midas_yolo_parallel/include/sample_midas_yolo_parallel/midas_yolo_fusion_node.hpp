@@ -17,7 +17,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace sample_midas_yolo_parallel_cpp
+namespace sample_midas_yolo_parallel
 {
 
 namespace custom_msg = qrb_ros_tensor_list_msgs::msg;
@@ -160,4 +160,4 @@ private:
       const std_msgs::msg::Header & hdr);
 };
 
-}  // namespace sample_midas_yolo_parallel_cpp
+}  // namespace sample_midas_yolo_parallel

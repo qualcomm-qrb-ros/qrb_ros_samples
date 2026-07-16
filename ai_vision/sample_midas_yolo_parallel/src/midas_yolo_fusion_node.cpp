@@ -1,7 +1,7 @@
 // Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
 // SPDX-License-Identifier: BSD-3-Clause-Clear
 
-#include "sample_midas_yolo_parallel_cpp/midas_yolo_fusion_node.hpp"
+#include "sample_midas_yolo_parallel/midas_yolo_fusion_node.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -14,7 +14,7 @@
 #include <rclcpp_components/register_node_macro.hpp>
 #include <stdexcept>
 
-namespace sample_midas_yolo_parallel_cpp
+namespace sample_midas_yolo_parallel
 {
 
 using clk = std::chrono::steady_clock;
@@ -964,6 +964,6 @@ void MidasYoloFusionNode::fuse_and_publish(FrameKey key)
   }
 }
 
-}  // namespace sample_midas_yolo_parallel_cpp
+}  // namespace sample_midas_yolo_parallel
 
-RCLCPP_COMPONENTS_REGISTER_NODE(sample_midas_yolo_parallel_cpp::MidasYoloFusionNode)
+RCLCPP_COMPONENTS_REGISTER_NODE(sample_midas_yolo_parallel::MidasYoloFusionNode)

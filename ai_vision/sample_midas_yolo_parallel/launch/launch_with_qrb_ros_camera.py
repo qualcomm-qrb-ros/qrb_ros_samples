@@ -71,8 +71,8 @@ def generate_launch_description():
     )
 
     fusion_cpp = ComposableNode(
-        package='sample_midas_yolo_parallel_cpp',
-        plugin='sample_midas_yolo_parallel_cpp::MidasYoloFusionNode',
+        package='sample_midas_yolo_parallel',
+        plugin='sample_midas_yolo_parallel::MidasYoloFusionNode',
         name='midas_yolo_fusion_node',
         parameters=[{
             'input_topic': '/cam0_stream1',

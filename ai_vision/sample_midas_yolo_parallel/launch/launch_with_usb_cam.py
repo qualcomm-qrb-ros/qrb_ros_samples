@@ -127,8 +127,8 @@ def generate_launch_description():
     # This enables intra-process zero-copy for all tensor messages — no
     # serialization overhead between inference outputs and fusion inputs.
     fusion_cpp = ComposableNode(
-        package='sample_midas_yolo_parallel_cpp',
-        plugin='sample_midas_yolo_parallel_cpp::MidasYoloFusionNode',
+        package='sample_midas_yolo_parallel',
+        plugin='sample_midas_yolo_parallel::MidasYoloFusionNode',
         name='midas_yolo_fusion_node',
         parameters=[{
             'input_topic': '/image_raw',

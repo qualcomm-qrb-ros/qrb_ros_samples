@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(sample_midas_yolo_parallel_cpp)
+project(sample_midas_yolo_parallel)
 
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
@@ -36,12 +36,12 @@ target_link_libraries(midas_yolo_fusion_node
 
 rclcpp_components_register_node(
   midas_yolo_fusion_node
-  PLUGIN "sample_midas_yolo_parallel_cpp::MidasYoloFusionNode"
+  PLUGIN "sample_midas_yolo_parallel::MidasYoloFusionNode"
   EXECUTABLE midas_yolo_fusion_node_exe)
 
 rclcpp_components_register_node(
   midas_yolo_fusion_node
-  PLUGIN "sample_midas_yolo_parallel_cpp::FastImagePublisherNode"
+  PLUGIN "sample_midas_yolo_parallel::FastImagePublisherNode"
   EXECUTABLE fast_image_publisher_node_exe)
 
 if(BUILD_TESTING)
@@ -51,4 +51,4 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_auto_package()
+ament_auto_package(INSTALL_TO_SHARE launch config)
