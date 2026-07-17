@@ -37,6 +37,8 @@ The sample publishes:
 | `/cam0_stream1` | `<sensor_msgs.msg.Image>` | Input image topic for `launch_with_qrb_ros_camera.py`. |
 | `/midas_inference_input_tensor` | `<qrb_ros_tensor_list_msgs.msg.TensorList>` | MiDaS inference input tensor. |
 | `/yolo_seg_inference_input_tensor` | `<qrb_ros_tensor_list_msgs.msg.TensorList>` | YOLO segmentation inference input tensor. |
+| `/midas_inference_output_tensor` | `<qrb_ros_tensor_list_msgs.msg.TensorList>` | MiDaS inference output tensor from the NN node. |
+| `/yolo_seg_inference_output_tensor` | `<qrb_ros_tensor_list_msgs.msg.TensorList>` | YOLO segmentation inference output tensor from the NN node. |
 | `/midas_depth_map` | `<sensor_msgs.msg.Image>` | Colorized depth visualization. |
 | `/midas_depth_gray` | `<sensor_msgs.msg.Image>` | Grayscale depth output. |
 | `/midas_yolo_overlay` | `<sensor_msgs.msg.Image>` | Segmentation overlay with fused output. |
@@ -79,7 +81,7 @@ sudo apt install -y \
 <details>
   <summary>Model preparation</summary>
 
-Create the default model directory and place the combined context binary there:
+Create the default model directory and place the combined context binary there (instructions for creating the binary can be found under the docs directory in this sample):
 
 ```bash
 sudo mkdir -p /opt/model
