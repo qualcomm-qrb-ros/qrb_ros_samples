@@ -1,0 +1,4 @@
+# apt packages
+apt:
+  - libpulse-dev
+  - ros-jazzy-ros-base
