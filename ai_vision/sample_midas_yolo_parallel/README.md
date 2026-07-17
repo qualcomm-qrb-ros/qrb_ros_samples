@@ -1,5 +1,6 @@
 <div>
   <h1>AI Sample MiDaS + YOLO Seg Parallel</h1>
+  <img src="https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/ai_vision/sample_midas_yolo_parallel/resource/demo_yolo_overlay.gif" style="zoom:80%;" />
 </div>
 
 ---
