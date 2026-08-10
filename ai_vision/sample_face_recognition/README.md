@@ -122,6 +122,12 @@ sudo apt install ros-jazzy-usb-cam \
 
 # for model
 sudo apt install python3-pip
+
+# If you encounter installation issues, please retry with --break-system-packages
+# Please refer to the following command:
+# python3 -m pip install --upgrade pip --break-system-package
+# pip install onnx onnxruntime --break-system-package
+# pip install onnx-simplifier --break-system-package
 python3 -m pip install --upgrade pip
 pip install onnx onnxruntime
 pip install onnx-simplifier
@@ -173,9 +179,13 @@ ros2 launch sample_face_recognition face_recognition.launch.py
 # open anoter terminal, run the demo py to submit ./resource/test_img.jpg image to topic /input_faces for recognition
 source /opt/ros/jazzy/setup.bash
 export ROS_DOMAIN_ID=66
-source install/setup.bash
 cd ~/qrb_ros_sample_ws/src/qrb_ros_samples/ai_vision/sample_face_recognition/
-python ./sample_face_recognition/scripts/image_pub.py  -i ./resource/test_img.jpg -t /input_faces -r 1 --frame-id cam0 --encoding bgr8
+source install/setup.bash
+
+# If you encounter numpy issues, please uninstall numpy and retry
+# Please refer to the following command:
+# pip3 uninstall -y numpy --break-system-packages
+python3 ./sample_face_recognition/scripts/image_pub.py  -i ./resource/test_img.jpg -t /input_faces -r 1 --frame-id cam0 --encoding bgr8
 
 ```
 ## 🚀 Usage
