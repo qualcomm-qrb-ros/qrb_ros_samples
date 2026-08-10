@@ -128,9 +128,9 @@ pip install onnx-simplifier
 1. Download model manully
 
 ```bash
-sudo mkdir -p /opt/model && cd /opt/model
-sudo wget https://media.githubusercontent.com/media/opencv/opencv_zoo/42802fb13aecbf59542f2cb1125a6306da882bf2/models/face_detection_yunet/face_detection_yunet_2021dec.onnx?download=true -O face_detection_yunet_2021dec.onnx
-sudo wget https://media.githubusercontent.com/media/opencv/opencv_zoo/refs/heads/main/models/face_recognition_sface/face_recognition_sface_2021dec.onnx?download=true -O face_recognition_sface_2021dec.onnx
+mkdir -p ~/model && cd ~/model
+wget https://media.githubusercontent.com/media/opencv/opencv_zoo/42802fb13aecbf59542f2cb1125a6306da882bf2/models/face_detection_yunet/face_detection_yunet_2021dec.onnx?download=true -O face_detection_yunet_2021dec.onnx
+wget https://media.githubusercontent.com/media/opencv/opencv_zoo/refs/heads/main/models/face_recognition_sface/face_recognition_sface_2021dec.onnx?download=true -O face_recognition_sface_2021dec.onnx
 
 python3 -m onnxsim \
   ./face_detection_yunet_2021dec.onnx \
@@ -151,7 +151,7 @@ mkdir -p ~/qrb_ros_sample_ws/src && cd ~/qrb_ros_sample_ws/src
 git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
 cd ~/qrb_ros_sample_ws/src/qrb_ros_samples/ai_vision/sample_face_recognition/
 mkdir model
-cp -vf  /opt/model/*   ./model/
+cp -vf  ~/model/*   ./model/
 
 source /opt/ros/jazzy/setup.bash
 colcon build --packages-up-to sample_face_recognition
