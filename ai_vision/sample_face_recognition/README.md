@@ -106,6 +106,10 @@ sudo apt install ros-dev-tools\
   ros-jazzy-cv-bridge \
   ros-jazzy-ament-index-python \
   ros-jazzy-vision-opencv  \
+  ros-jazzy-rosidl-default-generators \
+  ros-jazzy-ament-lint-auto \
+  ros-jazzy-ament-lint-common \
+  ros-jazzy-ament-cmake-auto \
   libopencv-dev  \
   python3-opencv  \
 
