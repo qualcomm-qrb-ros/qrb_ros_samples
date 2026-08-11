@@ -110,6 +110,10 @@ sudo apt install ros-jazzy-simulation-remote-assistant
 <details>
   <summary>Usage details</summary>
 
+> [!NOTE]
+> For better performance, connect the device and the simulation host with a **direct Ethernet cable** instead of Wi-Fi.<br>
+> The two sides exchange high-rate topics (`/scan`, `/odom`, `/tf`, `/camera/color/image_raw`) over DDS. Wi-Fi latency and jitter delay these messages, which makes the control loops tick late and degrades mapping accuracy and navigation stability.
+
 ### Step1: Download the yolo object detection model
 
 Reference the [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) README to build and download the yolo model
@@ -152,7 +156,7 @@ ros2 launch simulation_remote_assistant map_nav_setup.launch.py control_period:=
 #Launch the yolo object detection script
 
 #Qualcomm Dragonwing™ IQ-9075 EVK 
-ros2 launch simulation_remote_assistant yolo_detectcion.launch.py model:=/opt/model/yolov8_det_qcs9075.bin backend_option:=libQnnHtp.so
+ros2 launch simulation_remote_assistant yolo_detectcion.launch.py model:=/opt/model/yolov8_det_qcs9075.bin backend_option:=libQnnHtp.so label_file:=/opt/model/coco8.yaml
 
 #Run the task manager to parse the location and object
 ros2 run simulation_remote_assistant task_manager_node
@@ -182,7 +186,7 @@ sudo apt update
 - Download source code from qrb-ros-sample repository.
 ```bash
 mkdir -p ~/qrb_ros_sample_ws/src && cd ~/qrb_ros_sample_ws/src
-git clone -b jazzy-rel https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+git clone -b release/20260814 https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
 ```
 
 - Build sample from source code.
