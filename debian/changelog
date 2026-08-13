@@ -1,3 +1,11 @@
+ros-jazzy-simulation-remote-assistant (1.0.4) noble; urgency=high
+
+  * Make the build_map_node control loop period configurable through the
+    control_period launch argument.
+  * Revert to blocking wait() for robust child process shutdown.
+
+ -- xionfu <xionfu@qti.qualcomm.com>  Thu, 13 Aug 2026 01:45:06 +0000
+
 ros-jazzy-simulation-remote-assistant (1.0.3) noble; urgency=high
 
   * bugfix : add runtime dependency ros-jazzy-nav2-route

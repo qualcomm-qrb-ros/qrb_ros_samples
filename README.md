@@ -1,11 +1,11 @@
 <div align="center">
   <h1>Simulation Remote Assistant</h1>
   <p align="center">
-    <img src="./resource/detection.gif" alt="Detection Demo" />
+    <img src="https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/robotics/simulation_remote_assistant/resource/detection.gif" alt="Detection Demo" />
   </p>
   <a href="https://ubuntu.com/download/qualcomm-iot" target="_blank"><img src="https://img.shields.io/badge/Qualcomm%20Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Qualcomm Ubuntu"></a>
   <a href="https://docs.ros.org/en/jazzy/" target="_blank"><img src="https://img.shields.io/badge/ROS%20Jazzy-1c428a?style=for-the-badge&logo=ros&logoColor=white" alt="Jazzy"></a>
-  
+
 </div>
 
 ## 👋 Overview
@@ -73,14 +73,6 @@ The `simulation_remote_assistant` sample application is the ROS package that uti
     </td>
   </tr>
   <tr>
-    <td>Qualcomm Robotics RB3 Gen2 Vision Kit</td>
-    <td>
-      <a href="https://www.qualcomm.com/products/robotics/robotics-rb3-platform">
-        <img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3-vision-kit-1" width="160">
-      </a>
-    </td>
-  </tr>
-  <tr>
     <td>Qualcomm Dragonwing™ IQ-8300</td>
     <td>
       <span>coming soon...</span>
@@ -101,7 +93,7 @@ The `simulation_remote_assistant` sample application is the ROS package that uti
 Add Qualcomm IOT PPA for Ubuntu:
 
 ```bash
-sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-noble-ppa
+sudo add-apt-repository ppa:ubuntu-qcom-iot/qcom-ppa
 sudo add-apt-repository ppa:ubuntu-qcom-iot/qirp
 sudo apt update
 ```
@@ -118,6 +110,10 @@ sudo apt install ros-jazzy-simulation-remote-assistant
 <details>
   <summary>Usage details</summary>
 
+> **📝 Note:**
+> For better performance, connect the device and the simulation host with a **direct Ethernet cable** instead of Wi-Fi.<br>
+> The two sides exchange high-rate topics (`/scan`, `/odom`, `/tf`, `/camera/color/image_raw`) over DDS. Wi-Fi latency and jitter delay these messages, which makes the control loops tick late and degrades mapping accuracy and navigation stability.
+
 ### Step1: Download the yolo object detection model
 
 Reference the [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process) README to build and download the yolo model
@@ -126,7 +122,7 @@ Reference the [qrb_ros_tensor_process](https://github.com/qualcomm-qrb-ros/qrb_r
 #Prepare the model and move to default model path
 sudo chmod -R 777 /opt/
 mkdir /opt/model/
-mv coco8.yaml yolov8_det_qcs9075.bin yolov8_det_qcs6490.tflite /opt/model/
+mv coco8.yaml yolov8_det_qcs9075.bin /opt/model/
 ```
 ### Step2: Run the simulation sample env on host
 
@@ -154,13 +150,13 @@ export ROS_DOMAIN_ID=78
 #Launch the map_nav_setup.launch.py scripts
 ros2 launch simulation_remote_assistant map_nav_setup.launch.py
 
+#Optional: shrink the mapping control loop period if the robot overshoots turns on your machine
+ros2 launch simulation_remote_assistant map_nav_setup.launch.py control_period:=0.05
+
 #Launch the yolo object detection script
 
 #Qualcomm Dragonwing™ IQ-9075 EVK 
-ros2 launch simulation_remote_assistant yolo_detectcion.launch.py model:=/opt/model/yolov8_det_qcs9075.bin backend_option:=libQnnHtp.so
-
-#Qualcomm Robotics RB3 Gen2 Vision Kit
-ros2 launch simulation_remote_assistant  yolo_detectcion.launch.py model:=/opt/model/yolov8_det_qcs6490.tflite label_file:=/opt/model/coco8.yaml
+ros2 launch simulation_remote_assistant yolo_detectcion.launch.py model:=/opt/model/yolov8_det_qcs9075.bin backend_option:=libQnnHtp.so label_file:=/opt/model/coco8.yaml
 
 #Run the task manager to parse the location and object
 ros2 run simulation_remote_assistant task_manager_node
@@ -190,7 +186,7 @@ sudo apt update
 - Download source code from qrb-ros-sample repository.
 ```bash
 mkdir -p ~/qrb_ros_sample_ws/src && cd ~/qrb_ros_sample_ws/src
-git clone -b jazzy-rel https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
+git clone https://github.com/qualcomm-qrb-ros/qrb_ros_samples.git
 ```
 
 - Build sample from source code.

@@ -1,6 +1,7 @@
 # Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.  
 # SPDX-License-Identifier: BSD-3-Clause-Clear
 
+import argparse
 import subprocess
 import time
 import signal
@@ -13,8 +14,11 @@ def launch_ros_launch(pkg, file):
     procs.append(proc)
     return proc
 
-def launch_ros_run(pkg, executable):
-    proc = subprocess.Popen(['ros2', 'run', pkg, executable])
+def launch_ros_run(pkg, executable, ros_args=None):
+    cmd = ['ros2', 'run', pkg, executable]
+    if ros_args:
+        cmd += ['--ros-args'] + ros_args
+    proc = subprocess.Popen(cmd)
     procs.append(proc)
     return proc
 
@@ -37,6 +41,11 @@ def sigint_handler(sig, frame):
     raise KeyboardInterrupt
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--control-period', type=float, default=0.2,
+                        help='build_map_node control loop period in seconds')
+    cli_args = parser.parse_args()
+
     # Let the default KeyboardInterrupt exception be the main mechanism for shutdown.
     signal.signal(signal.SIGINT, sigint_handler)
     signal.signal(signal.SIGTERM, sigint_handler)
@@ -46,7 +55,9 @@ if __name__ == '__main__':
         time.sleep(5)  
 
         print('Running build_map_node...')
-        buildmap_proc = launch_ros_run('simulation_remote_assistant', 'build_map_node')
+        buildmap_proc = launch_ros_run(
+            'simulation_remote_assistant', 'build_map_node',
+            ros_args=['-p', f'control_period:={cli_args.control_period:.6f}'])
         buildmap_proc.wait()
         print('Mapping finished.')
 

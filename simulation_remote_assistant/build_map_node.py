@@ -22,7 +22,14 @@ class BuildMapNode(Node):
         self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
         self.odom_sub = self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
         self.slam_cli = self.create_client(SlamCommand, '/qrb_slam_command')
-        self.timer = self.create_timer(0.2, self.control_loop)
+
+        self.declare_parameter('control_period', 0.2)
+        self.control_period = self.get_parameter('control_period').get_parameter_value().double_value
+        if self.control_period <= 0.0:
+            self.get_logger().warn(f'Invalid control_period {self.control_period}, falling back to 0.2 s')
+            self.control_period = 0.2
+        self.timer = self.create_timer(self.control_period, self.control_loop)
+        self.get_logger().info(f'Control loop period: {self.control_period} s')
 
         self.state = 'START'
         self.start_position = None
