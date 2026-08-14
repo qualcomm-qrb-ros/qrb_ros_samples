@@ -47,7 +47,7 @@ class hrnet_pose_estimation(Node):
         if msg.encoding == 'nv12':
             nv12_data = np.frombuffer(msg.data, dtype=np.uint8)
             cv_image = self.nv12_to_bgr(nv12_data, msg.width, msg.height)
-        elif msg.encoding == 'bgr8':
+        elif msg.encoding in ('bgr8', 'rgb8'):
             cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
         else:
             self.get_logger().error(f'Unsupported image encoding: {msg.encoding}')
@@ -55,14 +55,10 @@ class hrnet_pose_estimation(Node):
 
         preprocessed_image = preprocess.preprocess(cv_image)
 
-        if self.raw_image_processed_flag == True:
-            self.cv_image = cv_image
-            nn_inference_input_tensor_msg = self.make_nn_inference_input_tensor_msg(msg, preprocessed_image)
-            self.nn_inference_input_tensor_publisher.publish(nn_inference_input_tensor_msg)
-            self.get_logger().info("Publish nn_inference_input_tensor_msg")
-            self.raw_image_processed_flag = False
-        else:
-            self.get_logger().info("Skip nn_inference_input_tensor_msg")
+        self.cv_image = cv_image
+        nn_inference_input_tensor_msg = self.make_nn_inference_input_tensor_msg(msg, preprocessed_image)
+        self.nn_inference_input_tensor_publisher.publish(nn_inference_input_tensor_msg)
+        self.get_logger().info("Publish nn_inference_input_tensor_msg")
 
     def make_nn_inference_input_tensor_msg(self, original_msg, preprocessed_image):
         nn_inference_input_tensor_msg = TensorList()
