@@ -30,6 +30,7 @@ def generate_launch_description():
         name='depth_estimation_node', 
         namespace=namespace, 
     )
+    
     delayed_depth_estimation_node = TimerAction(
         period=3.0,
         actions=[depth_estimation_node],

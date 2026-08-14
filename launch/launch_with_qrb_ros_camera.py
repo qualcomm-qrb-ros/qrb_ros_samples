@@ -9,6 +9,7 @@ from launch.substitutions import LaunchConfiguration
 from launch.actions import LogInfo
 from launch.substitutions import PathJoinSubstitution
 from ament_index_python.packages import get_package_share_directory
+from launch.actions import TimerAction
 
 
 def generate_launch_description():
@@ -28,6 +29,11 @@ def generate_launch_description():
         executable='depth_estimation_node', 
         name='depth_estimation_node', 
         namespace=namespace, 
+    )
+
+    delayed_depth_estimation_node = TimerAction(
+        period=3.0,
+        actions=[depth_estimation_node],
     )
 
     # Node for qrb ros camera node
@@ -81,6 +87,6 @@ def generate_launch_description():
         [
             model_path_arg,
             container, 
-            depth_estimation_node
+            delayed_depth_estimation_node
         ]
     )
