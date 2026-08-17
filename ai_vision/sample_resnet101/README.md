@@ -53,10 +53,12 @@ The `sample_resnet101` is a Python-based ROS node that performs image classifica
   <tr>
     <th>Development Hardware</th>
      <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
+     <td>Qualcomm Dragonwing™ IQ-8275 EVK</td>
   </tr>
   <tr>
     <th>Hardware Overview</th>
     <th><a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160"></a></th>
+    <th><a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq8-series/iq-8275"><img src="https://mintcdn.com/qualcomm-prod/kAKe9NmJg3DGZBpB/images/IQ-8275-light.png?fit=max&auto=format&n=kAKe9NmJg3DGZBpB&q=85&s=127e91e509493f24539905c6675a06ad" width="240"></a></th>
   </tr>
   <tr>
     <th>GMSL Camera Support</th>

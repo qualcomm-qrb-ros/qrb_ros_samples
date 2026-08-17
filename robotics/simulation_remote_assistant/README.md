@@ -73,9 +73,11 @@ The `simulation_remote_assistant` sample application is the ROS package that uti
     </td>
   </tr>
   <tr>
-    <td>Qualcomm Dragonwing™ IQ-8300</td>
+    <td>Qualcomm Dragonwing™ IQ-8275 EVK</td>
     <td>
-      <span>coming soon...</span>
+      <a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq8-series/iq-8275">
+        <img src="https://mintcdn.com/qualcomm-prod/kAKe9NmJg3DGZBpB/images/IQ-8275-light.png?fit=max&auto=format&n=kAKe9NmJg3DGZBpB&q=85&s=127e91e509493f24539905c6675a06ad" width="240">
+      </a>
     </td>
   </tr>
 </table>
