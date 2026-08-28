@@ -127,7 +127,6 @@ sudo apt update
 Install Debian package:
 
 ```bash
-sudo apt install qcom-adreno-dev
 sudo apt install ros-jazzy-qcom-cartographer ros-jazzy-qrb-ros-slam-msgs ros-jazzy-qcom-cartographer-ros
 ```
 
