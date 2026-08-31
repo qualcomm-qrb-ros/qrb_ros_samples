@@ -1,0 +1,29 @@
+# AI models for the 3-stage MediaPipe Hand Gesture pipeline.
+#
+# Stage 1 (palm detector) and stage 2 (hand landmark detector) run on the NPU
+# through qrb_ros_nn_inference. They are w8a8 QNN context binaries built from
+# the Qualcomm AI Hub "mediapipe_hand_gesture" QNN DLC release: extract
+# palm_detector.dlc and hand_landmark_detector.dlc from the archive noted below,
+# build the per-target context binaries palm_detector.bin /
+# hand_landmark_detector.bin with the QAIRT tools, and place them together with
+# quant_params.json in /opt/model/.
+#   https://qaihub-public-assets.s3.us-west-2.amazonaws.com/qai-hub-models/models/mediapipe_hand_gesture/releases/v0.61.0/mediapipe_hand_gesture-qnn_dlc-w8a8.zip
+#
+# Stage 3 (gesture classifier) runs in-node in FP32 from the two PyTorch weight
+# files below; the palm anchors are the standard MediaPipe palm anchors. These
+# three assets are downloaded directly.
+model:
+  - gesture_embedder.pth,https://qaihub-public-assets.s3.us-west-2.amazonaws.com/qai-hub-models/models/mediapipe_hand_gesture/v1/gesture_embedder.pth
+  - gesture_classifier.pth,https://qaihub-public-assets.s3.us-west-2.amazonaws.com/qai-hub-models/models/mediapipe_hand_gesture/v1/gesture_classifier.pth
+  - anchors_palm.npy,https://raw.githubusercontent.com/zmurez/MediaPipePyTorch/65f2549ba35cd61dfd29f402f6c21882a32fabb1/anchors_palm.npy
+
+model_label:
+
+# apt packages
+apt:
+  - ros-jazzy-cv-bridge
+  - ros-jazzy-image-publisher
+  - python3-opencv
+
+# python packages
+pip:
