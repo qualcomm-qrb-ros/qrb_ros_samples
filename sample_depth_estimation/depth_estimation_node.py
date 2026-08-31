@@ -45,9 +45,9 @@ class DepthEstimationNode(Node):
         )
         # Input tensor size
         self.target_size = [518, 518]
-        self.msg_count = 0
 
-        # KeyboardInterrupt exception handle
+        # Guards both back pressure (one inference in flight at a time) and
+        # graceful shutdown on KeyboardInterrupt
         self.stopping = False
         self.inference_in_progress = False
         self.inference_lock = threading.Lock()
@@ -60,15 +60,13 @@ class DepthEstimationNode(Node):
         bgr = cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR_NV12)
         return bgr
 
-    def image_callback(self, msg):       
-        # Check if we're shutting down
-        if self.stopping:
-            return
-        
-        # Prevent concurrent inference requests
-        if self.msg_count != 0:
-            return
-        
+    def image_callback(self, msg):
+        # Fast path: skip if shutting down or an inference is already in flight,
+        # so we don't waste CPU on decoding and preprocessing
+        with self.inference_lock:
+            if self.stopping or self.inference_in_progress:
+                return
+
         if msg.encoding == 'nv12':
             nv12_data = np.frombuffer(msg.data, dtype=np.uint8)
             image = self.nv12_to_bgr(nv12_data, msg.width, msg.height)
@@ -90,18 +88,18 @@ class DepthEstimationNode(Node):
             tensor.data = input.tobytes()
             msg.tensor_list.append(tensor)
 
-            # Mark inference as in progress before publishing
+            # Test-and-set under the lock, so concurrent executor threads cannot
+            # both pass the check and publish two inference requests
             with self.inference_lock:
-                if not self.stopping:
-                    self.inference_in_progress = True
-                    try: 
-                        self.qnn_infer_publisher.publish(msg)
-                        self.msg_count += 1
-                        self.get_logger().info('Published qnn input tensor')
-                    except Exception:
-                        # Context may be invalid during shutdown, ignore logging errors
-                        self.inference_in_progress = False
-                        pass
+                if self.stopping or self.inference_in_progress:
+                    return
+                self.inference_in_progress = True
+                try:
+                    self.qnn_infer_publisher.publish(msg)
+                    self.get_logger().info('Published qnn input tensor')
+                except Exception:
+                    # Context may be invalid during shutdown, ignore logging errors
+                    self.inference_in_progress = False
         except Exception as e:
             self.get_logger().error(f'Error preprocessing image: {e}')
         
@@ -121,7 +119,6 @@ class DepthEstimationNode(Node):
                 msg = self.bridge.cv2_to_imgmsg(depth_color_map, encoding='bgr8')
                 self.publisher_.publish(msg)
                 self.get_logger().info('Published depth map')
-                self.msg_count = 0
         except Exception as e:
             with self.inference_lock:
                 self.inference_in_progress = False
