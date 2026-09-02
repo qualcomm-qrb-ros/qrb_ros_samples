@@ -1,0 +1,16 @@
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+
+model:
+  - midas_yolo_combined_int8_split.bin,file:///home/ubuntu/midas_yolo_combined_int8_split.bin
+
+apt:
+  - ros-jazzy-qrb-ros-camera
+  - ros-jazzy-qrb-ros-nn-inference
+  - ros-jazzy-qrb-ros-tensor-list-msgs
+  - ros-jazzy-image-publisher
+  - ros-jazzy-cv-bridge
+  - ros-jazzy-usb-cam
+  - python3-numpy
+
+pip:

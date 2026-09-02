@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>sample_midas_yolo_parallel</name>
+  <version>1.0.0</version>
+  <description>
+    Parallel MiDaS depth estimation and YOLO segmentation pipeline using a
+    C++ composable fusion node and QNN inference. The fusion node runs in the
+    same component_container_mt as QrbRosSharedInferenceNode for
+    intra-process zero-copy tensor delivery.
+  </description>
+  <maintainer email="opensource@qualcomm.com">Qualcomm Technologies, Inc.</maintainer>
+  <license>BSD-3-Clause-Clear</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_auto</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>qrb_ros_tensor_list_msgs</depend>
+  <depend>image_transport</depend>
+
+  <build_depend>libopencv-dev</build_depend>
+
+  <exec_depend>image_transport_plugins</exec_depend>
+  <exec_depend>libopencv-core</exec_depend>
+  <exec_depend>libopencv-imgproc</exec_depend>
+  <exec_depend>libopencv-imgcodecs</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>qrb_ros_camera</exec_depend>
+  <exec_depend>qrb_ros_nn_inference</exec_depend>
+  <exec_depend>usb_cam</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
