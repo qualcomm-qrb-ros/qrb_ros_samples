@@ -1,5 +1,7 @@
 <div align="center">
   <h1>AI Samples - Hand Gesture Recognition</h1>
+  <!-- TODO: demo GIF pending device capture, follows the sample_hand_detection convention:
+       https://github.com/qualcomm-qrb-ros/qrb_ros_samples/blob/gif/ai_vision/sample_hand_gesture_recognition/resource/result.gif -->
   <a href="https://ubuntu.com/download/qualcomm-iot" target="_blank"><img src="https://img.shields.io/badge/Qualcomm%20Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Qualcomm Ubuntu"></a>
   <a href="https://docs.ros.org/en/jazzy/" target="_blank"><img src="https://img.shields.io/badge/ROS%20Jazzy-1c428a?style=for-the-badge&logo=ros&logoColor=white" alt="Jazzy"></a>
 </div>
@@ -19,6 +21,17 @@ Following the architecture of [`sample_hand_detection`](../sample_hand_detection
 
 The 8 recognized gestures are: `None`, `Closed_Fist`, `Open_Palm`, `Pointing_Up`, `Thumb_Down`, `Thumb_Up`, `Victory`, `ILoveYou`.
 
+```mermaid
+flowchart LR
+    A["Image source<br/>(image_publisher /<br/>qrb_ros_camera)"] -->|/image_raw| B["qrb_ros_gesture_recognition<br/>(palm preprocess)"]
+    B -->|/palm_detector_input_tensor| C["qrb_ros_nn_inference<br/>(palm detector, NPU)"]
+    C -->|/palm_detector_output_tensor| D["qrb_ros_gesture_recognition<br/>(decode / ROI / landmark preprocess)"]
+    D -->|/landmark_detector_input_tensor| E["qrb_ros_nn_inference<br/>(landmark detector, NPU)"]
+    E -->|/landmark_detector_output_tensor| F["qrb_ros_gesture_recognition<br/>(FP32 gesture classify + draw)"]
+    F -->|/gesture_class| G["Gesture label"]
+    F -->|/gesture_result_image| H["Annotated image"]
+```
+
 | Node Name                                                    | Function                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Qualcomm ROS 2 package that captures images with parameters and publishes them to ROS topics. |
@@ -34,6 +47,8 @@ The 8 recognized gestures are: `None`, `Closed_Fist`, `Open_Palm`, `Pointing_Up`
   * [Usage](#-usage)
   * [Build from source](#-build-from-source)
   * [Contributing](#-contributing)
+  * [Contributors](#%EF%B8%8F-contributors)
+  * [FAQs](#-faqs)
   * [License](#-license)
 
 ## ⚓ Used ROS Topics
@@ -61,7 +76,7 @@ The 8 recognized gestures are: `None`, `Closed_Fist`, `Open_Palm`, `Pointing_Up`
   <tr>
     <th>Hardware Overview</th>
     <th><a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160"></a></th>
-    <th>coming soon...</th>
+    <th><a href="https://www.qualcomm.com/internet-of-things/products/iq8-series/iq-8275"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/IQ8?$QC_Responsive$&fmt=png-alpha" width="160"></a></th>
   </tr>
   <tr>
     <th>GMSL Camera Support</th>
@@ -147,17 +162,56 @@ sudo apt install ros-jazzy-rclpy \
 
 ### Download AI models
 
-The pipeline uses three assets from Qualcomm AI Hub.
+The pipeline uses assets from [Qualcomm AI Hub](https://aihub.qualcomm.com/iot/models/mediapipe_hand). Stages 1 & 2 run on the NPU as **QNN context binaries** (`.bin`); stage 3 runs in-node in FP32 from two PyTorch weight files. Everything lives in `/opt/model/`.
 
 **Stage 1 & 2 (NPU) — palm & landmark detectors.**
-These run on the NPU as w8a8 QNN context binaries. Download the `mediapipe_hand_gesture` QNN DLC (w8a8) release, extract `palm_detector.dlc` and `hand_landmark_detector.dlc`, then build the per-target context binaries `palm_detector.bin` / `hand_landmark_detector.bin` with the QAIRT tools and place them (together with `quant_params.json`) in `/opt/model/`.
+Qualcomm AI Hub ships these as a **w8a8 QNN DLC** archive. A QNN context binary is tied to a specific HTP backend, so build the `.bin` **on / for each target board** (IQ-9075 / IQ-8275). The release asset is hosted publicly, so **no API token is required**:
 
 ```bash
-# w8a8 QNN DLC release archive:
-#   https://qaihub-public-assets.s3.us-west-2.amazonaws.com/qai-hub-models/models/mediapipe_hand_gesture/releases/v0.61.0/mediapipe_hand_gesture-qnn_dlc-w8a8.zip
+# 1. Download and extract the w8a8 QNN DLC release
+cd /tmp
+curl -fLO https://qaihub-public-assets.s3.us-west-2.amazonaws.com/qai-hub-models/models/mediapipe_hand_gesture/releases/v0.61.0/mediapipe_hand_gesture-qnn_dlc-w8a8.zip
+python3 -m zipfile -e mediapipe_hand_gesture-qnn_dlc-w8a8.zip .
+# -> mediapipe_hand_gesture-qnn_dlc-w8a8/palm_detector.dlc
+# -> mediapipe_hand_gesture-qnn_dlc-w8a8/hand_landmark_detector.dlc
+
+# 2. Set up the QAIRT environment (see the QAIRT general setup guide linked below)
+
+# 3. Build the per-target context binaries into /opt/model
+sudo mkdir -p /opt/model
+qnn-context-binary-generator \
+    --backend /usr/lib/libQnnHtp.so \
+    --model /usr/lib/libQnnModelDlc.so \
+    --dlc_path /tmp/mediapipe_hand_gesture-qnn_dlc-w8a8/palm_detector.dlc \
+    --binary_file palm_detector \
+    --output_dir /opt/model
+qnn-context-binary-generator \
+    --backend /usr/lib/libQnnHtp.so \
+    --model /usr/lib/libQnnModelDlc.so \
+    --dlc_path /tmp/mediapipe_hand_gesture-qnn_dlc-w8a8/hand_landmark_detector.dlc \
+    --binary_file hand_landmark_detector \
+    --output_dir /opt/model
 ```
 
-> **Note:** QNN context binaries are compiled per target SoC. Build the `.bin` for the specific board you run on (IQ-9075 / IQ-8275) with the matching QAIRT toolchain.
+> Set up the QAIRT environment following the [QAIRT general setup guide](https://docs.qualcomm.com/doc/80-63442-10/topic/general_setup.html).
+> `qnn-context-binary-generator` writes `palm_detector.bin` / `hand_landmark_detector.bin`. The `.bin` is tied to a specific backend (HTP version) and must be regenerated for every new hardware platform.
+
+The w8a8 models have **quantized (uint8) input/output tensors**, so the node quantizes/dequantizes float32 ⇄ uint8 using the per-tensor scale/offset in `quant_params.json` (QNN convention `real = (q + offset) * scale`). These encodings are a fixed property of the released DLC, so `quant_params.json` is shipped with this sample — just copy it to `/opt/model/`:
+
+```bash
+sudo cp $(ros2 pkg prefix sample_hand_gesture_recognition)/share/sample_hand_gesture_recognition/quant_params.json /opt/model/
+```
+
+<details>
+  <summary>Regenerating <code>quant_params.json</code> yourself (optional)</summary>
+
+The scale/offset values are the quantization encodings embedded in the context binary. You can dump them for a given `.bin` with the QAIRT utility and read the per-tensor `scaleOffset` fields:
+
+```bash
+qnn-context-binary-utility --context_binary /opt/model/palm_detector.bin --json_file /tmp/palm_detector_meta.json
+qnn-context-binary-utility --context_binary /opt/model/hand_landmark_detector.bin --json_file /tmp/hand_landmark_detector_meta.json
+```
+</details>
 
 **Stage 3 (in-node FP32) — gesture classifier weights** and the **palm anchors** are downloaded directly:
 
@@ -204,6 +258,34 @@ Feel free to create an issue for bug report, feature requests or any discussion�
 ## ❤️ Contributors
 
 Thanks to all our contributors who have helped make this project better!
+
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/yli47"><img src="https://avatars.githubusercontent.com/u/312031278?v=4" width="100" height="100" alt="yli47"/><br /><sub><b>yli47</b></sub></a></td>
+  </tr>
+</table>
+
+## ❔ FAQs
+
+<details>
+<summary>The publish/inference rate is only a few Hz. Why?</summary><br>
+NPU (HTP) inference is serial and the palm + landmark stages run back-to-back per frame. Publishing frames faster than the NPU can consume just causes drops (the node processes one frame at a time). This is expected; keep the source frame rate modest to match actual pipeline throughput.
+</details>
+
+<details>
+<summary><code>ERROR: Model format NOT support!</code> when loading the inference node</summary><br>
+<code>qrb_ros_nn_inference</code> loads a <b>precompiled QNN context binary</b> (<code>.bin</code>) only; on-the-fly <code>.dlc</code> loading is not supported. Convert each DLC to a <code>.bin</code> first (see <a href="#-build-from-source">Download AI models</a>). The <code>.bin</code> is tied to a specific HTP backend and must be regenerated for every new hardware platform.
+</details>
+
+<details>
+<summary>A clenched fist is sometimes labelled <code>None</code> instead of <code>Closed_Fist</code>. Is this a bug in the port?</summary><br>
+No. This is a limitation of the upstream MediaPipe hand-gesture model itself, not of this ROS port or of the w8a8 quantization. On the affected frames the reference FP32 <code>hand_landmark_detector</code> + <code>canned_gesture_classifier</code> (run offline with the official ONNX/PyTorch models) produce the same <code>None</code> &gt; <code>Closed_Fist</code> ranking. Per this repository's "mimic the reference, don't add heuristics" policy, no custom correction is applied. Clear, well-framed fists are classified correctly.
+</details>
+
+<details>
+<summary>Which gestures are recognized?</summary><br>
+Eight classes: <code>None</code>, <code>Closed_Fist</code>, <code>Open_Palm</code>, <code>Pointing_Up</code>, <code>Thumb_Down</code>, <code>Thumb_Up</code>, <code>Victory</code>, <code>ILoveYou</code>. The recognized class is published as a <code>std_msgs/String</code> on <code>/gesture_class</code> and drawn on <code>/gesture_result_image</code>.
+</details>
 
 ## 📜 License
 
