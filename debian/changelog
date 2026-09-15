@@ -1,4 +1,4 @@
-ros-jazzy-sample-apriltag (1.0.0) noble; urgency=medium
+ros-jazzy-sample-apriltag-opencv (1.0.0) noble; urgency=medium
 
   * The initial version for Debian package
 
