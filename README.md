@@ -1,3 +1,6 @@
+> [!NOTE]
+> This repository is currently migrating to ROS 2 Lyrical. Documentation may still reference Jazzy, and some features may not be fully supported yet.
+
 # QRB ROS Samples
 
 ## Overview
