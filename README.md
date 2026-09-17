@@ -82,7 +82,7 @@ sudo apt update
 Install Debian packages:
 
 ```bash
-sudo apt install qcom-adreno1 weston weston-autostart ros-jazzy-sample-apriltag
+sudo apt install ros-jazzy-sample-apriltag-opencv
 ```
 
 ## 🚀 Usage
@@ -93,10 +93,6 @@ sudo apt install qcom-adreno1 weston weston-autostart ros-jazzy-sample-apriltag
 ### Start the AprilTag pipeline sample
 
 ```bash
-export XDG_RUNTIME_DIR=/run/user/1000
-export WAYLAND_DISPLAY=wayland-1
-sudo systemctl start weston-autostart.service
-
 source /opt/ros/jazzy/setup.bash
 ros2 launch sample_apriltag sample_apriltag.launch.py
 ```
@@ -180,7 +176,7 @@ sudo apt install ros-dev-tools \
   ros-jazzy-image-proc \
   ros-jazzy-apriltag-ros \
   ros-jazzy-qrb-ros-camera \
-  ros-jazzy-qrb-ros-colorspace-convert
+  ros-jazzy-qrb-ros-colorspace-convert-opencv
 ```
 
 Download the source code and build with colcon
