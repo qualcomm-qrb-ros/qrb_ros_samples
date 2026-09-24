@@ -1,0 +1,66 @@
+{
+  "palm_detector": {
+    "inputs": {
+      "image": {
+        "scale": 0.003921568859368563,
+        "offset": 0
+      }
+    },
+    "outputs": {
+      "box_coords": {
+        "scale": 1.6417323350906372,
+        "offset": -50
+      },
+      "box_scores": {
+        "scale": 0.00390625,
+        "offset": 0
+      }
+    }
+  },
+
+  "hand_landmark_detector": {
+    "inputs": {
+      "image": {
+        "scale": 0.003921568859368563,
+        "offset": 0
+      }
+    },
+    "outputs": {
+      "landmarks": {
+        "scale": 1.1388181447982788,
+        "offset": -48
+      },
+      "scores": {
+        "scale": 0.00390625,
+        "offset": 0
+      },
+      "lr": {
+        "scale": 0.00390625,
+        "offset": 0
+      },
+      "world_landmarks": {
+        "scale": 0.0009378043469041586,
+        "offset": -122
+      }
+    }
+  },
+
+  "canned_gesture_classifier": {
+    "inputs": {
+      "hand": {
+        "scale": 0.013154414482414722,
+        "offset": -147
+      },
+      "mirrored_hand": {
+        "scale": 0.013154414482414722,
+        "offset": -147
+      }
+    },
+    "outputs": {
+      "Identity": {
+        "scale": 0.00390625,
+        "offset": 0
+      }
+    }
+  }
+}
