@@ -17,7 +17,7 @@
 
 ```mermaid
 flowchart LR
-    A["Image source<br/>(image_publisher /<br/>usb_cam)"] -->|/image_raw| B["ppe_detection_node<br/>(letterbox preprocess)"]
+    A["Image source<br/>(image_publisher /<br/>usb_cam / qrb_ros_camera)"] -->|/image_raw| B["ppe_detection_node<br/>(letterbox preprocess)"]
     B -->|/qrb_inference_input_tensor| C["qrb_ros_nn_inference<br/>(NPU / HTP inference)"]
     C -->|/qrb_inference_output_tensor| D["ppe_detection_node<br/>(dequantize / NMS / box-hold)"]
     D -->|/ppe_detection/image| E["Annotated image"]
@@ -28,6 +28,7 @@ flowchart LR
 | --------- | -------- |
 | image publisher | Publishes a local image file to a ROS topic at a fixed rate. |
 | usb_cam | Captures frames from a live USB (V4L2) camera and publishes them to `/image_raw`. |
+| [qrb ros camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera) | Captures frames from a GMSL camera and publishes them to `/cam<camera_id>_<stream_name>`. |
 | sample ppe detection | Subscribes to input images for letterbox preprocessing, sends tensors to the NN inference node, then post-processes (dequantize / NMS / box-hold) and publishes annotated results. |
 | [qrb ros nn interface](https://github.com/qualcomm-qrb-ros/qrb_ros_nn_inference) | Loads a trained AI model, receives preprocessed images, performs inference on the NPU, and publishes output tensors. |
 
@@ -51,7 +52,7 @@ flowchart LR
 
 | ROS Topic | Type | Description |
 | --------- | ---- | ----------- |
-| `/image_raw` | `<sensor_msgs.msg.Image>` | Input image / video frame |
+| `/image_raw` | `<sensor_msgs.msg.Image>` | Input image / video frame. When `camera_type:=gmsl`, this is remapped from `qrb_ros_camera`'s `/cam<camera_id>_<stream_name>`. |
 | `/qrb_inference_input_tensor` | `<qrb_ros_tensor_list_msgs.msg.TensorList>` | Preprocessed (letterboxed, NHWC uint8) input tensor |
 | `/qrb_inference_output_tensor` | `<qrb_ros_tensor_list_msgs.msg.TensorList>` | Raw model output tensors (`boxes`, `scores`, `class_idx`) |
 | `/ppe_detection/image` | `<sensor_msgs.msg.Image>` | Annotated image with drawn bounding boxes |
@@ -155,10 +156,18 @@ ros2 launch sample_ppe_detection launch_with_image_publisher.py image_path:=<you
 - To run PPE detection from a **live USB (V4L2) camera** (recommended for real cameras — exposes resolution / frame rate / pixel format controls), install the USB camera driver and launch:
 ```bash
 sudo apt install -y ros-jazzy-usb-cam
-ros2 launch sample_ppe_detection launch_with_camera.py video_device:=/dev/video0
+ros2 launch sample_ppe_detection launch_with_camera.py camera_type:=usb video_device:=/dev/video0
 ```
 
-> **Note:** Defaults are `640x480 @ 30`, `pixel_format:=yuyv2rgb` (widest webcam compatibility). For a 720p/1080p webcam use MJPEG, e.g. `ros2 launch sample_ppe_detection launch_with_camera.py image_width:=1280 image_height:=720 pixel_format:=mjpeg2rgb`. The node self-throttles to NPU speed and drops surplus frames.
+> **Note:** `camera_type:=usb` is the default. Defaults are `640x480 @ 30`, `pixel_format:=yuyv2rgb` (widest webcam compatibility). For a 720p/1080p webcam use MJPEG, e.g. `ros2 launch sample_ppe_detection launch_with_camera.py image_width:=1280 image_height:=720 pixel_format:=mjpeg2rgb`. The node self-throttles to NPU speed and drops surplus frames.
+
+- To run PPE detection from a **GMSL camera** via [qrb_ros_camera](https://github.com/qualcomm-qrb-ros/qrb_ros_camera), install the driver and launch:
+```bash
+sudo apt install -y ros-jazzy-qrb-ros-camera
+ros2 launch sample_ppe_detection launch_with_camera.py camera_type:=gmsl
+```
+
+> **Note:** Defaults are `640x480 @ 30` on `camera_id:=0`, using `camera_info_file:=camera_info_OX03F10_yuv.yaml` (matches the `LI-VENUS-OX03F10-OAX40-GM2A-118H(YUV)` module in [Supported targets](#-supported-targets)) from the `qrb_ros_camera` share directory. `qrb_ros_camera` also ships `camera_info_{imx577,ov9282,ar0231,OX03F10_bayer}.yaml`; override `camera_info_file` if you're using a different GMSL module.
 
 </details>
 
@@ -194,7 +203,13 @@ ros2 launch sample_ppe_detection launch_with_image_publisher.py image_path:=<you
 - You can also run PPE detection from a live USB (V4L2) camera:
 ```bash
 sudo apt install -y ros-jazzy-usb-cam
-ros2 launch sample_ppe_detection launch_with_camera.py video_device:=/dev/video0
+ros2 launch sample_ppe_detection launch_with_camera.py camera_type:=usb video_device:=/dev/video0
+```
+
+- Or from a GMSL camera via qrb_ros_camera:
+```bash
+sudo apt install -y ros-jazzy-qrb-ros-camera
+ros2 launch sample_ppe_detection launch_with_camera.py camera_type:=gmsl
 ```
 
 ## 📊 Visualization
